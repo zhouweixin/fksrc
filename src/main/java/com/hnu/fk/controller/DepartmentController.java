@@ -4,6 +4,8 @@ import com.hnu.fk.domain.Department;
 import com.hnu.fk.domain.Result;
 import com.hnu.fk.service.DepartmentService;
 import com.hnu.fk.utils.ResultUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -22,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/department")
+@Api(tags = "部门接口")
 public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
@@ -33,6 +36,7 @@ public class DepartmentController {
      * @return
      */
     @RequestMapping(value = "/add")
+    @ApiOperation(value = "新增", notes = "id自增长不需要传参")
     public Result<Department> add(@Valid Department department, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -49,6 +53,7 @@ public class DepartmentController {
      * @return
      */
     @RequestMapping(value = "/update")
+    @ApiOperation(value = "新增", notes = "id自增长不需要传参")
     public Result<Department> update(@Valid Department department, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
