@@ -51,7 +51,7 @@ public class DepartmentController {
      * @return
      */
     @PostMapping(value = "/update")
-    @ApiOperation(value = "新增", notes = "id自增长不需要传参")
+    @ApiOperation(value = "更新")
     public Result<Department> update(@Valid Department department, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -68,6 +68,7 @@ public class DepartmentController {
      * @return
      */
     @DeleteMapping(value = "/deleteById")
+    @ApiOperation(value = "通过id删除")
     public Result<Object> deleteById(Integer id) {
         departmentService.delete(id);
         return ResultUtil.success();
@@ -80,6 +81,7 @@ public class DepartmentController {
      * @return
      */
     @DeleteMapping(value = "/deleteByIds")
+    @ApiOperation(value = "批量删除")
     public Result<Object> deleteByIds(Integer[] ids) {
         departmentService.deleteByIdIn(ids);
         return ResultUtil.success();
@@ -92,6 +94,7 @@ public class DepartmentController {
      * @return
      */
     @GetMapping(value = "/getById")
+    @ApiOperation(value = "通过id查询")
     public Result<Department> getById(Integer id) {
         return ResultUtil.success(departmentService.findOne(id));
     }
@@ -102,6 +105,7 @@ public class DepartmentController {
      * @return
      */
     @GetMapping(value = "/getAll")
+    @ApiOperation(value = "查询所有")
     public Result<List<Department>> getAll() {
         return ResultUtil.success(departmentService.findAll());
 
@@ -117,6 +121,7 @@ public class DepartmentController {
      * @return
      */
     @GetMapping(value = "/getAllByPage")
+    @ApiOperation(value = "查询所有-分页")
     public Result<Page<Department>> getAllByPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                              @RequestParam(value = "size", defaultValue = "10") Integer size,
                                              @RequestParam(value = "sortFieldName", defaultValue = "id") String sortFieldName,
@@ -136,6 +141,7 @@ public class DepartmentController {
      * @return
      */
     @GetMapping(value = "/getByNameLikeByPage")
+    @ApiOperation(value = "通过名称模糊查询-分页")
     public Result<Page<Department>> getByNameLikeByPage(@RequestParam(value = "name", defaultValue = "") String name,
                                                     @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                     @RequestParam(value = "size", defaultValue = "10") Integer size,
