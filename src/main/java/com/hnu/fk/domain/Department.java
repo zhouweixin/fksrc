@@ -1,9 +1,8 @@
 package com.hnu.fk.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import io.swagger.annotations.ApiModelProperty;
+
+import javax.persistence.*;
 
 /**
  * @Author: zhouweixin
@@ -12,17 +11,20 @@ import javax.persistence.Id;
  * @Modified By:
  */
 @Entity
+//@org.hibernate.annotations.Table(appliesTo = "Department",comment="部门")
 public class Department {
     /**
      * 主键:自增长
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty("主键:自增长")
     private Integer id;
 
     /**
      * 名称
      */
+    @ApiModelProperty("名称")
     private String name;
 
     public Integer getId() {
