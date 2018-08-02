@@ -1,5 +1,6 @@
 package com.hnu.fk.domain;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import javax.persistence.*;
  * @Modified By:
  */
 @Entity
-//@org.hibernate.annotations.Table(appliesTo = "Department",comment="部门")
+@ApiModel(description = "部门")
 public class Department {
     /**
      * 主键:自增长
