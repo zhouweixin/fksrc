@@ -9,9 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -35,7 +33,7 @@ public class DepartmentController {
      * @param department
      * @return
      */
-    @RequestMapping(value = "/add")
+    @PostMapping(value = "/add")
     @ApiOperation(value = "新增", notes = "id自增长不需要传参")
     public Result<Department> add(@Valid Department department, BindingResult bindingResult) {
 
@@ -52,7 +50,7 @@ public class DepartmentController {
      * @param department
      * @return
      */
-    @RequestMapping(value = "/update")
+    @PostMapping(value = "/update")
     @ApiOperation(value = "新增", notes = "id自增长不需要传参")
     public Result<Department> update(@Valid Department department, BindingResult bindingResult) {
 
@@ -69,7 +67,7 @@ public class DepartmentController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/deleteById")
+    @DeleteMapping(value = "/deleteById")
     public Result<Object> deleteById(Integer id) {
         departmentService.delete(id);
         return ResultUtil.success();
@@ -81,7 +79,7 @@ public class DepartmentController {
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/deleteByIds")
+    @DeleteMapping(value = "/deleteByIds")
     public Result<Object> deleteByIds(Integer[] ids) {
         departmentService.deleteByIdIn(ids);
         return ResultUtil.success();
@@ -93,7 +91,7 @@ public class DepartmentController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/getById")
+    @GetMapping(value = "/getById")
     public Result<Department> getById(Integer id) {
         return ResultUtil.success(departmentService.findOne(id));
     }
@@ -103,7 +101,7 @@ public class DepartmentController {
      *
      * @return
      */
-    @RequestMapping(value = "/getAll")
+    @GetMapping(value = "/getAll")
     public Result<List<Department>> getAll() {
         return ResultUtil.success(departmentService.findAll());
 
@@ -118,7 +116,7 @@ public class DepartmentController {
      * @param asc
      * @return
      */
-    @RequestMapping(value = "/getAllByPage")
+    @GetMapping(value = "/getAllByPage")
     public Result<Page<Department>> getAllByPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                              @RequestParam(value = "size", defaultValue = "10") Integer size,
                                              @RequestParam(value = "sortFieldName", defaultValue = "id") String sortFieldName,
@@ -137,7 +135,7 @@ public class DepartmentController {
      * @param asc
      * @return
      */
-    @RequestMapping(value = "/getByNameLikeByPage")
+    @GetMapping(value = "/getByNameLikeByPage")
     public Result<Page<Department>> getByNameLikeByPage(@RequestParam(value = "name", defaultValue = "") String name,
                                                     @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                     @RequestParam(value = "size", defaultValue = "10") Integer size,

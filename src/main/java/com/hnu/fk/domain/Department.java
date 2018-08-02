@@ -7,7 +7,7 @@ import javax.persistence.Id;
 
 /**
  * @Author: zhouweixin
- * @Description:
+ * @Description: 部门
  * @Date: Created in 10:20 2018/8/1
  * @Modified By:
  */
