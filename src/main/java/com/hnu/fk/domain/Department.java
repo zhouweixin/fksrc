@@ -12,6 +12,7 @@ import javax.persistence.*;
  * @Modified By:
  */
 @Entity
+@Table(name = "basicinfo_department")
 @ApiModel(description = "部门")
 public class Department {
     /**
@@ -28,6 +29,14 @@ public class Department {
     @ApiModelProperty("名称")
     private String name;
 
+    @ApiModelProperty("信息")
+    private String info;
+
+    @ApiModelProperty("所属部门")
+    @ManyToOne(targetEntity = Department.class)
+    @JoinColumn(name = "parent_department_id", referencedColumnName = "id")
+    private Department parentDepartment;
+
     public Integer getId() {
         return id;
     }
@@ -42,5 +51,21 @@ public class Department {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public Department getParentDepartment() {
+        return parentDepartment;
+    }
+
+    public void setParentDepartment(Department parentDepartment) {
+        this.parentDepartment = parentDepartment;
     }
 }
