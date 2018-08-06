@@ -15,6 +15,7 @@ public enum EnumExceptions {
     UPDATE_FAILED_NOT_EXIST(4, "修改失败, 不存在"),
     DELETE_FAILED_NOT_EXIST(5, "删除失败, 不存在"),
     DELETE_FAILED_REF_KEY_EXISTS(6, "删除失败, 有外键引用"),
+    DELETE_FAILED_SYSTEM_VALUE_NOT_ALLOW(7, "删除失败, 系统值禁止删除"),
 
 	;
 

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 /**
  * @Author: zhouweixin
- * @Description: 二级菜单和操作分配
+ * @Description: 二级菜单和操作分配, 约束页面最多拥有的操作
  * @Date: Created in 13:28 2018/8/6
  * @Modified By:
  */
