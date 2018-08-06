@@ -9,7 +9,9 @@ import java.io.Serializable;
  * @Modified By:
  */
 public class UserRoleMultiKeys implements Serializable {
+    // 用户主键
     private Integer userId;
+    // 角色主键
     private Integer roleId;
 
     public Integer getUserId() {

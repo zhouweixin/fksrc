@@ -15,7 +15,7 @@ import java.util.Date;
  * @Modified By:
  */
 @Entity
-@Table(name = "permission_login_log")
+@Table(name = "permission_action_log")
 @ApiModel(description = "操作日志")
 public class ActionLog {
     @Id

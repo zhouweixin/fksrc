@@ -12,7 +12,7 @@ import javax.persistence.*;
  * @Modified By:
  */
 @Entity
-@Table(name = "permission_role")
+@Table(name = "permission_user")
 @ApiModel(description = "用户")
 public class User {
     @Id
