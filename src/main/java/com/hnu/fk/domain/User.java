@@ -3,6 +3,7 @@ package com.hnu.fk.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 
 import javax.persistence.*;
 import java.util.List;
@@ -55,7 +56,8 @@ public class User {
     private Integer enable = 1;
 
     @Transient
-    @ApiModelProperty("导航")
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "导航", hidden=true)
     private List<Navigation> navigations;
 
     public Integer getId() {
