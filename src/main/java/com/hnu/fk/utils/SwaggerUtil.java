@@ -2,6 +2,7 @@ package com.hnu.fk.utils;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -29,13 +30,11 @@ public class SwaggerUtil {
     }
 
     private ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo("凡口信息化系统",
-                "接口文件生成页面",
-                "1.0",
-                "",
-                "2712220318@qq.com",
-                "&copy长沙矿冶研究院版权所有",
-                "");
-        return apiInfo;
+        return new ApiInfoBuilder()
+                .title("凡口信息化系统")   //标题
+                .description("接口文件生成页面")     //说明
+                .termsOfServiceUrl("")  //服务器地址
+                .version("1.0")         //版本号
+                .build();
     }
 }

@@ -8,6 +8,7 @@ import com.hnu.fk.service.UserService;
 import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,7 @@ public class UserController {
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "新增", notes = "id自增长不需要传参")
+
     public Result<User> add(@Valid User user){
         return ResultUtil.success(userService.save(user));
     }
