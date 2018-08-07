@@ -68,4 +68,14 @@ public class Department {
     public void setParentDepartment(Department parentDepartment) {
         this.parentDepartment = parentDepartment;
     }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", info='" + info + '\'' +
+                ", parentDepartment=" + parentDepartment +
+                '}';
+    }
 }

@@ -34,11 +34,7 @@ public class DepartmentController {
      */
     @PostMapping(value = "/add")
     @ApiOperation(value = "新增", notes = "id自增长不需要传参")
-    public Result<Department> add(@Valid Department department, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
-        }
+    public Result<Department> add(@RequestBody Department department) {
 
         return ResultUtil.success(departmentService.save(department));
     }
@@ -51,11 +47,7 @@ public class DepartmentController {
      */
     @PostMapping(value = "/update")
     @ApiOperation(value = "更新")
-    public Result<Department> update(@Valid Department department, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
-        }
+    public Result<Department> update(@RequestBody Department department) {
 
         return ResultUtil.success(departmentService.update(department));
     }
