@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 说明:
+ * 说明: 默认密码管理控制器
  * <br>
  *
  * @author ZSCDumin
