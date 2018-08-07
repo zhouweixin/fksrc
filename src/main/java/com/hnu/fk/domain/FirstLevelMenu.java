@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: zhouweixin
@@ -45,6 +47,10 @@ public class FirstLevelMenu {
     @JoinColumn(name = "navigation_id", referencedColumnName = "id")
     private Navigation navigation;
 
+    @Transient
+    @ApiModelProperty("二级菜单")
+    private List<SecondLevelMenu> secondLevelMenus = new ArrayList<>();
+
     public Integer getId() {
         return id;
     }
@@ -83,6 +89,14 @@ public class FirstLevelMenu {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public List<SecondLevelMenu> getSecondLevelMenus() {
+        return secondLevelMenus;
+    }
+
+    public void setSecondLevelMenus(List<SecondLevelMenu> secondLevelMenus) {
+        this.secondLevelMenus = secondLevelMenus;
     }
 }
 

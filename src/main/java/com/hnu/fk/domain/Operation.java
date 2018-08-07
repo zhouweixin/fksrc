@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 /**
  * @Author: zhouweixin
- * @Description: 操作:0浏览;1新增;2查询;3删除;4编辑;5审核
+ * @Description: 操作:1浏览;2新增;3查询;4删除;5编辑;6审核
  * @Date: Created in 10:20 2018/8/1
  * @Modified By:
  */

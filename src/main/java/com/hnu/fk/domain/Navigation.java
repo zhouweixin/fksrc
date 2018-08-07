@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: zhouweixin
@@ -40,6 +42,10 @@ public class Navigation {
     @ApiModelProperty("图片存储路径")
     private String path;
 
+    @Transient
+    @ApiModelProperty("一级菜单")
+    private List<FirstLevelMenu> firstLevelMenus = new ArrayList<>();
+
     public Integer getId() {
 
         return id;
@@ -73,14 +79,12 @@ public class Navigation {
         this.rank = rank;
     }
 
-    @Override
-    public String toString() {
-        return "Navigation{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", rank=" + rank +
-                ", path='" + path + '\'' +
-                '}';
+    public List<FirstLevelMenu> getFirstLevelMenus() {
+        return firstLevelMenus;
+    }
+
+    public void setFirstLevelMenus(List<FirstLevelMenu> firstLevelMenus) {
+        this.firstLevelMenus = firstLevelMenus;
     }
 }
 
