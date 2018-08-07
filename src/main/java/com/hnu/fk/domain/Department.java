@@ -1,5 +1,6 @@
 package com.hnu.fk.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "basicinfo_department")
 @ApiModel(description = "部门")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
 public class Department {
     /**
      * 主键:自增长
@@ -67,5 +69,15 @@ public class Department {
 
     public void setParentDepartment(Department parentDepartment) {
         this.parentDepartment = parentDepartment;
+    }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", info='" + info + '\'' +
+                ", parentDepartment=" + parentDepartment +
+                '}';
     }
 }

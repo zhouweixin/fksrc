@@ -4,6 +4,7 @@ import com.hnu.fk.domain.Department;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.DepartmentRepository;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,13 +35,18 @@ public class DepartmentService {
      * @param department
      * @return
      */
-    public Department save(Department department) {
+    public Department save(Department department,Integer parentId) {
+
 
         // 验证是否存在
         if (department == null || (department.getId() != null && departmentRepository.findById(department.getId()).isPresent()) == true) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
-
+        if((parentId != -1) && departmentRepository.existsById(parentId)){
+            department.setParentDepartment(departmentRepository.getOne(parentId));
+        }else if(parentId != -1 && !departmentRepository.existsById(parentId)){
+            throw new FkExceptions(EnumExceptions.ADD_UPDATE_FAILED_PARENT_NOT_EXIST);
+        }
         return departmentRepository.save(department);
     }
 
@@ -50,13 +56,20 @@ public class DepartmentService {
      * @param department
      * @return
      */
-    public Department update(Department department) {
+    public Department update(Department department, Integer parentId) {
+
 
         // 验证是否存在
         if (department == null || department.getId() == null || departmentRepository.findById(department.getId()).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
-
+        if(parentId == -1){
+            department.setParentDepartment(null);
+        }else if(departmentRepository.existsById(parentId)){
+            department.setParentDepartment(departmentRepository.getOne(parentId));
+        }else if(!departmentRepository.existsById(parentId)){
+            throw new FkExceptions(EnumExceptions.ADD_UPDATE_FAILED_PARENT_NOT_EXIST);
+        }
         return departmentRepository.save(department);
     }
 

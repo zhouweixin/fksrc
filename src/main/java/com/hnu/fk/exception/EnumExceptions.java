@@ -16,9 +16,10 @@ public enum EnumExceptions {
     DELETE_FAILED_NOT_EXIST(5, "删除失败, 不存在"),
     DELETE_FAILED_REF_KEY_EXISTS(6, "删除失败, 有外键引用"),
     DELETE_FAILED_SYSTEM_VALUE_NOT_ALLOW(7, "删除失败, 系统值禁止删除"),
-    ADD_FAILED_DEPARTMENT_NOT_EXISTS(8, "新增失败, 部门不存在"),
-    LOGIN_FAILED_USER_NOT_EXISTS(9, "登录失败, 用户不存在"),
-    LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER(10, "登录失败, 用户名和密码不匹配"),
+	ADD_UPDATE_FAILED_PARENT_NOT_EXIST(8,"父部门不存在")
+    ADD_FAILED_DEPARTMENT_NOT_EXISTS(9, "新增失败, 部门不存在"),
+    LOGIN_FAILED_USER_NOT_EXISTS(10, "登录失败, 用户不存在"),
+    LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER(11, "登录失败, 用户名和密码不匹配"),
 
 	;
 

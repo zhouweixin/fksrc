@@ -33,14 +33,15 @@ public class DepartmentController {
      * @return
      */
     @PostMapping(value = "/add")
-    @ApiOperation(value = "新增", notes = "id自增长不需要传参")
-    public Result<Department> add(@Valid Department department, BindingResult bindingResult) {
+    @ApiOperation(value = "新增", notes = "id自增长不需要传参,")
+    public Result<Department> add(@Valid Department department,@ApiParam(value = "父部门主键，无父部门则输入-1") @RequestParam Integer parentId, BindingResult bindingResult) {
+
 
         if (bindingResult.hasErrors()) {
             return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
         }
 
-        return ResultUtil.success(departmentService.save(department));
+        return ResultUtil.success(departmentService.save(department,parentId));
     }
 
     /**
@@ -51,13 +52,13 @@ public class DepartmentController {
      */
     @PostMapping(value = "/update")
     @ApiOperation(value = "更新")
-    public Result<Department> update(@Valid Department department, BindingResult bindingResult) {
+    public Result<Department> update(@Valid Department department,@ApiParam(value = "父部门主键，无父部门则输入-1") @RequestParam Integer parentId, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
         }
 
-        return ResultUtil.success(departmentService.update(department));
+        return ResultUtil.success(departmentService.update(department,parentId));
     }
 
     /**
