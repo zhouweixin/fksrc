@@ -34,8 +34,8 @@ public class SwaggerUtil {
                 "1.0",
                 "",
                 "2712220318@qq.com",
-                "license",
-                "license url");
+                "&copy长沙矿冶研究院版权所有",
+                "");
         return apiInfo;
     }
 }

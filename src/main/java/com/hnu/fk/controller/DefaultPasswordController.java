@@ -5,6 +5,7 @@ import com.hnu.fk.domain.Result;
 import com.hnu.fk.service.DefaultPasswordService;
 import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class DefaultPasswordController {
      * @return DefaultPassword
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    @ApiOperation(value = "获取默认密码", notes = "获取默认密码")
+    @ApiOperation(value = "getDefaultPassword", notes = "获取默认密码")
     public Result<DefaultPassword> getDefaultPassword() {
         return ResultUtil.success(defaultPasswordService.getDefaultPassword());
     }
@@ -44,12 +45,14 @@ public class DefaultPasswordController {
     /**
      * 更新默认密码
      *
-     * @param password String
+     * @param defaultPassword String
      * @return DefaultPassword
      */
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ApiOperation(value = "更新默认密码", notes = "更新默认密码")
-    public Result<DefaultPassword> updateDefaultPassword(@RequestParam String password) {
-        return ResultUtil.success(defaultPasswordService.updateDefaultPassword(password));
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @ResponseBody
+    @ApiOperation(value = "updateDefaultPassword", notes = "更新默认密码")
+    @ApiImplicitParam(value = "密码", name = "defaultPassword", defaultValue = "123456", required = true, dataType = "string", paramType = "query")
+    public Result<DefaultPassword> updateDefaultPassword(@RequestParam String defaultPassword) {
+        return ResultUtil.success(defaultPasswordService.updateDefaultPassword(defaultPassword));
     }
 }
