@@ -20,6 +20,7 @@ import java.util.Date;
 public class ActionLog {
     @Id
     @ApiModelProperty("主键: 自增长")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(targetEntity = User.class)

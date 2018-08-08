@@ -4,6 +4,8 @@ import com.hnu.fk.domain.Department;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.DepartmentRepository;
+import com.hnu.fk.utils.ActionLogUtil;
+import com.hnu.fk.utils.LoginLogUtil;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,6 +46,9 @@ public class DepartmentService {
         }else if(parentId != -1 && !departmentRepository.existsById(parentId)){
             throw new FkExceptions(EnumExceptions.ADD_UPDATE_FAILED_PARENT_NOT_EXIST);
         }
+
+        ActionLogUtil.log("部门",0,department);
+
         return departmentRepository.save(department);
     }
 
@@ -67,6 +72,10 @@ public class DepartmentService {
         }else if(!departmentRepository.existsById(parentId)){
             throw new FkExceptions(EnumExceptions.ADD_UPDATE_FAILED_PARENT_NOT_EXIST);
         }
+
+        Department departmentOld = departmentRepository.getOne(department.getId());
+        ActionLogUtil.log("部门",departmentOld,department);
+
         return departmentRepository.save(department);
     }
 
@@ -81,6 +90,10 @@ public class DepartmentService {
         if (departmentRepository.findById(id).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
+
+        Department department = departmentRepository.getOne(id);
+        ActionLogUtil.log("部门",1,department);
+
         departmentRepository.deleteById(id);
     }
 
@@ -91,6 +104,9 @@ public class DepartmentService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+
+        ActionLogUtil.log("部门",departmentRepository.findAllById(Arrays.asList(ids)));
+
         departmentRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
