@@ -40,6 +40,6 @@ public class DefaultPassword {
     /**
      * 默认密码
      */
-    @ApiModelProperty(value = "默认密码", name = "defaultPassword", example = "123456")
-    private String defaultPassword;
+    @ApiModelProperty(value = "默认密码", name = "password", example = "123456")
+    private String password;
 }

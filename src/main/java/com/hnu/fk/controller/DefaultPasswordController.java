@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping(value = "/defaultpassword")
+@RequestMapping(value = "/defaultPassword")
 @Api(tags = "默认密码")
 public class DefaultPasswordController {
 
@@ -45,14 +45,14 @@ public class DefaultPasswordController {
     /**
      * 更新默认密码
      *
-     * @param defaultPassword String
+     * @param password String
      * @return DefaultPassword
      */
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     @ResponseBody
     @ApiOperation(value = "updateDefaultPassword", notes = "更新默认密码")
-    @ApiImplicitParam(value = "密码", name = "defaultPassword", defaultValue = "123456", required = true, dataType = "string", paramType = "query")
-    public Result<DefaultPassword> updateDefaultPassword(@RequestParam String defaultPassword) {
-        return ResultUtil.success(defaultPasswordService.updateDefaultPassword(defaultPassword));
+    @ApiImplicitParam(value = "密码", name = "password", defaultValue = "123456", required = true, dataType = "string", paramType = "query")
+    public Result<DefaultPassword> updateDefaultPassword(@RequestParam String password) {
+        return ResultUtil.success(defaultPasswordService.updateDefaultPassword(password));
     }
 }

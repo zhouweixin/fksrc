@@ -23,7 +23,9 @@ import java.util.Optional;
 @Service
 public class DefaultPasswordService {
 
-    //默认密码
+    /**
+     * 默认密码
+     */
     private static final String DEFAULT_PASSWORD = "123456";
 
     @Autowired
