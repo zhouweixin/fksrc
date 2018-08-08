@@ -24,7 +24,7 @@ import java.util.Optional;
  * @Modified By:
  */
 @Service
-public class FkRealm extends AuthorizingRealm {
+public class RealmService extends AuthorizingRealm {
 
     @Autowired
     private UserRepository userRepository;

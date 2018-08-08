@@ -2,12 +2,10 @@ package com.hnu.fk.service;
 
 import com.hnu.fk.domain.Navigation;
 import com.hnu.fk.domain.User;
-import com.hnu.fk.domain.UserRole;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.DepartmentRepository;
 import com.hnu.fk.repository.UserRepository;
-import com.hnu.fk.repository.UserRoleRepository;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -39,7 +37,10 @@ public class UserService {
     private DepartmentRepository departmentRepository;
 
     @Autowired
-    private FkRealm fkRealm;
+    private RealmService realmService;
+
+    @Autowired
+    private DefaultPasswordService defaultPasswordService;
 
 
 
@@ -64,8 +65,7 @@ public class UserService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DEPARTMENT_NOT_EXISTS);
         }
 
-        // TODO 默认密码从数据库里获取
-        String password = "123456";
+        String password = defaultPasswordService.getDefaultPassword().getDefaultPassword();
 
         // 随机生成盐
         String salt = UUID.randomUUID().toString();
@@ -243,8 +243,8 @@ public class UserService {
 
         // 1、构建SecurityManager环境
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
-        defaultSecurityManager.setRealm(fkRealm);
-        fkRealm.setCredentialsMatcher(matcher);
+        defaultSecurityManager.setRealm(realmService);
+        realmService.setCredentialsMatcher(matcher);
 
         // 2、主体提交认证请求
         SecurityUtils.setSecurityManager(defaultSecurityManager);
