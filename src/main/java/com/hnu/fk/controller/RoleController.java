@@ -1,7 +1,9 @@
 package com.hnu.fk.controller;
 
+import com.hnu.fk.domain.Navigation;
 import com.hnu.fk.domain.Role;
 import com.hnu.fk.domain.Result;
+import com.hnu.fk.domain.RoleSecondLevelMenuOperation;
 import com.hnu.fk.service.RoleService;
 import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: zhouweixin
@@ -152,5 +155,13 @@ public class RoleController {
             @ApiParam(value = "排序方向(0:降序；1升序；默认为1)") @RequestParam(value = "asc", defaultValue = "1") Integer asc) {
 
         return ResultUtil.success(roleService.findByNameLikeByPage(name, page, size, sortFieldName, asc));
+    }
+
+    @PostMapping(value = "/assignPermissions")
+    @ApiOperation(value = "分配权限给角色")
+    public Result<Object> assignPermissions(
+            @ApiParam(value = "角色菜单操作对应关系") @RequestBody Set<RoleSecondLevelMenuOperation> permissions){
+        roleService.assignPermissions(permissions);
+        return ResultUtil.success();
     }
 }

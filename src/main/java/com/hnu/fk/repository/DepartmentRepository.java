@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @Author: zhouweixin
@@ -29,4 +30,12 @@ public interface DepartmentRepository extends JpaRepository<Department, Integer>
      * @return
      */
     public Page<Department> findByNameLike(String name, Pageable pageable);
+
+    /**
+     * 通过父部门查询
+     *
+     * @param department
+     * @return
+     */
+    public List<Department> findByParentDepartment(Department department);
 }

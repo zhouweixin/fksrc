@@ -25,38 +25,38 @@ import java.util.Optional;
 @Service
 public class SecondLevelMenuService {
     @Autowired
-    private SecondLevelMenuRepository departmentRepository;
+    private SecondLevelMenuRepository secondLevelRepositoryRepository;
 
     /**
      * 新增
      *
-     * @param department
+     * @param secondLevelRepository
      * @return
      */
-    public SecondLevelMenu save(SecondLevelMenu department) {
+    public SecondLevelMenu save(SecondLevelMenu secondLevelRepository) {
 
         // 验证是否存在
-        if (department == null || (department.getId() != null && departmentRepository.findById(department.getId()).isPresent()) == true) {
+        if (secondLevelRepository == null || (secondLevelRepository.getId() != null && secondLevelRepositoryRepository.findById(secondLevelRepository.getId()).isPresent()) == true) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        return departmentRepository.save(department);
+        return secondLevelRepositoryRepository.save(secondLevelRepository);
     }
 
     /**
      * 更新
      *
-     * @param department
+     * @param secondLevelRepository
      * @return
      */
-    public SecondLevelMenu update(SecondLevelMenu department) {
+    public SecondLevelMenu update(SecondLevelMenu secondLevelRepository) {
 
         // 验证是否存在
-        if (department == null || department.getId() == null || departmentRepository.findById(department.getId()).isPresent() == false) {
+        if (secondLevelRepository == null || secondLevelRepository.getId() == null || secondLevelRepositoryRepository.findById(secondLevelRepository.getId()).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
-        return departmentRepository.save(department);
+        return secondLevelRepositoryRepository.save(secondLevelRepository);
     }
 
     /**
@@ -67,10 +67,10 @@ public class SecondLevelMenuService {
     public void delete(Integer id) {
 
         // 验证是否存在
-        if (departmentRepository.findById(id).isPresent() == false) {
+        if (secondLevelRepositoryRepository.findById(id).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
-        departmentRepository.deleteById(id);
+        secondLevelRepositoryRepository.deleteById(id);
     }
 
     /**
@@ -80,7 +80,7 @@ public class SecondLevelMenuService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
-        departmentRepository.deleteByIdIn(Arrays.asList(ids));
+        secondLevelRepositoryRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
     /**
@@ -90,7 +90,7 @@ public class SecondLevelMenuService {
      * @return
      */
     public SecondLevelMenu findOne(Integer id) {
-        Optional<SecondLevelMenu> optional = departmentRepository.findById(id);
+        Optional<SecondLevelMenu> optional = secondLevelRepositoryRepository.findById(id);
         if(optional.isPresent()){
             return optional.get();
         }
@@ -103,7 +103,7 @@ public class SecondLevelMenuService {
      * @return
      */
     public List<SecondLevelMenu> findAll() {
-        return departmentRepository.findAll();
+        return secondLevelRepositoryRepository.findAll();
     }
 
     /**
@@ -133,7 +133,7 @@ public class SecondLevelMenuService {
         }
 
         Pageable pageable =PageRequest.of(page, size, sort);
-        return departmentRepository.findAll(pageable);
+        return secondLevelRepositoryRepository.findAll(pageable);
     }
 
     /**
@@ -165,6 +165,27 @@ public class SecondLevelMenuService {
         }
 
         Pageable pageable =PageRequest.of(page, size, sort);
-        return departmentRepository.findByNameLike("%" + name + "%", pageable);
+        return secondLevelRepositoryRepository.findByNameLike("%" + name + "%", pageable);
+    }
+
+    /**
+     * 菜单上下移动
+     *
+     * @param id1
+     * @param id2
+     */
+    public void shift(Integer id1, Integer id2) {
+        Optional<SecondLevelMenu> optional1 = secondLevelRepositoryRepository.findById(id1);
+        Optional<SecondLevelMenu> optional2 = secondLevelRepositoryRepository.findById(id2);
+
+        if(optional1.isPresent() == false || optional1.isPresent() == false){
+            throw new FkExceptions(EnumExceptions.MENU_SHIFT_FAILED_NOT_EXISTS);
+        }
+
+        int temp = optional1.get().getRank();
+        optional1.get().setRank(optional2.get().getRank());
+        optional2.get().setRank(temp);
+        secondLevelRepositoryRepository.save(optional1.get());
+        secondLevelRepositoryRepository.save(optional2.get());
     }
 }

@@ -167,4 +167,25 @@ public class FirstLevelMenuService {
         Pageable pageable =PageRequest.of(page, size, sort);
         return firstLevelMenuRepository.findByNameLike("%" + name + "%", pageable);
     }
+
+    /**
+     * 上下移动菜单
+     *
+     * @param id1
+     * @param id2
+     */
+    public void shift(Integer id1, Integer id2) {
+        Optional<FirstLevelMenu> optional1 = firstLevelMenuRepository.findById(id1);
+        Optional<FirstLevelMenu> optional2 = firstLevelMenuRepository.findById(id2);
+
+        if(optional1.isPresent() == false || optional1.isPresent() == false){
+            throw new FkExceptions(EnumExceptions.MENU_SHIFT_FAILED_NOT_EXISTS);
+        }
+
+        int temp = optional1.get().getRank();
+        optional1.get().setRank(optional2.get().getRank());
+        optional2.get().setRank(temp);
+        firstLevelMenuRepository.save(optional1.get());
+        firstLevelMenuRepository.save(optional2.get());
+    }
 }

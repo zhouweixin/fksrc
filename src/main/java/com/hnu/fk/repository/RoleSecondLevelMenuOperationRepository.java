@@ -22,4 +22,11 @@ public interface RoleSecondLevelMenuOperationRepository extends JpaRepository<Ro
      * @return
      */
     public List<RoleSecondLevelMenuOperation> findByRoleIdIn(Collection<Integer> roleIds);
+
+    /**
+     * 通过角色删除
+     *
+     * @param roleIds
+     */
+    public void deleteByRoleIdIn(Collection<Integer> roleIds);
 }

@@ -1,11 +1,9 @@
 package com.hnu.fk.service;
 
-import com.hnu.fk.domain.Navigation;
-import com.hnu.fk.domain.User;
+import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
-import com.hnu.fk.repository.DepartmentRepository;
-import com.hnu.fk.repository.UserRepository;
+import com.hnu.fk.repository.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -37,15 +35,25 @@ public class UserService {
     private DepartmentRepository departmentRepository;
 
     @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
     private RealmService realmService;
 
     @Autowired
     private DefaultPasswordService defaultPasswordService;
 
-
+    @Autowired
+    private RoleSecondLevelMenuOperationRepository roleSecondLevelMenuOperationRepository;
 
     @Autowired
     private RoleSecondMenuOperationService roleSecondMenuOperationService;
+
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     /**
      * 新增
@@ -61,23 +69,14 @@ public class UserService {
         }
 
         // 验证部门
-        if(user.getDepartment() != null && user.getDepartment().getId() != null && departmentRepository.findById(user.getDepartment().getId()).isPresent() == false){
+        if (user.getDepartment() != null && user.getDepartment().getId() != null && departmentRepository.findById(user.getDepartment().getId()).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DEPARTMENT_NOT_EXISTS);
         }
 
-        String password = defaultPasswordService.getDefaultPassword().getDefaultPassword();
-
-        // 随机生成盐
-        String salt = UUID.randomUUID().toString();
-        // 随机生成加密次数1-5
-        int md5Num = new Random().nextInt(5) + 1;
-        // 用带盐的加密
-        String pwd = new Md5Hash(password, salt, md5Num).toString();
-
-        // 保存盐和密码
-        user.setSalt(salt);
-        user.setPassword(pwd);
-        user.setMd5Num(md5Num);
+        // 获得默认密码
+        String password = defaultPasswordService.getDefaultPassword().getPassword();
+        // 加密
+        encryptPassword(user, password);
 
         return userRepository.save(user);
     }
@@ -92,12 +91,12 @@ public class UserService {
 
         // 验证是否存在
         Optional<User> optional = null;
-        if (user == null || user.getId() == null || (optional=userRepository.findById(user.getId())).isPresent() == false) {
+        if (user == null || user.getId() == null || (optional = userRepository.findById(user.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
         // 验证部门
-        if(user.getDepartment() != null && user.getDepartment().getId() != null && departmentRepository.findById(user.getDepartment().getId()).isPresent() == false){
+        if (user.getDepartment() != null && user.getDepartment().getId() != null && departmentRepository.findById(user.getDepartment().getId()).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DEPARTMENT_NOT_EXISTS);
         }
 
@@ -141,7 +140,7 @@ public class UserService {
      */
     public User findOne(Integer id) {
         Optional<User> optional = userRepository.findById(id);
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             return optional.get();
         }
         return null;
@@ -197,7 +196,7 @@ public class UserService {
      * @return
      */
     public Page<User> findByNameLikeByPage(String name, Integer page, Integer size, String sortFieldName,
-                                                 Integer asc) {
+                                           Integer asc) {
 
         // 判断排序字段名是否存在
         try {
@@ -214,7 +213,7 @@ public class UserService {
             sort = new Sort(Sort.Direction.ASC, sortFieldName);
         }
 
-        Pageable pageable =PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
         return userRepository.findByNameLike("%" + name + "%", pageable);
     }
 
@@ -229,10 +228,60 @@ public class UserService {
         // 验证用户是否存在
         Optional<User> optional = userRepository.findById(id);
         User user = null;
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             user = optional.get();
         } else {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_NOT_EXISTS);
+        }
+
+        if (this.checkUserPassword(id, password) == false) {
+            throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER);
+        }
+
+        // 查询用户所有的菜单
+        List<Navigation> navigations = roleSecondMenuOperationService.findNavigationsByRoleIds(id);
+        user.setNavigations(navigations);
+
+        return user;
+    }
+
+    /**
+     * 密码加密
+     *
+     * @return
+     */
+    private boolean encryptPassword(User user, String password) {
+        if(user == null || password == null){
+            return false;
+        }
+
+        // 随机生成盐
+        String salt = UUID.randomUUID().toString();
+        // 随机生成加密次数1-5
+        int md5Num = new Random().nextInt(5) + 1;
+        // 用带盐的加密
+        String pwd = new Md5Hash(password, salt, md5Num).toString();
+
+        user.setSalt(salt);
+        user.setMd5Num(md5Num);
+        user.setPassword(pwd);
+        return true;
+    }
+
+    /**
+     * 校验用户密码
+     *
+     * @param id
+     * @param password
+     */
+    private boolean checkUserPassword(Integer id, String password) {
+        // 验证用户是否存在
+        Optional<User> optional = userRepository.findById(id);
+        User user = null;
+        if (optional.isPresent()) {
+            user = optional.get();
+        } else {
+            throw new FkExceptions(EnumExceptions.CHECK_PASSWORD_FAILED_NOT_EXISTS);
         }
 
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
@@ -254,15 +303,167 @@ public class UserService {
         try {
             // 认证登录
             subject.login(token);
-        }catch(Exception e){
+        } catch (Exception e) {
             // 登录失败
-            throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param id
+     */
+    @Transactional
+    public void resetPassword(Integer id) {
+        // 验证是否存在
+        Optional<User> optional = userRepository.findById(id);
+        if (optional.isPresent() == false) {
+            throw new FkExceptions(EnumExceptions.RESET_PASSWORD_FAILED_NOT_EXIST);
+        }
+        User user = optional.get();
+
+        // 查询默认密码
+        String defaultPassword = defaultPasswordService.getDefaultPassword().getPassword();
+
+        // 加密
+        encryptPassword(user, defaultPassword);
+
+        // 修改
+        userRepository.save(user);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param id
+     * @param oldPassword
+     * @param newPassword
+     * @param reNewPassword
+     */
+    public void updatePassword(Integer id, String oldPassword, String newPassword, String reNewPassword) {
+        // 验证用户是否存在
+        Optional<User> optional = userRepository.findById(id);
+        User user = null;
+        if (optional.isPresent()) {
+            user = optional.get();
+        } else {
+            throw new FkExceptions(EnumExceptions.UPDATE_PASSWORD_FAILED_USER_NOT_EIXSTS);
         }
 
-        // 查询用户所有的菜单
-        List<Navigation> navigations = roleSecondMenuOperationService.findNavigationsByRoleIds(id);
-        user.setNavigations(navigations);
+        // 校验新旧密码的合法性
+        if (newPassword == null || "".equals(newPassword)) {
+            throw new FkExceptions(EnumExceptions.UPDATE_PASSWORD_FAILED_NEW_PASSWORD_NULL);
+        } else if (newPassword.length() < 6) {
+            throw new FkExceptions(EnumExceptions.UPDATE_PASSWORD_FAILED_LEN_LESS_SIX);
+        } else if (!newPassword.equals(reNewPassword)) {
+            throw new FkExceptions(EnumExceptions.UPDATE_PASSWORD_FAILED_TWICE_PASSWORD_DIFF);
+        }
 
-        return user;
+        // 校验密码
+        if (this.checkUserPassword(id, oldPassword) == false) {
+            throw new FkExceptions(EnumExceptions.UPDATE_PASSWORD_FAILED_CHECK_FAILED);
+        }
+
+        // 加密
+        encryptPassword(user, newPassword);
+
+        // 修改
+        userRepository.save(user);
+    }
+
+    /**
+     * 通过部门查询所有员工-分页
+     *
+     * @param departmentId
+     * @param page
+     * @param size
+     * @param sortFieldName
+     * @param asc
+     * @return
+     */
+    public Page<User> findByDepartment(Integer departmentId, Integer page, Integer size, String sortFieldName, Integer asc) {
+        Optional<Department> optional = departmentRepository.findById(departmentId);
+        if(optional.isPresent() ==  false){
+            throw new FkExceptions(EnumExceptions.QUERY_FAILED_DEPARTMENT_NOT_EXISTS);
+        }
+
+        // 查询部门的子部门
+        List<Department> departments = departmentService.findSonAndSelfByParentDepartment(optional.get());
+
+        // 判断排序字段名是否存在
+        try {
+            User.class.getDeclaredField(sortFieldName);
+        } catch (Exception e) {
+            // 如果不存在就设置为id
+            sortFieldName = "id";
+        }
+
+        Sort sort = null;
+        if (asc == 0) {
+            sort = new Sort(Sort.Direction.DESC, sortFieldName);
+        } else {
+            sort = new Sort(Sort.Direction.ASC, sortFieldName);
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return userRepository.findByDepartmentIn(departments, pageable);
+    }
+
+    /**
+     * 给用户分配角色
+     *
+     * @param userIds
+     * @param roleIds
+     */
+    @Transactional
+    public void assignRolesToUsers(Integer[] userIds, Integer[] roleIds) {
+        // 删除用户所有的角色
+        userRoleRepository.deleteByUserIdIn(Arrays.asList(userIds));
+
+        // 重新分配角色
+        List<UserRole> userRoles = new ArrayList<>();
+
+        List<User> users = userRepository.findAllById(Arrays.asList(userIds));
+        List<Role> roles = roleRepository.findAllById(Arrays.asList(roleIds));
+        for(User user : users){
+            for(Role role : roles){
+                userRoles.add(new UserRole(user.getId(), role.getId()));
+            }
+        }
+
+        userRoleRepository.saveAll(userRoles);
+    }
+
+    /**
+     * 查询用户的角色
+     *
+     * @param id
+     * @return
+     */
+    public List<Role> getRolesById(Integer id) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(id);
+        Set<Integer> roleIds = new HashSet<>();
+        for(UserRole userRole : userRoles){
+            roleIds.add(userRole.getRoleId());
+        }
+
+        return roleRepository.findAllById(roleIds);
+    }
+
+    /**
+     * 查询用户的权限
+     *
+     * @param id
+     * @return
+     */
+    public List<RoleSecondLevelMenuOperation> getPermissionsById(Integer id) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(id);
+        Set<Integer> roleIds = new HashSet<>();
+        for(UserRole userRole : userRoles){
+            roleIds.add(userRole.getRoleId());
+        }
+        return roleSecondLevelMenuOperationRepository.findByRoleIdIn(roleIds);
     }
 }

@@ -5,6 +5,8 @@ import com.hnu.fk.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
 
@@ -30,4 +32,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
      * @return
      */
     public Page<User> findByNameLike(String name, Pageable pageable);
+
+    /**
+     * 通过部门查询-分页
+     *
+     * @param departments
+     * @return
+     */
+    public Page<User> findByDepartmentIn(Collection<Department> departments, Pageable pageable);
 }

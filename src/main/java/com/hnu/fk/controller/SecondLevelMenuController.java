@@ -153,4 +153,14 @@ public class SecondLevelMenuController {
 
         return ResultUtil.success(secondLevelMenuService.findByNameLikeByPage(name, page, size, sortFieldName, asc));
     }
+
+    @GetMapping(value = "/shift")
+    @ApiOperation(value = "菜单上下移动")
+    public Result<Object> shift(
+            @ApiParam(value = "菜单1主键") @RequestParam Integer id1,
+            @ApiParam(value = "菜单2主键") @RequestParam Integer id2) {
+
+        secondLevelMenuService.shift(id1, id2);
+        return ResultUtil.success();
+    }
 }

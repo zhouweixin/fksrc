@@ -4,6 +4,7 @@ import com.hnu.fk.domain.UserRole;
 import com.hnu.fk.domain.UserRoleMultiKeys;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,4 +21,11 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleMult
      * @return
      */
     public List<UserRole> findByUserId(Integer userId);
+
+    /**
+     * 删除用户所有的角色
+     *
+     * @param userIds
+     */
+    public void deleteByUserIdIn(Collection<Integer> userIds);
 }

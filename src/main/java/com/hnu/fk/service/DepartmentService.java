@@ -13,10 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Author: zhouweixin
@@ -180,5 +177,30 @@ public class DepartmentService {
 
         Pageable pageable =PageRequest.of(page, size, sort);
         return departmentRepository.findByNameLike("%" + name + "%", pageable);
+    }
+
+    /**
+     * 通过父部门查询所有的子部门及本身
+     *
+     * @param department
+     * @return
+     */
+    public List<Department> findSonAndSelfByParentDepartment(Department department){
+        List<Department> departments = new ArrayList<>();
+
+        if(department == null){
+            return departments;
+        }
+
+        department.setParentDepartment(null);
+        departments.add(department);
+
+        List<Department> deps = departmentRepository.findByParentDepartment(department);
+        if (deps != null && deps.size() > 0) {
+            for(Department dep : deps){
+                departments.addAll(findSonAndSelfByParentDepartment(dep));
+            }
+        }
+        return departments;
     }
 }

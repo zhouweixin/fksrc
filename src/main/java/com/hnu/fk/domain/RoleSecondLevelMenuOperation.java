@@ -51,4 +51,21 @@ public class RoleSecondLevelMenuOperation {
     public void setOperationId(Integer operationId) {
         this.operationId = operationId;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        RoleSecondLevelMenuOperation permission = (RoleSecondLevelMenuOperation) obj;
+
+        if (this.roleId == permission.getRoleId()
+                && this.secondLevelMenuId == permission.getSecondLevelMenuId()
+                && this.operationId == permission.getOperationId()) {
+            return true;
+        }
+
+        return super.equals(obj);
+    }
 }

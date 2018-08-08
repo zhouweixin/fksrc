@@ -27,7 +27,7 @@ public class Role {
     @ApiModelProperty("描述")
     private String description;
 
-    @ApiModelProperty("标记:0用户;1系统;(默认为0, 标记为系统的角色不允许删除)")
+    @ApiModelProperty(value = "标记:0用户;1系统;(默认为0, 标记为系统的角色不允许删除)", hidden = true)
     private Integer flag = 0;
 
     public Integer getId() {

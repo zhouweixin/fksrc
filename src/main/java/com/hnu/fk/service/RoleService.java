@@ -1,9 +1,11 @@
 package com.hnu.fk.service;
 
 import com.hnu.fk.domain.Role;
+import com.hnu.fk.domain.RoleSecondLevelMenuOperation;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.RoleRepository;
+import com.hnu.fk.repository.RoleSecondLevelMenuOperationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,9 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Author: zhouweixin
@@ -26,6 +26,9 @@ import java.util.Optional;
 public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private RoleSecondLevelMenuOperationRepository roleSecondLevelMenuOperationRepository;
 
     /**
      * 新增
@@ -173,5 +176,24 @@ public class RoleService {
 
         Pageable pageable =PageRequest.of(page, size, sort);
         return roleRepository.findByNameLike("%" + name + "%", pageable);
+    }
+
+    /**
+     * 分配权限给角色
+     *
+     * @param permissions
+     */
+    @Transactional
+    public void assignPermissions(Set<RoleSecondLevelMenuOperation> permissions) {
+        Set<Integer> roleIds = new HashSet<>();
+        for(RoleSecondLevelMenuOperation permission : permissions){
+            roleIds.add(permission.getRoleId());
+        }
+
+        // 先清除角色的权限
+        roleSecondLevelMenuOperationRepository.deleteByRoleIdIn(roleIds);
+
+        // 分配
+        roleSecondLevelMenuOperationRepository.saveAll(permissions);
     }
 }

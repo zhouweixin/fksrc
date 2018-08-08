@@ -20,6 +20,15 @@ public enum EnumExceptions {
     ADD_FAILED_DEPARTMENT_NOT_EXISTS(9, "新增失败, 部门不存在"),
     LOGIN_FAILED_USER_NOT_EXISTS(10, "登录失败, 用户不存在"),
     LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER(11, "登录失败, 用户名和密码不匹配"),
+    MENU_SHIFT_FAILED_NOT_EXISTS(12, "菜单移动失败, 不存在"),
+    RESET_PASSWORD_FAILED_NOT_EXIST(13, "重置密码失败, 不存在"),
+    UPDATE_PASSWORD_FAILED_USER_NOT_EIXSTS(14, "修改密码失败, 用户不存在"),
+    UPDATE_PASSWORD_FAILED_NEW_PASSWORD_NULL(15, "修改密码失败, 新密码为空"),
+    UPDATE_PASSWORD_FAILED_TWICE_PASSWORD_DIFF(16, "修改密码失败, 两次密码不相同"),
+    UPDATE_PASSWORD_FAILED_LEN_LESS_SIX(17, "修改密码失败, 密码长度小于6"),
+    UPDATE_PASSWORD_FAILED_CHECK_FAILED(18, "修改密码失败, 旧密码错误"),
+    CHECK_PASSWORD_FAILED_NOT_EXISTS(19, "密码校验失败, 用户不存在"),
+    QUERY_FAILED_DEPARTMENT_NOT_EXISTS(20, "查询失败, 部门不存在"),
 
 	;
 
