@@ -29,6 +29,7 @@ public enum EnumExceptions {
     UPDATE_PASSWORD_FAILED_CHECK_FAILED(18, "修改密码失败, 旧密码错误"),
     CHECK_PASSWORD_FAILED_NOT_EXISTS(19, "密码校验失败, 用户不存在"),
     QUERY_FAILED_DEPARTMENT_NOT_EXISTS(20, "查询失败, 部门不存在"),
+    CHECK_FAILED_USER_NOT_EXISTS(21, "权限校验失败, 用户不存在"),
 
 	;
 
