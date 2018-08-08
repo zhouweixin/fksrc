@@ -86,17 +86,10 @@
         </dependency>
 
         <!--UI-1 依赖-->
-        <!--<dependency>-->
-        <!--<groupId>com.github.caspar-chen</groupId>-->
-        <!--<artifactId>swagger-ui-layer</artifactId>-->
-        <!--<version>0.0.6</version>-->
-        <!--</dependency>-->
-
-        <!--UI-2 依赖-->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.7.0</version>
+            <groupId>com.github.caspar-chen</groupId>
+            <artifactId>swagger-ui-layer</artifactId>
+            <version>0.0.6</version>
         </dependency>
 
         <dependency>
