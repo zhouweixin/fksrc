@@ -1,20 +1,16 @@
 package com.hnu.fk.controller;
 
-import com.hnu.fk.domain.Department;
 import com.hnu.fk.domain.Result;
 import com.hnu.fk.domain.User;
-import com.hnu.fk.service.RoleService;
 import com.hnu.fk.service.UserService;
 import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -34,8 +30,7 @@ public class UserController {
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "新增", notes = "id自增长不需要传参")
-
-    public Result<User> add(@Valid User user){
+    public Result<User> add(@Valid User user) {
         return ResultUtil.success(userService.save(user));
     }
 
@@ -52,7 +47,7 @@ public class UserController {
 
     @PostMapping(value = "/login")
     @ApiOperation(value = "登录")
-    public Result<User> login(Integer id, String password){
+    public Result<User> login(Integer id, String password) {
         return ResultUtil.success(userService.login(id, password));
     }
 }

@@ -3,8 +3,6 @@ package com.hnu.fk.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -53,6 +51,7 @@ public class User {
     @ApiModelProperty("描述")
     private String description;
 
+    @org.springframework.data.annotation.Transient
     @ApiModelProperty("是否启用:0不启用;1启用;(默认值为1)")
     private Integer enable = 1;
 
