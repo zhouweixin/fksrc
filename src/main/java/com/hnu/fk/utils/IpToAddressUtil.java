@@ -1,6 +1,6 @@
 package com.hnu.fk.utils;
 
-import net.sf.json.JSONObject;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -22,19 +22,19 @@ public class IpToAddressUtil {
         String returnStr = getResult(urlStr, content, encodingString);
         if (returnStr != null) {
             // 处理返回的json信息
-            JSONObject json = JSONObject.fromObject(returnStr);
+            JSONObject json = new JSONObject(returnStr).getJSONObject("data");
             //国家
-            String country = JSONObject.fromObject(json.get("data")).get("country").toString();
+            String country = json.getString("country");
             //地区
-            String area = JSONObject.fromObject(json.get("data")).get("area").toString();
+            String area = json.getString("area");
             //省份
-            String region = JSONObject.fromObject(json.get("data")).get("region").toString();
+            String region = json.getString("region");
             //城市
-            String city = JSONObject.fromObject(json.get("data")).get("city").toString();
+            String city = json.getString("city");
             //区/县
-            String county = JSONObject.fromObject(json.get("data")).get("county").toString();
+            String county = json.getString("county");
             //互联网服务提供商
-            String isp = JSONObject.fromObject(json.get("data")).get("isp").toString();
+            String isp = json.getString("isp");
 
             String address = country + "/";
             address += region + "/";
