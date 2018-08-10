@@ -4,11 +4,13 @@ import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.*;
+import com.hnu.fk.utils.LoginLogUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -226,21 +228,15 @@ public class UserService {
      */
     public User login(Integer id, String password) {
         // 验证用户是否存在
-        Optional<User> optional = userRepository.findById(id);
-        User user = null;
-        if (optional.isPresent()) {
-            user = optional.get();
-        } else {
+        if (!userRepository.findById(id).isPresent()) {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_NOT_EXISTS);
         }
 
-        if (this.checkUserPassword(id, password) == false) {
+        // 登录验证
+        User user = null;
+        if ((user=this.checkUserPassword(id, password)) == null) {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER);
         }
-
-        // 查询用户所有的菜单
-        List<Navigation> navigations = roleSecondMenuOperationService.findNavigationsByRoleIds(id);
-        user.setNavigations(navigations);
 
         return user;
     }
@@ -251,7 +247,7 @@ public class UserService {
      * @return
      */
     private boolean encryptPassword(User user, String password) {
-        if(user == null || password == null){
+        if (user == null || password == null) {
             return false;
         }
 
@@ -274,7 +270,7 @@ public class UserService {
      * @param id
      * @param password
      */
-    private boolean checkUserPassword(Integer id, String password) {
+    private User checkUserPassword(Integer id, String password) {
         // 验证用户是否存在
         Optional<User> optional = userRepository.findById(id);
         User user = null;
@@ -305,9 +301,26 @@ public class UserService {
             subject.login(token);
         } catch (Exception e) {
             // 登录失败
-            return false;
+            return null;
         }
-        return true;
+
+        // 如果验证通过
+        if (subject.isAuthenticated()) {
+            // 查询用户所有的菜单
+            List<Navigation> navigations = roleSecondMenuOperationService.findNavigationsByRoleIds(id);
+            user.setNavigations(navigations);
+
+            // 获取 session， 如果不存在就创建
+            Session session = subject.getSession(true);
+            session.setAttribute("user", user);
+
+            // 保存登录日志
+            LoginLogUtil.log();
+
+            return user;
+        }
+
+        return null;
     }
 
     /**
@@ -362,7 +375,7 @@ public class UserService {
         }
 
         // 校验密码
-        if (this.checkUserPassword(id, oldPassword) == false) {
+        if (this.checkUserPassword(id, oldPassword) == null) {
             throw new FkExceptions(EnumExceptions.UPDATE_PASSWORD_FAILED_CHECK_FAILED);
         }
 
@@ -385,7 +398,7 @@ public class UserService {
      */
     public Page<User> findByDepartment(Integer departmentId, Integer page, Integer size, String sortFieldName, Integer asc) {
         Optional<Department> optional = departmentRepository.findById(departmentId);
-        if(optional.isPresent() ==  false){
+        if (optional.isPresent() == false) {
             throw new FkExceptions(EnumExceptions.QUERY_FAILED_DEPARTMENT_NOT_EXISTS);
         }
 
@@ -427,8 +440,8 @@ public class UserService {
 
         List<User> users = userRepository.findAllById(Arrays.asList(userIds));
         List<Role> roles = roleRepository.findAllById(Arrays.asList(roleIds));
-        for(User user : users){
-            for(Role role : roles){
+        for (User user : users) {
+            for (Role role : roles) {
                 userRoles.add(new UserRole(user.getId(), role.getId()));
             }
         }
@@ -445,7 +458,7 @@ public class UserService {
     public List<Role> getRolesById(Integer id) {
         List<UserRole> userRoles = userRoleRepository.findByUserId(id);
         Set<Integer> roleIds = new HashSet<>();
-        for(UserRole userRole : userRoles){
+        for (UserRole userRole : userRoles) {
             roleIds.add(userRole.getRoleId());
         }
 
@@ -461,7 +474,7 @@ public class UserService {
     public List<RoleSecondLevelMenuOperation> getPermissionsById(Integer id) {
         List<UserRole> userRoles = userRoleRepository.findByUserId(id);
         Set<Integer> roleIds = new HashSet<>();
-        for(UserRole userRole : userRoles){
+        for (UserRole userRole : userRoles) {
             roleIds.add(userRole.getRoleId());
         }
         return roleSecondLevelMenuOperationRepository.findByRoleIdIn(roleIds);

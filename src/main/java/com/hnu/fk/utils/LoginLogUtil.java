@@ -3,6 +3,7 @@ package com.hnu.fk.utils;
 import com.hnu.fk.domain.LoginLog;
 import com.hnu.fk.domain.User;
 import com.hnu.fk.repository.LoginLogRepository;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -31,9 +32,10 @@ public class LoginLogUtil {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         Date currentTime = new Date();
 
+        User user = (User)SecurityUtils.getSubject().getSession(true).getAttribute("user");
         LoginLog loginLog = new LoginLog();
-        if (request.getSession().getAttribute("user") != null) {
-            loginLog.setUser((User) request.getSession().getAttribute("user"));
+        if (user != null) {
+            loginLog.setUser(user);
         }
         loginLog.setTime(currentTime);
         loginLog.setIpAddress(IpUtil.getIpAddr(request));
