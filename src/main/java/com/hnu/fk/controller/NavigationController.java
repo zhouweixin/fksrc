@@ -153,4 +153,12 @@ public class NavigationController {
 
         return ResultUtil.success(navigationService.findByNameLikeByPage(name, page, size, sortFieldName, asc));
     }
+    /**
+     * 查询所有可分配操作
+     */
+    @GetMapping(value = "/getAllNavigationOperations")
+    @ApiOperation(value = "查询所有可分配操作")
+    public Result<List<Navigation>> findAllNavigationOperations(){
+        return ResultUtil.success(navigationService.findAllNavigationOperations());
+    }
 }

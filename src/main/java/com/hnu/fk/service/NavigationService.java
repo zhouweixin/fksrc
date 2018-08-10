@@ -1,9 +1,12 @@
 package com.hnu.fk.service;
 
-import com.hnu.fk.domain.Navigation;
+import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.NavigationRepository;
+import com.hnu.fk.repository.OperationRepository;
+import com.hnu.fk.repository.SecondLevelMenuOperationRepository;
+import com.hnu.fk.repository.SecondLevelMenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,9 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.security.Permission;
+import java.util.*;
 
 /**
  * @Author: zhouweixin
@@ -26,6 +28,12 @@ import java.util.Optional;
 public class NavigationService {
     @Autowired
     private NavigationRepository navigationRepository;
+    @Autowired
+    private SecondLevelMenuRepository secondLevelMenuRepository;
+    @Autowired
+    private SecondLevelMenuOperationRepository secondLevelMenuOperationRepository;
+    @Autowired
+    private OperationRepository operationRepository;
 
     /**
      * 新增
@@ -167,4 +175,79 @@ public class NavigationService {
         Pageable pageable =PageRequest.of(page, size, sort);
         return navigationRepository.findByNameLike("%" + name + "%", pageable);
     }
+    /**
+     * 查询所有子菜单及其允许操作
+     */
+    public List<Navigation> findAllNavigationOperations(){
+        //得到所有允许操作
+        List<SecondLevelMenuOperation> secondLevelMenuOperations = secondLevelMenuOperationRepository.findAll();
+        //得到对象
+        List<SecondLevelMenu> secondLevelMenus = secondLevelMenuRepository.findAll();
+        List<Operation> operations = operationRepository.findAll();
+
+        // 建立主键与对象映射关系 SecondLevelMenu
+        Map<Integer, SecondLevelMenu> secondLevelMenuMap = new HashMap<>();
+        for(SecondLevelMenu secondLevelMenu : secondLevelMenus){
+            secondLevelMenuMap.put(secondLevelMenu.getId(), secondLevelMenu);
+        }
+
+        // 建立主键与对象映射关系 Operation
+        Map<Integer, Operation> operationMap = new HashMap<>();
+        for(Operation operation : operations){
+            operationMap.put(operation.getId(), operation);
+        }
+         /**
+         * 把允许操作添加到二级菜单下
+         */
+        //根据二级菜单操作分配表来分配操作
+        for(SecondLevelMenuOperation secondLevelMenuOperation:secondLevelMenuOperations){
+               Integer secondLevelMenuId = secondLevelMenuOperation.getSecondLevelMenuId();
+               Integer operationId = secondLevelMenuOperation.getOperationId();
+               if(secondLevelMenuMap.containsKey(secondLevelMenuId)&&operationMap.containsKey(operationId)){
+                   secondLevelMenuMap.get(secondLevelMenuId).getOperations().add(operationMap.get(operationId));
+               }
+
+        }
+        // 把二级菜单添加到一级菜单下
+        Map<Integer, FirstLevelMenu> firstLevelMenuMap = new HashMap<>();
+        for(SecondLevelMenu secondLevelMenu : secondLevelMenus){
+            FirstLevelMenu firstLevelMenu = secondLevelMenu.getFirstLevelMenu();
+            if(firstLevelMenu != null && firstLevelMenu.getId() != null){
+                if(firstLevelMenuMap.containsKey(firstLevelMenu.getId())){
+                    firstLevelMenuMap.get(firstLevelMenu.getId()).getSecondLevelMenus().add(secondLevelMenu);
+                } else {
+                    firstLevelMenu.getSecondLevelMenus().add(secondLevelMenu);
+                    firstLevelMenuMap.put(firstLevelMenu.getId(), firstLevelMenu);
+                }
+            }
+
+            // 置空父菜单
+            secondLevelMenu.setFirstLevelMenu(null);
+            secondLevelMenu.setNavigation(null);
+        }
+
+        // 把一级菜单添加到导航下
+        Map<Integer, Navigation> navigationHashMap = new HashMap<>();
+        for(FirstLevelMenu firstLevelMenu : firstLevelMenuMap.values()){
+            Navigation navigation = firstLevelMenu.getNavigation();
+            if(navigation != null && navigation.getId() != null){
+                if(navigationHashMap.containsKey(navigation.getId())){
+                    navigationHashMap.get(navigation.getId()).getFirstLevelMenus().add(firstLevelMenu);
+                } else {
+                    navigation.getFirstLevelMenus().add(firstLevelMenu);
+                    navigationHashMap.put(navigation.getId(), navigation);
+                }
+            }
+
+            // 置空父菜单
+            firstLevelMenu.setNavigation(null);
+        }
+
+        // TODO 递增排序
+
+        List<Navigation> navigations = new ArrayList<>(navigationHashMap.values());
+        return navigations;
+    }
+
+
 }
