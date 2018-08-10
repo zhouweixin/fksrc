@@ -55,7 +55,7 @@ public class SecondLevelMenu {
      */
     @ApiModelProperty("一级菜单外键")
     @ManyToOne(targetEntity = FirstLevelMenu.class)
-    @JoinColumn(name = "first_level_menu_id", referencedColumnName = "id")
+    @JoinColumn(name = "first_level_menu_id", referencedColumnName = "id", nullable = false)
     private FirstLevelMenu firstLevelMenu;
 
     /**
@@ -63,7 +63,7 @@ public class SecondLevelMenu {
      */
     @ApiModelProperty("导航外键")
     @ManyToOne(targetEntity = Navigation.class)
-    @JoinColumn(name = "navigation_id", referencedColumnName = "id")
+    @JoinColumn(name = "navigation_id", referencedColumnName = "id", nullable = false)
     private Navigation navigation;
 
     @Transient
