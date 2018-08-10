@@ -44,7 +44,7 @@ public class FirstLevelMenu {
 
     @ApiModelProperty("所在导航的外键")
     @ManyToOne(targetEntity = Navigation.class, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "navigation_id", referencedColumnName = "id")
+    @JoinColumn(name = "navigation_id", referencedColumnName = "id", nullable = false)
     private Navigation navigation;
 
     @Transient
