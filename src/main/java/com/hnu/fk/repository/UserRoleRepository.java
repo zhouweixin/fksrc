@@ -23,6 +23,14 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleMult
     public List<UserRole> findByUserId(Integer userId);
 
     /**
+     * 通过用户编码批量查询
+     *
+     * @param userIds
+     * @return
+     */
+    public List<UserRole> findByUserIdIn(Collection<Integer> userIds);
+
+    /**
      * 删除用户所有的角色
      *
      * @param userIds

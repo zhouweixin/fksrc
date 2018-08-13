@@ -105,7 +105,7 @@ public class DepartmentService {
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
 
-        ActionLogUtil.log("部门",departmentRepository.findAllById(Arrays.asList(ids)));
+        ActionLogUtil.log("部门", 1, departmentRepository.findAllById(Arrays.asList(ids)));
 
         departmentRepository.deleteByIdIn(Arrays.asList(ids));
     }

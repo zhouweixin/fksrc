@@ -1,9 +1,11 @@
 package com.hnu.fk.service;
 
+import com.hnu.fk.domain.ActionLog;
 import com.hnu.fk.domain.Operation;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.OperationRepository;
+import com.hnu.fk.utils.ActionLogUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,8 @@ import java.util.Optional;
  */
 @Service
 public class OperationService {
+    public static final String NAME = "操作";
+
     @Autowired
     private OperationRepository operationRepository;
 
@@ -40,7 +44,10 @@ public class OperationService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        return operationRepository.save(operation);
+        Operation save = operationRepository.save(operation);
+        ActionLogUtil.log(NAME, 0, save);
+
+        return save;
     }
 
     /**
@@ -52,11 +59,16 @@ public class OperationService {
     public Operation update(Operation operation) {
 
         // 验证是否存在
-        if (operation == null || operation.getId() == null || operationRepository.findById(operation.getId()).isPresent() == false) {
+        Optional<Operation> operation1 = null;
+        if (operation == null || operation.getId() == null || (operation1=operationRepository.findById(operation.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
-        return operationRepository.save(operation);
+        Operation oldOperation = operation1.get();
+        Operation newOperation = operationRepository.save(operation);
+        ActionLogUtil.log(NAME, oldOperation, newOperation);
+
+        return newOperation;
     }
 
     /**
@@ -67,9 +79,11 @@ public class OperationService {
     public void delete(Integer id) {
 
         // 验证是否存在
-        if (operationRepository.findById(id).isPresent() == false) {
+        Optional<Operation> operation1 = null;
+        if ((operation1=operationRepository.findById(id)).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
+        ActionLogUtil.log(NAME, 1, operation1.get());
         operationRepository.deleteById(id);
     }
 
@@ -80,6 +94,8 @@ public class OperationService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+
+        ActionLogUtil.log(NAME, 1, operationRepository.findAllById(Arrays.asList(ids)));
         operationRepository.deleteByIdIn(Arrays.asList(ids));
     }
 

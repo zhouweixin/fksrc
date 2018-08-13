@@ -6,6 +6,7 @@ import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.RoleRepository;
 import com.hnu.fk.repository.RoleSecondLevelMenuOperationRepository;
+import com.hnu.fk.utils.ActionLogUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.*;
  */
 @Service
 public class RoleService {
+    public static final String NAME = "角色";
     @Autowired
     private RoleRepository roleRepository;
 
@@ -43,7 +45,9 @@ public class RoleService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        return roleRepository.save(role);
+        Role save = roleRepository.save(role);
+        ActionLogUtil.log(NAME, 0, save);
+        return save;
     }
 
     /**
@@ -55,11 +59,15 @@ public class RoleService {
     public Role update(Role role) {
 
         // 验证是否存在
-        if (role == null || role.getId() == null || roleRepository.findById(role.getId()).isPresent() == false) {
+        Optional<Role> optional = null;
+        if (role == null || role.getId() == null || (optional=roleRepository.findById(role.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
-        return roleRepository.save(role);
+        Role oldRole = optional.get();
+        Role newRole = roleRepository.save(role);
+        ActionLogUtil.log(NAME, oldRole, newRole);
+        return newRole;
     }
 
     /**
@@ -79,6 +87,7 @@ public class RoleService {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_SYSTEM_VALUE_NOT_ALLOW);
         }
 
+        ActionLogUtil.log(NAME, 1, optional.get());
         roleRepository.deleteById(id);
     }
 
@@ -89,6 +98,7 @@ public class RoleService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+        ActionLogUtil.log(NAME, 1, roleRepository.findByIdInAndFlag(Arrays.asList(ids), 0));
         // 非系统值才可以删除
         roleRepository.deleteByIdInAndFlag(Arrays.asList(ids), 0);
     }
@@ -191,9 +201,11 @@ public class RoleService {
         }
 
         // 先清除角色的权限
+        ActionLogUtil.log(NAME, 1, roleSecondLevelMenuOperationRepository.findByRoleIdIn(roleIds));
         roleSecondLevelMenuOperationRepository.deleteByRoleIdIn(roleIds);
 
         // 分配
-        roleSecondLevelMenuOperationRepository.saveAll(permissions);
+        List<RoleSecondLevelMenuOperation> roleSecondLevelMenuOperations = roleSecondLevelMenuOperationRepository.saveAll(permissions);
+        ActionLogUtil.log(NAME, 0, roleSecondLevelMenuOperations);
     }
 }

@@ -4,6 +4,7 @@ import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.*;
+import com.hnu.fk.utils.ActionLogUtil;
 import com.hnu.fk.utils.LoginLogUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -30,6 +31,9 @@ import java.util.*;
  */
 @Service
 public class UserService {
+    
+    public static final String NAME = "用户";
+    
     @Autowired
     private UserRepository userRepository;
 
@@ -80,7 +84,9 @@ public class UserService {
         // 加密
         encryptPassword(user, password);
 
-        return userRepository.save(user);
+        User save = userRepository.save(user);
+        ActionLogUtil.log(NAME, 0, save);
+        return save;
     }
 
     /**
@@ -107,7 +113,10 @@ public class UserService {
         user.setSalt(optional.get().getSalt());
         user.setPassword(optional.get().getPassword());
 
-        return userRepository.save(user);
+        User oldUser = optional.get();
+        User newUser = userRepository.save(user);
+        ActionLogUtil.log(NAME, oldUser, newUser);
+        return newUser;
     }
 
     /**
@@ -118,9 +127,12 @@ public class UserService {
     public void delete(Integer id) {
 
         // 验证是否存在
-        if (userRepository.findById(id).isPresent() == false) {
+        Optional<User> optional = null;
+        if ((optional=userRepository.findById(id)).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
+
+        ActionLogUtil.log(NAME, 1, optional.get());
         userRepository.deleteById(id);
     }
 
@@ -131,6 +143,7 @@ public class UserService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+        ActionLogUtil.log(NAME, 1, roleRepository.findByIdInAndFlag(Arrays.asList(ids), 0));
         userRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
@@ -234,7 +247,7 @@ public class UserService {
 
         // 登录验证
         User user = null;
-        if ((user=this.checkUserPassword(id, password)) == null) {
+        if ((user=this.checkUserPasswordForLogin(id, password)) == null) {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER);
         }
 
@@ -265,12 +278,12 @@ public class UserService {
     }
 
     /**
-     * 校验用户密码
+     * 校验用户密码-用于登录
      *
      * @param id
      * @param password
      */
-    private User checkUserPassword(Integer id, String password) {
+    private User checkUserPasswordForLogin(Integer id, String password) {
         // 验证用户是否存在
         Optional<User> optional = userRepository.findById(id);
         User user = null;
@@ -321,6 +334,54 @@ public class UserService {
         }
 
         return null;
+    }
+
+    /**
+     * 校验用户密码
+     *
+     * @param id
+     * @param password
+     */
+    private boolean checkUserPassword(Integer id, String password) {
+        // 验证用户是否存在
+        Optional<User> optional = userRepository.findById(id);
+        User user = null;
+        if (optional.isPresent()) {
+            user = optional.get();
+        } else {
+            throw new FkExceptions(EnumExceptions.CHECK_PASSWORD_FAILED_NOT_EXISTS);
+        }
+
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        // md5 加密
+        matcher.setHashAlgorithmName("md5");
+        // 迭代次数
+        matcher.setHashIterations(user.getMd5Num());
+
+        // 1、构建SecurityManager环境
+        DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
+        defaultSecurityManager.setRealm(realmService);
+        realmService.setCredentialsMatcher(matcher);
+
+        // 2、主体提交认证请求
+        SecurityUtils.setSecurityManager(defaultSecurityManager);
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(id + "", password);
+
+        try {
+            // 认证登录
+            subject.login(token);
+        } catch (Exception e) {
+            // 登录失败
+            return false;
+        }
+
+        // 如果验证通过
+        if (subject.isAuthenticated()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -375,7 +436,7 @@ public class UserService {
         }
 
         // 校验密码
-        if (this.checkUserPassword(id, oldPassword) == null) {
+        if (this.checkUserPassword(id, oldPassword) == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_PASSWORD_FAILED_CHECK_FAILED);
         }
 
@@ -433,6 +494,7 @@ public class UserService {
     @Transactional
     public void assignRolesToUsers(Integer[] userIds, Integer[] roleIds) {
         // 删除用户所有的角色
+        ActionLogUtil.log(NAME, 1, userRoleRepository.findByUserIdIn(Arrays.asList(userIds)));
         userRoleRepository.deleteByUserIdIn(Arrays.asList(userIds));
 
         // 重新分配角色
@@ -446,7 +508,8 @@ public class UserService {
             }
         }
 
-        userRoleRepository.saveAll(userRoles);
+        List<UserRole> userRoleList = userRoleRepository.saveAll(userRoles);
+        ActionLogUtil.log(NAME, 0, userRoleList);
     }
 
     /**
