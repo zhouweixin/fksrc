@@ -98,7 +98,7 @@ public class RoleService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
-        ActionLogUtil.log(NAME, roleRepository.findByIdInAndFlag(Arrays.asList(ids), 0));
+        ActionLogUtil.log(NAME, 1, roleRepository.findByIdInAndFlag(Arrays.asList(ids), 0));
         // 非系统值才可以删除
         roleRepository.deleteByIdInAndFlag(Arrays.asList(ids), 0);
     }
@@ -201,7 +201,7 @@ public class RoleService {
         }
 
         // 先清除角色的权限
-        ActionLogUtil.log(NAME, roleSecondLevelMenuOperationRepository.findByRoleIdIn(roleIds));
+        ActionLogUtil.log(NAME, 1, roleSecondLevelMenuOperationRepository.findByRoleIdIn(roleIds));
         roleSecondLevelMenuOperationRepository.deleteByRoleIdIn(roleIds);
 
         // 分配

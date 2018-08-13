@@ -95,7 +95,7 @@ public class SecondLevelMenuService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
-        ActionLogUtil.log(NAME, secondLevelRepositoryRepository.findAllById(Arrays.asList(ids)));
+        ActionLogUtil.log(NAME, 1, secondLevelRepositoryRepository.findAllById(Arrays.asList(ids)));
         secondLevelRepositoryRepository.deleteByIdIn(Arrays.asList(ids));
     }
 

@@ -95,7 +95,7 @@ public class FirstLevelMenuService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
-        ActionLogUtil.log(NAME, firstLevelMenuRepository.findAllById(Arrays.asList(ids)));
+        ActionLogUtil.log(NAME, 1, firstLevelMenuRepository.findAllById(Arrays.asList(ids)));
         firstLevelMenuRepository.deleteByIdIn(Arrays.asList(ids));
     }
 

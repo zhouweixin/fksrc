@@ -95,7 +95,7 @@ public class OperationService {
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
 
-        ActionLogUtil.log(NAME, operationRepository.findAllById(Arrays.asList(ids)));
+        ActionLogUtil.log(NAME, 1, operationRepository.findAllById(Arrays.asList(ids)));
         operationRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
