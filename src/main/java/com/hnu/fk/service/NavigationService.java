@@ -180,24 +180,12 @@ public class NavigationService {
      * 查询所有子菜单及其允许操作
      */
     public List<Navigation> findAllNavigationOperations(){
-        //得到所有二级菜单操作对象
+        //得到二级菜单操作对象
         List<SecondLevelMenuOperation> secondLevelMenuOperations = secondLevelMenuOperationRepository.findAll();
-        //得到所有二级菜单对象
-        List<SecondLevelMenu> secondLevelMenus = secondLevelMenuRepository.findAll();
-        //得到所有操作对象
-        List<Operation> operations = operationRepository.findAll();
-
-        // 建立二级菜单主键与对象映射关系
-        Map<Integer, SecondLevelMenu> secondLevelMenuMap = new HashMap<>();
-        for(SecondLevelMenu secondLevelMenu : secondLevelMenus){
-            secondLevelMenuMap.put(secondLevelMenu.getId(), secondLevelMenu);
-        }
-
-        // 建立操作主键与对象映射关系 Operation
-        Map<Integer, Operation> operationMap = new HashMap<>();
-        for(Operation operation : operations){
-            operationMap.put(operation.getId(), operation);
-        }
+        //得到二级菜单对象
+        List<SecondLevelMenu> secondLevelMenus = new ArrayList<>();
+        //得到操作对象
+        List<Operation> operations = new ArrayList<>();
         // 循环copy对象
         for(SecondLevelMenu secondLevelMenu : secondLevelMenuRepository.findAll()){
 
@@ -211,7 +199,7 @@ public class NavigationService {
             // 添加到新的list里
             secondLevelMenus.add(menu);
 
-            // 1、copy 一级菜单
+            // copy 一级菜单
             FirstLevelMenu firstLevelMenu = new FirstLevelMenu();
             BeanUtils.copyProperties(menu.getFirstLevelMenu(), firstLevelMenu);
             menu.setFirstLevelMenu(firstLevelMenu);
@@ -222,6 +210,19 @@ public class NavigationService {
             BeanUtils.copyProperties(operation, o);
             operations.add(o);
         }
+
+        // 建立二级菜单主键与对象映射关系
+        Map<Integer, SecondLevelMenu> secondLevelMenuMap = new HashMap<>();
+        for(SecondLevelMenu secondLevelMenu : secondLevelMenus){
+            secondLevelMenuMap.put(secondLevelMenu.getId(), secondLevelMenu);
+        }
+
+        // 建立操作主键与对象映射关系 Operation
+        Map<Integer, Operation> operationMap = new HashMap<>();
+        for(Operation operation : operations){
+            operationMap.put(operation.getId(), operation);
+        }
+
          /**
          * 把允许操作添加到二级菜单下
          */
