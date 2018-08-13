@@ -28,6 +28,7 @@ import java.util.*;
  */
 @Service
 public class NavigationService {
+    public static final String NAME = "导航菜单";
     @Autowired
     private NavigationRepository navigationRepository;
     @Autowired
@@ -50,7 +51,9 @@ public class NavigationService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        return navigationRepository.save(navigation);
+        Navigation save = navigationRepository.save(navigation);
+        ActionLogUtil.log(NAME, 0, save);
+        return save;
     }
 
     /**
@@ -62,11 +65,16 @@ public class NavigationService {
     public Navigation update(Navigation navigation) {
 
         // 验证是否存在
-        if (navigation == null || navigation.getId() == null || navigationRepository.findById(navigation.getId()).isPresent() == false) {
+        Optional<Navigation> optional = null;
+        if (navigation == null || navigation.getId() == null || (optional=navigationRepository.findById(navigation.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
-        return navigationRepository.save(navigation);
+        Navigation oldNavigation = optional.get();
+        Navigation newNavigation = navigationRepository.save(navigation);
+        ActionLogUtil.log(NAME, oldNavigation, newNavigation);
+
+        return newNavigation;
     }
 
     /**
@@ -77,9 +85,12 @@ public class NavigationService {
     public void delete(Integer id) {
 
         // 验证是否存在
-        if (navigationRepository.findById(id).isPresent() == false) {
+        Optional<Navigation> optional = null;
+        if ((optional=navigationRepository.findById(id)).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
+
+        ActionLogUtil.log(NAME, 1, optional.get());
         navigationRepository.deleteById(id);
     }
 
@@ -90,6 +101,7 @@ public class NavigationService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+        ActionLogUtil.log(NAME, 1, navigationRepository.findAllById(Arrays.asList(ids)));
         navigationRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
@@ -245,11 +257,7 @@ public class NavigationService {
             firstLevelMenu.setNavigation(null);
         }
 
-        // TODO 递增排序
-
         List<Navigation> navigations = new ArrayList<>(navigationHashMap.values());
         return navigations;
     }
-
-
 }

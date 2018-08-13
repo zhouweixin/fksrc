@@ -205,6 +205,7 @@ public class RoleService {
         roleSecondLevelMenuOperationRepository.deleteByRoleIdIn(roleIds);
 
         // 分配
-        roleSecondLevelMenuOperationRepository.saveAll(permissions);
+        List<RoleSecondLevelMenuOperation> roleSecondLevelMenuOperations = roleSecondLevelMenuOperationRepository.saveAll(permissions);
+        ActionLogUtil.log(NAME, 0, roleSecondLevelMenuOperations);
     }
 }
