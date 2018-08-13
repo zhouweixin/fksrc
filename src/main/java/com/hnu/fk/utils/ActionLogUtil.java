@@ -57,7 +57,6 @@ public class ActionLogUtil {
      * @param object    操作对象
      * @param type  0新增/1删除
      * @param data  对象
-     * @return
      */
     public static <T> void log(String object, Integer type, T data) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
@@ -79,18 +78,25 @@ public class ActionLogUtil {
     }
 
     /**
-     * 批量删除
-     * @param object
-     * @param data
+     * 批量新增/删除
+     * @param object  操作对象
+     * @param type  0批量新增/1批量删除
+     * @param data  对象
      * @param <T>
      */
-    public static <T> void log(String object, List<T> data) {
+
+    public static <T> void log(String object, Integer type, List<T> data) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         Date currentTime = new Date();
         ActionLog actionLog = new ActionLog();
         actionLog.setObject(object);
         actionLog.setTime(currentTime);
-        actionLog.setType("批量删除");
+        String type1 = null;
+        if(type == 0)
+            type1 = "批量新增";
+        else if(type == 1)
+            type1 = "批量删除";
+        actionLog.setType(type1);
         if (request.getSession().getAttribute("user") != null) {
             actionLog.setUser((User) request.getSession().getAttribute("user"));
         }
