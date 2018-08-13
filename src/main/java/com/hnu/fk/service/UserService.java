@@ -4,6 +4,7 @@ import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.*;
+import com.hnu.fk.utils.ActionLogUtil;
 import com.hnu.fk.utils.LoginLogUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -30,6 +31,9 @@ import java.util.*;
  */
 @Service
 public class UserService {
+    
+    public static final String NAME = "用户";
+    
     @Autowired
     private UserRepository userRepository;
 
@@ -80,7 +84,9 @@ public class UserService {
         // 加密
         encryptPassword(user, password);
 
-        return userRepository.save(user);
+        User save = userRepository.save(user);
+        ActionLogUtil.log(NAME, 0, save);
+        return save;
     }
 
     /**
@@ -107,7 +113,10 @@ public class UserService {
         user.setSalt(optional.get().getSalt());
         user.setPassword(optional.get().getPassword());
 
-        return userRepository.save(user);
+        User oldUser = optional.get();
+        User newUser = userRepository.save(user);
+        ActionLogUtil.log(NAME, oldUser, newUser);
+        return newUser;
     }
 
     /**

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @Author: zhouweixin
@@ -29,4 +30,13 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
      * @return
      */
     public Page<Role> findByNameLike(String name, Pageable pageable);
+
+    /**
+     * 通过id和标志查询
+     *
+     * @param ids
+     * @param flag
+     * @return
+     */
+    public List<Role> findByIdInAndFlag(Collection<Integer> ids, int flag);
 }

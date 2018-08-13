@@ -1,9 +1,12 @@
 package com.hnu.fk.service;
 
+import com.hnu.fk.domain.FirstLevelMenu;
 import com.hnu.fk.domain.SecondLevelMenu;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.SecondLevelMenuRepository;
+import com.hnu.fk.utils.ActionLogUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +27,9 @@ import java.util.Optional;
  */
 @Service
 public class SecondLevelMenuService {
+
+    public static final String NAME = "二级菜单";
+
     @Autowired
     private SecondLevelMenuRepository secondLevelRepositoryRepository;
 
@@ -40,7 +46,9 @@ public class SecondLevelMenuService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        return secondLevelRepositoryRepository.save(secondLevelRepository);
+        SecondLevelMenu save = secondLevelRepositoryRepository.save(secondLevelRepository);
+        ActionLogUtil.log(NAME, 0, save);
+        return save;
     }
 
     /**
@@ -52,11 +60,15 @@ public class SecondLevelMenuService {
     public SecondLevelMenu update(SecondLevelMenu secondLevelRepository) {
 
         // 验证是否存在
-        if (secondLevelRepository == null || secondLevelRepository.getId() == null || secondLevelRepositoryRepository.findById(secondLevelRepository.getId()).isPresent() == false) {
+        Optional<SecondLevelMenu> optional = null;
+        if (secondLevelRepository == null || secondLevelRepository.getId() == null || (optional=secondLevelRepositoryRepository.findById(secondLevelRepository.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
-        return secondLevelRepositoryRepository.save(secondLevelRepository);
+        SecondLevelMenu oldSecondLevelMenu = optional.get();
+        SecondLevelMenu newSecondLevelMenu = secondLevelRepositoryRepository.save(secondLevelRepository);
+        ActionLogUtil.log(NAME, oldSecondLevelMenu, newSecondLevelMenu);
+        return newSecondLevelMenu;
     }
 
     /**
@@ -67,9 +79,12 @@ public class SecondLevelMenuService {
     public void delete(Integer id) {
 
         // 验证是否存在
-        if (secondLevelRepositoryRepository.findById(id).isPresent() == false) {
+        Optional<SecondLevelMenu> optional = null;
+        if ((optional=secondLevelRepositoryRepository.findById(id)).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
+
+        ActionLogUtil.log(NAME, 1, optional.get());
         secondLevelRepositoryRepository.deleteById(id);
     }
 
@@ -80,6 +95,7 @@ public class SecondLevelMenuService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+        ActionLogUtil.log(NAME, secondLevelRepositoryRepository.findAllById(Arrays.asList(ids)));
         secondLevelRepositoryRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
@@ -182,10 +198,23 @@ public class SecondLevelMenuService {
             throw new FkExceptions(EnumExceptions.MENU_SHIFT_FAILED_NOT_EXISTS);
         }
 
+        // 复制旧数据
+        SecondLevelMenu oldSecondLevelMenu1 = new SecondLevelMenu();
+        SecondLevelMenu oldSecondLevelMenu2 = new SecondLevelMenu();
+        BeanUtils.copyProperties(optional1.get(), oldSecondLevelMenu1);
+        BeanUtils.copyProperties(optional2.get(), oldSecondLevelMenu2);
+
+        // 交换序号
         int temp = optional1.get().getRank();
         optional1.get().setRank(optional2.get().getRank());
         optional2.get().setRank(temp);
-        secondLevelRepositoryRepository.save(optional1.get());
-        secondLevelRepositoryRepository.save(optional2.get());
+
+        // 更新数据
+        SecondLevelMenu newSecondLevelMenu1 = secondLevelRepositoryRepository.save(optional1.get());
+        SecondLevelMenu newSecondLevelMenu2 = secondLevelRepositoryRepository.save(optional2.get());
+
+        // 保存日志
+        ActionLogUtil.log(NAME, oldSecondLevelMenu1, newSecondLevelMenu1);
+        ActionLogUtil.log(NAME, oldSecondLevelMenu2, newSecondLevelMenu2);
     }
 }

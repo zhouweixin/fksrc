@@ -1,9 +1,12 @@
 package com.hnu.fk.service;
 
 import com.hnu.fk.domain.FirstLevelMenu;
+import com.hnu.fk.domain.Navigation;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.FirstLevelMenuRepository;
+import com.hnu.fk.utils.ActionLogUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +27,8 @@ import java.util.Optional;
  */
 @Service
 public class FirstLevelMenuService {
+    public static final String NAME = "一级菜单";
+
     @Autowired
     private FirstLevelMenuRepository firstLevelMenuRepository;
 
@@ -40,7 +45,9 @@ public class FirstLevelMenuService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        return firstLevelMenuRepository.save(firstLevelMenu);
+        FirstLevelMenu save = firstLevelMenuRepository.save(firstLevelMenu);
+        ActionLogUtil.log(NAME, 0, save);
+        return save;
     }
 
     /**
@@ -52,11 +59,16 @@ public class FirstLevelMenuService {
     public FirstLevelMenu update(FirstLevelMenu firstLevelMenu) {
 
         // 验证是否存在
-        if (firstLevelMenu == null || firstLevelMenu.getId() == null || firstLevelMenuRepository.findById(firstLevelMenu.getId()).isPresent() == false) {
+        Optional<FirstLevelMenu> optional = null;
+        if (firstLevelMenu == null || firstLevelMenu.getId() == null || (optional=firstLevelMenuRepository.findById(firstLevelMenu.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
-        return firstLevelMenuRepository.save(firstLevelMenu);
+        FirstLevelMenu oldFirstLevelMenu = optional.get();
+        FirstLevelMenu newFirstLevelMenu = firstLevelMenuRepository.save(firstLevelMenu);
+        ActionLogUtil.log(NAME, oldFirstLevelMenu, newFirstLevelMenu);
+
+        return newFirstLevelMenu;
     }
 
     /**
@@ -67,9 +79,12 @@ public class FirstLevelMenuService {
     public void delete(Integer id) {
 
         // 验证是否存在
-        if (firstLevelMenuRepository.findById(id).isPresent() == false) {
+        Optional<FirstLevelMenu> optional = null;
+        if ((optional=firstLevelMenuRepository.findById(id)).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
+
+        ActionLogUtil.log(NAME, 1, optional.get());
         firstLevelMenuRepository.deleteById(id);
     }
 
@@ -80,6 +95,7 @@ public class FirstLevelMenuService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+        ActionLogUtil.log(NAME, firstLevelMenuRepository.findAllById(Arrays.asList(ids)));
         firstLevelMenuRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
@@ -182,10 +198,23 @@ public class FirstLevelMenuService {
             throw new FkExceptions(EnumExceptions.MENU_SHIFT_FAILED_NOT_EXISTS);
         }
 
+        // 复制旧数据
+        FirstLevelMenu oldFirstLevelMenu1 = new FirstLevelMenu();
+        FirstLevelMenu oldFirstLevelMenu2 = new FirstLevelMenu();
+        BeanUtils.copyProperties(optional1.get(), oldFirstLevelMenu1);
+        BeanUtils.copyProperties(optional2.get(), oldFirstLevelMenu2);
+
+        // 交换序号
         int temp = optional1.get().getRank();
         optional1.get().setRank(optional2.get().getRank());
         optional2.get().setRank(temp);
-        firstLevelMenuRepository.save(optional1.get());
-        firstLevelMenuRepository.save(optional2.get());
+
+        // 更新数据
+        FirstLevelMenu newFirstLevelMenu1 = firstLevelMenuRepository.save(optional1.get());
+        FirstLevelMenu newFirstLevelMenu2 = firstLevelMenuRepository.save(optional2.get());
+
+        // 保存日志
+        ActionLogUtil.log(NAME, oldFirstLevelMenu1, newFirstLevelMenu1);
+        ActionLogUtil.log(NAME, oldFirstLevelMenu2, newFirstLevelMenu2);
     }
 }
