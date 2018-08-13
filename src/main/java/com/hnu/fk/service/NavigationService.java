@@ -7,6 +7,7 @@ import com.hnu.fk.repository.NavigationRepository;
 import com.hnu.fk.repository.OperationRepository;
 import com.hnu.fk.repository.SecondLevelMenuOperationRepository;
 import com.hnu.fk.repository.SecondLevelMenuRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -179,27 +180,53 @@ public class NavigationService {
      * 查询所有子菜单及其允许操作
      */
     public List<Navigation> findAllNavigationOperations(){
-        //得到所有允许操作
+        //得到所有二级菜单操作对象
         List<SecondLevelMenuOperation> secondLevelMenuOperations = secondLevelMenuOperationRepository.findAll();
-        //得到对象
+        //得到所有二级菜单对象
         List<SecondLevelMenu> secondLevelMenus = secondLevelMenuRepository.findAll();
+        //得到所有操作对象
         List<Operation> operations = operationRepository.findAll();
 
-        // 建立主键与对象映射关系 SecondLevelMenu
+        // 建立二级菜单主键与对象映射关系
         Map<Integer, SecondLevelMenu> secondLevelMenuMap = new HashMap<>();
         for(SecondLevelMenu secondLevelMenu : secondLevelMenus){
             secondLevelMenuMap.put(secondLevelMenu.getId(), secondLevelMenu);
         }
 
-        // 建立主键与对象映射关系 Operation
+        // 建立操作主键与对象映射关系 Operation
         Map<Integer, Operation> operationMap = new HashMap<>();
         for(Operation operation : operations){
             operationMap.put(operation.getId(), operation);
         }
+        // 循环copy对象
+        for(SecondLevelMenu secondLevelMenu : secondLevelMenuRepository.findAll()){
+
+            // 1、copy 二级菜单
+            // 创建的新对象
+            SecondLevelMenu menu = new SecondLevelMenu();
+
+            // 执行copy
+            BeanUtils.copyProperties(secondLevelMenu, menu);
+
+            // 添加到新的list里
+            secondLevelMenus.add(menu);
+
+            // 1、copy 一级菜单
+            FirstLevelMenu firstLevelMenu = new FirstLevelMenu();
+            BeanUtils.copyProperties(menu.getFirstLevelMenu(), firstLevelMenu);
+            menu.setFirstLevelMenu(firstLevelMenu);
+        }
+
+        for(Operation operation : operationRepository.findAll()){
+            Operation o = new Operation();
+            BeanUtils.copyProperties(operation, o);
+            operations.add(o);
+        }
          /**
          * 把允许操作添加到二级菜单下
          */
-        //根据二级菜单操作分配表来分配操作
+        //根据二级菜单操作表来分配操作
+        //操作和二级菜单没有数据库映射关系,不需要置空
         for(SecondLevelMenuOperation secondLevelMenuOperation:secondLevelMenuOperations){
                Integer secondLevelMenuId = secondLevelMenuOperation.getSecondLevelMenuId();
                Integer operationId = secondLevelMenuOperation.getOperationId();
@@ -209,19 +236,15 @@ public class NavigationService {
 
         }
         // 把二级菜单添加到一级菜单下
-        Map<Integer, FirstLevelMenu> firstLevelMenuMap = new HashMap<>();
-        for(SecondLevelMenu secondLevelMenu : secondLevelMenus){
+        Map<Integer,FirstLevelMenu> firstLevelMenuMap=new HashMap<>();
+        for(SecondLevelMenu secondLevelMenu :secondLevelMenus){
             FirstLevelMenu firstLevelMenu = secondLevelMenu.getFirstLevelMenu();
-            if(firstLevelMenu != null && firstLevelMenu.getId() != null){
+            if(firstLevelMenu!=null&&firstLevelMenu.getId()!=null){
                 if(firstLevelMenuMap.containsKey(firstLevelMenu.getId())){
                     firstLevelMenuMap.get(firstLevelMenu.getId()).getSecondLevelMenus().add(secondLevelMenu);
-                } else {
-                    firstLevelMenu.getSecondLevelMenus().add(secondLevelMenu);
-                    firstLevelMenuMap.put(firstLevelMenu.getId(), firstLevelMenu);
-                }
+                }else{firstLevelMenu.getSecondLevelMenus().add(secondLevelMenu);
+                      firstLevelMenuMap.put(firstLevelMenu.getId(),firstLevelMenu);}
             }
-
-            // 置空父菜单
             secondLevelMenu.setFirstLevelMenu(null);
             secondLevelMenu.setNavigation(null);
         }
@@ -243,7 +266,6 @@ public class NavigationService {
             firstLevelMenu.setNavigation(null);
         }
 
-        // TODO 递增排序
 
         List<Navigation> navigations = new ArrayList<>(navigationHashMap.values());
         return navigations;
