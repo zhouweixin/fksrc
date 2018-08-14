@@ -17,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.security.Permission;
 import java.util.*;
 
 /**
@@ -196,8 +195,33 @@ public class NavigationService {
         //得到所有允许操作
         List<SecondLevelMenuOperation> secondLevelMenuOperations = secondLevelMenuOperationRepository.findAll();
         //得到对象
-        List<SecondLevelMenu> secondLevelMenus = secondLevelMenuRepository.findAll();
-        List<Operation> operations = operationRepository.findAll();
+        List<SecondLevelMenu> secondLevelMenus = new ArrayList<>();
+        List<Operation> operations = new ArrayList<>();
+
+        // 循环copy对象
+        for(SecondLevelMenu secondLevelMenu : secondLevelMenuRepository.findAll()){
+
+            // 1、copy 二级菜单
+            // 创建的新对象
+            SecondLevelMenu menu = new SecondLevelMenu();
+
+            // 执行copy
+            BeanUtils.copyProperties(secondLevelMenu, menu);
+
+            // 添加到新的list里
+            secondLevelMenus.add(menu);
+
+            // 1、copy 一级菜单
+            FirstLevelMenu firstLevelMenu = new FirstLevelMenu();
+            BeanUtils.copyProperties(menu.getFirstLevelMenu(), firstLevelMenu);
+            menu.setFirstLevelMenu(firstLevelMenu);
+        }
+
+        for(Operation operation : operationRepository.findAll()){
+            Operation o = new Operation();
+            BeanUtils.copyProperties(operation, o);
+            operations.add(o);
+        }
 
         // 建立主键与对象映射关系 SecondLevelMenu
         Map<Integer, SecondLevelMenu> secondLevelMenuMap = new HashMap<>();
