@@ -67,7 +67,7 @@ public class LoginLogService {
      * @param asc
      * @return
      */
-    public Page<LoginLog> findByDateLike(Date date, Integer page, Integer size, String sortFieldName, Integer asc) {
+    public Page<LoginLog> findByDateLike(String date, Integer page, Integer size, String sortFieldName, Integer asc) {
 
         // 判断排序字段名是否存在
         try {

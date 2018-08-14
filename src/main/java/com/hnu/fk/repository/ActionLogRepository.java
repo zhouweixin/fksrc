@@ -4,6 +4,7 @@ import com.hnu.fk.domain.ActionLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 
@@ -20,5 +21,6 @@ public interface ActionLogRepository extends JpaRepository<ActionLog, Long> {
      * @param pageable
      * @return
      */
-    public Page<ActionLog> findByTimeLike(Date time, Pageable pageable);
+    @Query(value = "SELECT * FROM permission_action_log where datediff(day,time,?1)=0 order by time desc ", nativeQuery = true)
+    public Page<ActionLog> findByTimeLike(String time,Pageable pageable);
 }

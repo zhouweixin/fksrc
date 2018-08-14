@@ -9,12 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 
 /**
  * 说明:操作日志接口
@@ -52,7 +48,7 @@ public class ActionLogController {
     @GetMapping(value = "/getByDate")
     @ApiOperation(value = "通过日期模糊查询")
     public Result<Page<ActionLog>> getByDateLikeByPage(
-            @ApiParam(value = "日期，格式为yyyy-MM-dd") @RequestParam(value = "date") Date date,
+            @ApiParam(value = "日期，格式为yyyy-MM-dd") @RequestParam(value = "date") String date,
             @ApiParam(value = "页码(默认为0)") @RequestParam(value = "page", defaultValue = "0") Integer page,
             @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
             @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "id") String sortFieldName,

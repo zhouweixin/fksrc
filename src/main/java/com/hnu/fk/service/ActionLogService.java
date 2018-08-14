@@ -1,6 +1,8 @@
 package com.hnu.fk.service;
 
 import com.hnu.fk.domain.ActionLog;
+import com.hnu.fk.exception.EnumExceptions;
+import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.ActionLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -67,8 +69,7 @@ public class ActionLogService {
      * @param asc
      * @return
      */
-    public Page<ActionLog> findByDateLike(Date date,Integer page, Integer size, String sortFieldName, Integer asc) {
-
+    public Page<ActionLog> findByDateLike(String date,Integer page, Integer size, String sortFieldName, Integer asc) {
         // 判断排序字段名是否存在
         try {
             ActionLog.class.getDeclaredField(sortFieldName);
@@ -77,7 +78,7 @@ public class ActionLogService {
             sortFieldName = "id";
         }
 
-        Sort sort = null;
+        Sort sort;
         if (asc == 0) {
             sort = new Sort(Sort.Direction.DESC, sortFieldName);
         } else {
@@ -85,6 +86,7 @@ public class ActionLogService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
+
         return actionLogRepository.findByTimeLike(date,pageable);
     }
 }
