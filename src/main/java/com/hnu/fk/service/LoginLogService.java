@@ -29,6 +29,9 @@ public class LoginLogService {
         return loginLogRepository.save(loginLog);
     }
 
+    public void delete(Long id){
+        loginLogRepository.deleteById(id);
+    }
     /**
      * 查询所有日志-分页
      * @param page

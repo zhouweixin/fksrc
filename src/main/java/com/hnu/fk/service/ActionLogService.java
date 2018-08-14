@@ -31,6 +31,9 @@ public class ActionLogService {
         return actionLogRepository.save(actionLog);
     }
 
+    public void delete(Long id){
+        actionLogRepository.deleteById(id);
+    }
     /**
      * 查询所有日志-分页
      * @param page
