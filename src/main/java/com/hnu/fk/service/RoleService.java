@@ -64,6 +64,8 @@ public class RoleService {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
+        role.setUpdateTime(new Date());
+
         Role oldRole = optional.get();
         Role newRole = roleRepository.save(role);
         ActionLogUtil.log(NAME, oldRole, newRole);

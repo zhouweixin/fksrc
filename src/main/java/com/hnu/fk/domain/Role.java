@@ -1,9 +1,12 @@
 package com.hnu.fk.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @Author: zhouweixin
@@ -29,6 +32,22 @@ public class Role {
 
     @ApiModelProperty(value = "标记:0用户;1系统;(默认为0, 标记为系统的角色不允许删除)", hidden = true)
     private Integer flag = 0;
+
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("更新时间")
+    private Date updateTime;
+
+    public Role() {
+        this.createTime = new Date();
+    }
 
     public Integer getId() {
         return id;
@@ -60,5 +79,21 @@ public class Role {
 
     public void setFlag(Integer flag) {
         this.flag = flag;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }
