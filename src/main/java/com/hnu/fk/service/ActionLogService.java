@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -31,9 +33,15 @@ public class ActionLogService {
         return actionLogRepository.save(actionLog);
     }
 
-    public void delete(Long id){
-        actionLogRepository.deleteById(id);
+    /**
+     * 通过id批量删除
+     * @param ids
+     */
+    @Transactional
+    public void deleteInBatch(Long[] ids){
+        actionLogRepository.deleteInBatch(actionLogRepository.findAllById(Arrays.asList(ids)));
     }
+
     /**
      * 查询所有日志-分页
      * @param page

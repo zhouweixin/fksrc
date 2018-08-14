@@ -27,13 +27,13 @@ public class ActionLogController {
 
     /**
      * 通过主键删除
-     * @param id
+     * @param ids
      * @return
      */
-    @DeleteMapping(value = "/deleteById")
+    @DeleteMapping(value = "/deleteByIds")
     @ApiOperation(value = "通过主键id删除")
-    public Result delete(@ApiParam(value = "主键id") Long id){
-        actionLogService.delete(id);
+    public Result delete(@ApiParam(value = "主键id") @RequestParam Long[] ids){
+        actionLogService.deleteInBatch(ids);
         return ResultUtil.success();
     }
 
