@@ -51,12 +51,13 @@ public class LoginLogController {
     @GetMapping(value = "/getByDate")
     @ApiOperation(value = "通过日期模糊查询")
     public Result<Page<LoginLog>> getByDateLikeByPage(
-            @ApiParam(value = "日期，格式为yyyy-MM-dd") @RequestParam(value = "date") String date,
+            @ApiParam(value = "开始日期，格式为yyyy-MM-dd") @RequestParam(value = "startDate") String startDate,
+            @ApiParam(value = "结束日期，格式为yyyy-MM-dd") @RequestParam(value = "endDate") String endDate,
             @ApiParam(value = "页码(默认为0)") @RequestParam(value = "page", defaultValue = "0") Integer page,
             @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
             @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "id") String sortFieldName,
             @ApiParam(value = "排序方向(0:降序；1升序；这里默认为0)") @RequestParam(value = "asc", defaultValue = "0") Integer asc) {
 
-        return ResultUtil.success(loginLogService.findByDateLike(date, page, size, sortFieldName, asc));
+        return ResultUtil.success(loginLogService.findByDateLike(startDate,endDate, page, size, sortFieldName, asc));
     }
 }

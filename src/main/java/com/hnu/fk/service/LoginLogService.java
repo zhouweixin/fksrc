@@ -59,15 +59,16 @@ public class LoginLogService {
     }
 
     /**
-     * 通过日期模糊查询
-     * @param date
+     * 通过时间段查询
+     * @param startDate
+     * @param endDate
      * @param page
      * @param size
      * @param sortFieldName
      * @param asc
      * @return
      */
-    public Page<LoginLog> findByDateLike(String date, Integer page, Integer size, String sortFieldName, Integer asc) {
+    public Page<LoginLog> findByDateLike(String startDate,String endDate,Integer page, Integer size, String sortFieldName, Integer asc) {
 
         // 判断排序字段名是否存在
         try {
@@ -85,6 +86,6 @@ public class LoginLogService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return loginLogRepository.findByTimeLike(date,pageable);
+        return loginLogRepository.findByTimeLike(startDate,endDate,pageable);
     }
 }

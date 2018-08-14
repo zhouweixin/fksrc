@@ -61,15 +61,16 @@ public class ActionLogService {
     }
 
     /**
-     * 通过日期模糊查询
-     * @param date
+     * 通过时间段查询
+     * @param startDate
+     * @param endDate
      * @param page
      * @param size
      * @param sortFieldName
      * @param asc
      * @return
      */
-    public Page<ActionLog> findByDateLike(String date,Integer page, Integer size, String sortFieldName, Integer asc) {
+    public Page<ActionLog> findByDateLike(String startDate,String endDate,Integer page, Integer size, String sortFieldName, Integer asc) {
         // 判断排序字段名是否存在
         try {
             ActionLog.class.getDeclaredField(sortFieldName);
@@ -86,7 +87,6 @@ public class ActionLogService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-
-        return actionLogRepository.findByTimeLike(date,pageable);
+        return actionLogRepository.findByTimeLike(startDate,endDate,pageable);
     }
 }

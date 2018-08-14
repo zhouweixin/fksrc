@@ -16,10 +16,12 @@ import java.util.Date;
  */
 public interface LoginLogRepository extends JpaRepository<LoginLog, Long> {
     /**
-     * 通过日期模糊查询
-     * @param time
+     * 通过时间段查询
+     * @param startDate
+     * @param endDate
      * @param pageable
      * @return
      */
-    @Query(value = "SELECT * FROM permission_action_log where datediff(day,time,?1)=0 order by time desc ", nativeQuery = true)
-    public Page<LoginLog> findByTimeLike(String time,Pageable pageable);}
+    @Query(value = "SELECT * FROM permission_action_log where time>=?1 and time <=Dateadd(mm,1,?2) order by time desc", nativeQuery = true)
+    public Page<LoginLog> findByTimeLike(String startDate,String endDate,Pageable pageable);
+}
