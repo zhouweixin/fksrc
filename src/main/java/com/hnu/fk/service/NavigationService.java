@@ -17,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.security.Permission;
 import java.util.*;
 
 /**
@@ -28,6 +27,7 @@ import java.util.*;
  */
 @Service
 public class NavigationService {
+    public static final String NAME = "导航菜单";
     @Autowired
     private NavigationRepository navigationRepository;
     @Autowired
@@ -50,7 +50,9 @@ public class NavigationService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        return navigationRepository.save(navigation);
+        Navigation save = navigationRepository.save(navigation);
+        ActionLogUtil.log(NAME, 0, save);
+        return save;
     }
 
     /**
@@ -62,11 +64,16 @@ public class NavigationService {
     public Navigation update(Navigation navigation) {
 
         // 验证是否存在
-        if (navigation == null || navigation.getId() == null || navigationRepository.findById(navigation.getId()).isPresent() == false) {
+        Optional<Navigation> optional = null;
+        if (navigation == null || navigation.getId() == null || (optional=navigationRepository.findById(navigation.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
-        return navigationRepository.save(navigation);
+        Navigation oldNavigation = optional.get();
+        Navigation newNavigation = navigationRepository.save(navigation);
+        ActionLogUtil.log(NAME, oldNavigation, newNavigation);
+
+        return newNavigation;
     }
 
     /**
@@ -77,9 +84,12 @@ public class NavigationService {
     public void delete(Integer id) {
 
         // 验证是否存在
-        if (navigationRepository.findById(id).isPresent() == false) {
+        Optional<Navigation> optional = null;
+        if ((optional=navigationRepository.findById(id)).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
+
+        ActionLogUtil.log(NAME, 1, optional.get());
         navigationRepository.deleteById(id);
     }
 
@@ -90,6 +100,7 @@ public class NavigationService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
+        ActionLogUtil.log(NAME, 1, navigationRepository.findAllById(Arrays.asList(ids)));
         navigationRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
@@ -157,7 +168,7 @@ public class NavigationService {
      * @return
      */
     public Page<Navigation> findByNameLikeByPage(String name, Integer page, Integer size, String sortFieldName,
-                                             Integer asc) {
+                                                 Integer asc) {
 
         // 判断排序字段名是否存在
         try {
@@ -184,8 +195,33 @@ public class NavigationService {
         //得到所有允许操作
         List<SecondLevelMenuOperation> secondLevelMenuOperations = secondLevelMenuOperationRepository.findAll();
         //得到对象
-        List<SecondLevelMenu> secondLevelMenus = secondLevelMenuRepository.findAll();
-        List<Operation> operations = operationRepository.findAll();
+        List<SecondLevelMenu> secondLevelMenus = new ArrayList<>();
+        List<Operation> operations = new ArrayList<>();
+
+        // 循环copy对象
+        for(SecondLevelMenu secondLevelMenu : secondLevelMenuRepository.findAll()){
+
+            // 1、copy 二级菜单
+            // 创建的新对象
+            SecondLevelMenu menu = new SecondLevelMenu();
+
+            // 执行copy
+            BeanUtils.copyProperties(secondLevelMenu, menu);
+
+            // 添加到新的list里
+            secondLevelMenus.add(menu);
+
+            // 1、copy 一级菜单
+            FirstLevelMenu firstLevelMenu = new FirstLevelMenu();
+            BeanUtils.copyProperties(menu.getFirstLevelMenu(), firstLevelMenu);
+            menu.setFirstLevelMenu(firstLevelMenu);
+        }
+
+        for(Operation operation : operationRepository.findAll()){
+            Operation o = new Operation();
+            BeanUtils.copyProperties(operation, o);
+            operations.add(o);
+        }
 
         // 建立主键与对象映射关系 SecondLevelMenu
         Map<Integer, SecondLevelMenu> secondLevelMenuMap = new HashMap<>();
@@ -198,16 +234,16 @@ public class NavigationService {
         for(Operation operation : operations){
             operationMap.put(operation.getId(), operation);
         }
-         /**
+        /**
          * 把允许操作添加到二级菜单下
          */
         //根据二级菜单操作分配表来分配操作
         for(SecondLevelMenuOperation secondLevelMenuOperation:secondLevelMenuOperations){
-               Integer secondLevelMenuId = secondLevelMenuOperation.getSecondLevelMenuId();
-               Integer operationId = secondLevelMenuOperation.getOperationId();
-               if(secondLevelMenuMap.containsKey(secondLevelMenuId)&&operationMap.containsKey(operationId)){
-                   secondLevelMenuMap.get(secondLevelMenuId).getOperations().add(operationMap.get(operationId));
-               }
+            Integer secondLevelMenuId = secondLevelMenuOperation.getSecondLevelMenuId();
+            Integer operationId = secondLevelMenuOperation.getOperationId();
+            if(secondLevelMenuMap.containsKey(secondLevelMenuId)&&operationMap.containsKey(operationId)){
+                secondLevelMenuMap.get(secondLevelMenuId).getOperations().add(operationMap.get(operationId));
+            }
 
         }
         // 把二级菜单添加到一级菜单下
@@ -245,11 +281,7 @@ public class NavigationService {
             firstLevelMenu.setNavigation(null);
         }
 
-        // TODO 递增排序
-
         List<Navigation> navigations = new ArrayList<>(navigationHashMap.values());
         return navigations;
     }
-
-
 }
