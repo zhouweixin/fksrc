@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,19 +35,19 @@ public class DataDictionaryService {
         }
         //判断是类型还是数据
         if(dataDictionary.getDicParentId()!=-1&&
-                dataDictionaryRepository.findByDicId(dataDictionary.getDicParentId())==null){
+                dataDictionaryRepository.findFirstByDicId(dataDictionary.getDicParentId())==null){
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DATAPARENT_NOT_EXISTS);
         }
         //编号重复
-        if(dataDictionaryRepository.findByDicId(dataDictionary.getDicId())!=null){
+        if(dataDictionaryRepository.findFirstByDicId(dataDictionary.getDicId())!=null){
             throw  new FkExceptions(EnumExceptions.ADD_FAILED_DICID_DUPLICATE);
         }
         //名称重复
-        if(dataDictionaryRepository.findByDicName(dataDictionary.getDicName())!=null){
+        if(dataDictionaryRepository.findFirstByDicName(dataDictionary.getDicName())!=null){
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DICNAME_DUPLICATE);
         }
         //值重复
-        if(dataDictionaryRepository.findByDicContent(dataDictionary.getDicContent())!=null){
+        if(dataDictionaryRepository.findFirstByDicContent(dataDictionary.getDicContent())!=null){
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DICCONTENT_DUPLICATE);
         }
         Integer max = dataDictionaryRepository.maxRank();
@@ -72,7 +71,7 @@ public class DataDictionaryService {
         }
         //判断是类型还是数据
         if(dataDictionary.getDicParentId()!=-1&&
-                dataDictionaryRepository.findByDicId(dataDictionary.getDicParentId())==null){
+                dataDictionaryRepository.findFirstByDicId(dataDictionary.getDicParentId())==null){
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DATAPARENT_NOT_EXISTS);
         }
         //编号重复
