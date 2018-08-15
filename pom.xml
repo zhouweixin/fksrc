@@ -86,11 +86,11 @@
         </dependency>
 
         <!-- shiro 缓存依赖-->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-ehcache</artifactId>
-            <version>1.4.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.shiro</groupId>-->
+            <!--<artifactId>shiro-ehcache</artifactId>-->
+            <!--<version>1.4.0</version>-->
+        <!--</dependency>-->
 
         <!--UI-1 依赖-->
         <dependency>

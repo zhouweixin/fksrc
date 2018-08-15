@@ -68,8 +68,11 @@ public class ActionLogUtil {
         else if(type == 1)
             type1 = "删除";
         actionLog.setType(type1);
-        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
-        actionLog.setUser(user);
+
+        // TODO 开发阶段此功能先注释
+//        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
+//        actionLog.setUser(user);
+
         actionLog.setDescription(LogDescriptionUtil.log(data));
         actionLogRepository.save(actionLog);
     }

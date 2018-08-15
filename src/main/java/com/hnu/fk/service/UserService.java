@@ -1,6 +1,5 @@
 package com.hnu.fk.service;
 
-import com.hnu.fk.config.FkSecurityConfig;
 import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
@@ -256,7 +255,7 @@ public class UserService {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER);
         }
 
-        session.setAttribute(FkSecurityConfig.SESSION_USER, user);
+//        session.setAttribute(FkSecurityConfig.SESSION_USER, user);
 
         return user;
     }
