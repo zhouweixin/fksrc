@@ -30,7 +30,10 @@ public enum EnumExceptions {
     CHECK_PASSWORD_FAILED_NOT_EXISTS(19, "密码校验失败, 用户不存在"),
     QUERY_FAILED_DEPARTMENT_NOT_EXISTS(20, "查询失败, 部门不存在"),
     CHECK_FAILED_USER_NOT_EXISTS(21, "权限校验失败, 用户不存在"),
-
+	ADD_FAILED_DICID_DUPLICATE(22, "新增失败, 编号重复"),
+	ADD_FAILED_DICNAME_DUPLICATE(23, "新增失败, 名称重复"),
+	ADD_FAILED_DICCONTENT_DUPLICATE(24, "新增失败, 值重复"),
+	ADD_FAILED_DATAPARENT_NOT_EXISTS(25,"新增失败,父编码不存在")
 	;
 
     /** 编码 */
