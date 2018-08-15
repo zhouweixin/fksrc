@@ -27,7 +27,7 @@ public class DataDictionary {
     /**
      * 数据字典编号
      */
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     @ApiModelProperty("数据字典编号")
     private Integer dicId;
     /**
@@ -39,13 +39,13 @@ public class DataDictionary {
     /**
      * 字典名称
      */
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     @ApiModelProperty("字典名称")
     private String dicName;
     /**
      * 字典值
      */
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     @ApiModelProperty("字典值")
     private String dicContent;
     /**
