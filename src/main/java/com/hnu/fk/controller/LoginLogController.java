@@ -31,8 +31,8 @@ public class LoginLogController {
      * @return
      */
     @DeleteMapping(value = "/deleteByIds")
-    @ApiOperation(value = "通过主键id删除")
-    public Result delete(@ApiParam(value = "主键id") @RequestParam Long[] ids){
+    @ApiOperation(value = "通过主键数组ids批量删除")
+    public Result delete(@ApiParam(value = "主键数组ids") @RequestParam Long[] ids){
         loginLogService.deleteInBatch(ids);
         return ResultUtil.success();
     }

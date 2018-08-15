@@ -1,5 +1,8 @@
 package com.hnu.fk.domain;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelEntity;
+import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "permission_user")
 @ApiModel(description = "用户")
+@ExcelTarget("userEntity")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +27,7 @@ public class User {
     private Integer id;
 
     @ApiModelProperty("名称")
+    @Excel(name = "数据更新人_tiUpdater",orderNum = "9",isImportField = "true_tiUpdater")
     private String name;
 
     @ApiModelProperty("性别")
