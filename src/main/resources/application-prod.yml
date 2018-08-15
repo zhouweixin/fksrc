@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: prod
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://127.0.0.1:8080;DatabaseName=fkdb
+    username: fkuser
+    password: FKuser730*
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database: sql_server
+    database-platform: org.hibernate.dialect.SQLServer2008Dialect
+  jackson:
+    time-zone: GMT+8
+server:
+  port: 8080
+  servlet:
+    context-path: /fk
