@@ -3,7 +3,7 @@ spring:
     active: prod
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://127.0.0.1:8080;DatabaseName=fkdb
+    url: jdbc:sqlserver://127.0.0.1:3306;DatabaseName=fkdb
     username: fkuser
     password: FKuser730*
   jpa:
