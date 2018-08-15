@@ -1,12 +1,14 @@
 package com.hnu.fk.service;
 
-import com.hnu.fk.domain.Role;
-import com.hnu.fk.domain.RoleSecondLevelMenuOperation;
+import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.RoleRepository;
 import com.hnu.fk.repository.RoleSecondLevelMenuOperationRepository;
+import com.hnu.fk.repository.UserRepository;
+import com.hnu.fk.repository.UserRoleRepository;
 import com.hnu.fk.utils.ActionLogUtil;
+import com.hnu.fk.vo.RoleAssignUsersVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +30,15 @@ public class RoleService {
     public static final String NAME = "角色";
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private NavigationService navigationService;
 
     @Autowired
     private RoleSecondLevelMenuOperationRepository roleSecondLevelMenuOperationRepository;
@@ -209,5 +220,68 @@ public class RoleService {
         // 分配
         List<RoleSecondLevelMenuOperation> roleSecondLevelMenuOperations = roleSecondLevelMenuOperationRepository.saveAll(permissions);
         ActionLogUtil.log(NAME, 0, roleSecondLevelMenuOperations);
+    }
+
+    /**
+     * 查询角色分配的用户
+     *
+     * @param id
+     * @return
+     */
+    public RoleAssignUsersVO getAssignUsersById(Integer id) {
+        // 查询所有的用户角色关系
+        List<UserRole> userRoles = userRoleRepository.findByRoleId(id);
+
+        // 提取所有的用户主键并去重
+        Set<Integer> userIds = new HashSet<>();
+        for(UserRole userRole : userRoles){
+            userIds.add(userRole.getUserId());
+        }
+
+        List<User> assignUsers = userRepository.findAllById(userIds);
+        List<User> allUsers = userRepository.findAll();
+        return new RoleAssignUsersVO(assignUsers, allUsers);
+    }
+
+    /**
+     * 分配角色给用户
+     *
+     * @param roleId
+     * @param userIds
+     */
+    @Transactional
+    public void assignRoleToUsers(Integer roleId, Integer[] userIds) {
+        // 验证是否存在
+        Optional<Role> optional = roleRepository.findById(roleId);
+        if (optional.isPresent() == false) {
+            throw new FkExceptions(EnumExceptions.ASSIGN_FAILED_ROLE_NOT_EXISTS);
+        }
+
+        // 清除所有角色
+        userRoleRepository.deleteByRoleId(roleId);
+
+        // 查询所有的用户
+        List<User> users = userRepository.findAllById(Arrays.asList(userIds));
+        Set<Integer> userIdSet = new HashSet<>();
+        for(User user : users){
+            userIdSet.add(user.getId());
+        }
+
+        List<UserRole> userRoles = new ArrayList<>();
+        for(int userId : userIdSet){
+            userRoles.add(new UserRole(userId, roleId));
+        }
+        userRoleRepository.saveAll(userRoles);
+    }
+
+    /**
+     * 查询角色分配的权限
+     * @param id
+     * @return
+     */
+    public List<Navigation> getPermissionsById(int id) {
+        HashSet<Integer> set = new HashSet<>();
+        set.add(id);
+        return navigationService.findAllByRoleIds(set);
     }
 }

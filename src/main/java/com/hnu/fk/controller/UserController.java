@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -47,8 +48,8 @@ public class UserController {
 
     @PostMapping(value = "/login")
     @ApiOperation(value = "登录")
-    public Result<User> login(Integer id, String password) {
-        return ResultUtil.success(userService.login(id, password));
+    public Result<User> login(Integer id, String password, HttpSession session) {
+        return ResultUtil.success(userService.login(id, password, session));
     }
 
     /**

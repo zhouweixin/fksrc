@@ -6,6 +6,7 @@ import com.hnu.fk.domain.Result;
 import com.hnu.fk.domain.RoleSecondLevelMenuOperation;
 import com.hnu.fk.service.RoleService;
 import com.hnu.fk.utils.ResultUtil;
+import com.hnu.fk.vo.RoleAssignUsersVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -157,11 +158,34 @@ public class RoleController {
         return ResultUtil.success(roleService.findByNameLikeByPage(name, page, size, sortFieldName, asc));
     }
 
+    @GetMapping(value = "/getPermissionsById")
+    @ApiOperation(value = "查询角色分配的权限")
+    public Result<List<Navigation>> getPermissionsById(
+            @ApiParam(value = "角色主键") @RequestParam int id){
+        return ResultUtil.success(roleService.getPermissionsById(id));
+    }
+
     @PostMapping(value = "/assignPermissions")
     @ApiOperation(value = "分配权限给角色")
     public Result<Object> assignPermissions(
             @ApiParam(value = "角色菜单操作对应关系") @RequestBody Set<RoleSecondLevelMenuOperation> permissions){
         roleService.assignPermissions(permissions);
+        return ResultUtil.success();
+    }
+
+    @GetMapping(value = "/getAssignUsersById")
+    @ApiOperation(value = "查询角色分配的用户")
+    public Result<RoleAssignUsersVO> getAssignUsersById(
+            @ApiParam(value = "角色主键") @RequestParam int id){
+        return ResultUtil.success(roleService.getAssignUsersById(id));
+    }
+
+    @PostMapping(value = "/assignRoleToUsers")
+    @ApiOperation(value = "分配角色给用户")
+    public Result<Object> assignRoleToUsers(
+            @ApiParam(value = "角色主键") @RequestParam Integer roleId,
+            @ApiParam(value = "用户主键数组") @RequestParam Integer[] userIds){
+        roleService.assignRoleToUsers(roleId, userIds);
         return ResultUtil.success();
     }
 }

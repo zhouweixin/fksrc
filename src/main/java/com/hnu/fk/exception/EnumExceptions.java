@@ -30,6 +30,8 @@ public enum EnumExceptions {
     CHECK_PASSWORD_FAILED_NOT_EXISTS(19, "密码校验失败, 用户不存在"),
     QUERY_FAILED_DEPARTMENT_NOT_EXISTS(20, "查询失败, 部门不存在"),
     CHECK_FAILED_USER_NOT_EXISTS(21, "权限校验失败, 用户不存在"),
+    UPDATE_FAILED_SON_NOT_PARENT(22,"部门修改失败, 不可把子部门设置为父部门"),
+    ASSIGN_FAILED_ROLE_NOT_EXISTS(23,"分配失败, 角色不存在"),
 
 	;
 

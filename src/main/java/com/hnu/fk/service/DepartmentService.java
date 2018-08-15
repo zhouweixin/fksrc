@@ -36,11 +36,12 @@ public class DepartmentService {
      */
     public Department save(Department department,Integer parentId) {
 
-
         // 验证是否存在
         if (department == null || (department.getId() != null && departmentRepository.findById(department.getId()).isPresent()) == true) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
+
+        // 验证父部门是否存在
         if((parentId != -1) && departmentRepository.existsById(parentId)){
             department.setParentDepartment(departmentRepository.getOne(parentId));
         }else if(parentId != -1 && !departmentRepository.existsById(parentId)){
@@ -68,6 +69,20 @@ public class DepartmentService {
         if(parentId == -1){
             department.setParentDepartment(null);
         }else if(departmentRepository.existsById(parentId)){
+
+            // 查询父部门的所有父部门
+            Department dep = departmentRepository.findById(parentId).get();
+            Set<Integer> depIds = new HashSet<Integer>();
+            while(dep != null){
+                depIds.add(dep.getId());
+                dep = dep.getParentDepartment();
+            }
+
+            // 判断该部门是否是父部门里的一员
+            if(depIds.contains(department.getId())){
+                throw new FkExceptions(EnumExceptions.UPDATE_FAILED_SON_NOT_PARENT);
+            }
+
             department.setParentDepartment(departmentRepository.getOne(parentId));
         }else if(!departmentRepository.existsById(parentId)){
             throw new FkExceptions(EnumExceptions.ADD_UPDATE_FAILED_PARENT_NOT_EXIST);
