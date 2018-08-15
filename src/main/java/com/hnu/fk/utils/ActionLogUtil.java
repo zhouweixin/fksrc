@@ -3,6 +3,7 @@ package com.hnu.fk.utils;
 import com.hnu.fk.domain.ActionLog;
 import com.hnu.fk.domain.User;
 import com.hnu.fk.repository.ActionLogRepository;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -38,15 +39,13 @@ public class ActionLogUtil {
      * @return
      */
     public static <T> void log(String object, T oldData, T newData) {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         Date currentTime = new Date();
         ActionLog actionLog = new ActionLog();
         actionLog.setObject(object);
         actionLog.setTime(currentTime);
         actionLog.setType("修改");
-        if (request.getSession().getAttribute("user") != null) {
-            actionLog.setUser((User) request.getSession().getAttribute("user"));
-        }
+        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
+        actionLog.setUser(user);
         actionLog.setDescription(LogDescriptionUtil.log(oldData,newData));
         actionLogRepository.save(actionLog);
     }
@@ -59,7 +58,6 @@ public class ActionLogUtil {
      * @param data  对象
      */
     public static <T> void log(String object, Integer type, T data) {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         Date currentTime = new Date();
         ActionLog actionLog = new ActionLog();
         actionLog.setObject(object);
@@ -70,9 +68,8 @@ public class ActionLogUtil {
         else if(type == 1)
             type1 = "删除";
         actionLog.setType(type1);
-        if (request.getSession().getAttribute("user") != null) {
-            actionLog.setUser((User) request.getSession().getAttribute("user"));
-        }
+        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
+        actionLog.setUser(user);
         actionLog.setDescription(LogDescriptionUtil.log(data));
         actionLogRepository.save(actionLog);
     }
@@ -86,21 +83,18 @@ public class ActionLogUtil {
      */
 
     public static <T> void log(String object, Integer type, List<T> data) {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        Date currentTime = new Date();
-        ActionLog actionLog = new ActionLog();
-        actionLog.setObject(object);
-        actionLog.setTime(currentTime);
-        String type1 = null;
-        if(type == 0)
-            type1 = "批量新增";
-        else if(type == 1)
-            type1 = "批量删除";
-        actionLog.setType(type1);
-        if (request.getSession().getAttribute("user") != null) {
-            actionLog.setUser((User) request.getSession().getAttribute("user"));
+        for (T t: data) {
+            log(object,type,t);
         }
-        actionLog.setDescription(LogDescriptionUtil.log(data));
+    }
+
+    public static <T> void log(String object){
+        ActionLog actionLog = new ActionLog();
+        Date currentTime = new Date();
+        actionLog.setTime(currentTime);
+        actionLog.setObject(object);
+        actionLog.setType("导出EXCEL");
+
         actionLogRepository.save(actionLog);
     }
 }

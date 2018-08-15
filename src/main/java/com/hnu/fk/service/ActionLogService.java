@@ -1,6 +1,8 @@
 package com.hnu.fk.service;
 
 import com.hnu.fk.domain.ActionLog;
+import com.hnu.fk.exception.EnumExceptions;
+import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.ActionLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -27,6 +31,15 @@ public class ActionLogService {
      */
     public ActionLog add(ActionLog actionLog){
         return actionLogRepository.save(actionLog);
+    }
+
+    /**
+     * 通过id批量删除
+     * @param ids
+     */
+    @Transactional
+    public void deleteInBatch(Long[] ids){
+        actionLogRepository.deleteInBatch(actionLogRepository.findAllById(Arrays.asList(ids)));
     }
 
     /**
@@ -59,16 +72,16 @@ public class ActionLogService {
     }
 
     /**
-     * 通过日期模糊查询
-     * @param date
+     * 通过时间段查询
+     * @param startDate
+     * @param endDate
      * @param page
      * @param size
      * @param sortFieldName
      * @param asc
      * @return
      */
-    public Page<ActionLog> findByDateLike(Date date,Integer page, Integer size, String sortFieldName, Integer asc) {
-
+    public Page<ActionLog> findByDateLike(String startDate,String endDate,Integer page, Integer size, String sortFieldName, Integer asc) {
         // 判断排序字段名是否存在
         try {
             ActionLog.class.getDeclaredField(sortFieldName);
@@ -77,7 +90,7 @@ public class ActionLogService {
             sortFieldName = "id";
         }
 
-        Sort sort = null;
+        Sort sort;
         if (asc == 0) {
             sort = new Sort(Sort.Direction.DESC, sortFieldName);
         } else {
@@ -85,6 +98,6 @@ public class ActionLogService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return actionLogRepository.findByTimeLike(date,pageable);
+        return actionLogRepository.findByTimeLike(startDate,endDate,pageable);
     }
 }
