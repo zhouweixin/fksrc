@@ -2,6 +2,7 @@ package com.hnu.fk.controller;
 
 import com.hnu.fk.domain.Navigation;
 import com.hnu.fk.domain.Result;
+import com.hnu.fk.domain.SecondLevelMenuOperation;
 import com.hnu.fk.service.NavigationService;
 import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
@@ -160,5 +161,16 @@ public class NavigationController {
     @ApiOperation(value = "查询所有可分配操作")
     public Result<List<Navigation>> findAllNavigationOperations(){
         return ResultUtil.success(navigationService.findAllNavigationOperations());
+    }
+
+    /**
+     * 更新二级菜单可分配操作
+     */
+    @PostMapping(value = "/updateNavigationOperations")
+    @ApiOperation(value = "更新二级菜单可分配操作")
+    public Result<List<SecondLevelMenuOperation>> updateSecondOperations(
+            @ApiParam(value = "二级菜单主键") @RequestParam Integer MenuId,
+            @ApiParam(value = "操作主键数组") @RequestParam Integer[] Operationids){
+        return ResultUtil.success(navigationService.updateSecondLevelMenuOperatons(MenuId,Operationids));
     }
 }
