@@ -98,7 +98,7 @@ public class ActionLogController {
      * @param response
      * @return
      */
-    @PostMapping(value = "/getByDateToExcel")
+    @GetMapping(value = "/getByDateToExcel")
     @ApiOperation(value = "通过时间段导出")
     public Result getByDateToExcel(
             @ApiParam(value = "开始日期，格式为yyyy-MM-dd") @RequestParam(value = "startDate") String startDate,

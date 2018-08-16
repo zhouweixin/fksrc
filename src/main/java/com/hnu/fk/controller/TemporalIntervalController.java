@@ -66,7 +66,7 @@ public class TemporalIntervalController {
      * @param response
      * @throws IOException
      */
-    @PostMapping(value = "/download")
+    @GetMapping(value = "/download")
     @ApiOperation(value = "导出excel",notes = "点击下载指定年份的excel")
     public Result downloadThisYear(@ApiParam(value = "年份") @RequestParam String statisticalYear, HttpServletResponse response) throws IOException {
         ActionLogUtil.log("月统计时间区间表");
