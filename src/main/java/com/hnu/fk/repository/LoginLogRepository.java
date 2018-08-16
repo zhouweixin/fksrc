@@ -22,6 +22,6 @@ public interface LoginLogRepository extends JpaRepository<LoginLog, Long> {
      * @param pageable
      * @return
      */
-    @Query(value = "SELECT * FROM permission_action_log where time>=?1 and time <=Dateadd(mm,1,?2) order by time desc", nativeQuery = true)
+    @Query(value = "SELECT * FROM permission_login_log where time>=?1 and time <=Dateadd(dd,1,?2) order by time desc", nativeQuery = true)
     public Page<LoginLog> findByTimeLike(String startDate,String endDate,Pageable pageable);
 }

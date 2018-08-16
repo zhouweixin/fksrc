@@ -36,4 +36,19 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleMult
      * @param userIds
      */
     public void deleteByUserIdIn(Collection<Integer> userIds);
+
+    /**
+     * 删除角色所有的用户
+     *
+     * @param roleId
+     */
+    public void deleteByRoleId(int roleId);
+
+    /**
+     * 通过角色主键查询
+     *
+     * @param roleId
+     * @return
+     */
+    public List<UserRole> findByRoleId(int roleId);
 }

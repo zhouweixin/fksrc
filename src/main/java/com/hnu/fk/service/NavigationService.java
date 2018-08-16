@@ -3,10 +3,7 @@ package com.hnu.fk.service;
 import com.hnu.fk.domain.*;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
-import com.hnu.fk.repository.NavigationRepository;
-import com.hnu.fk.repository.OperationRepository;
-import com.hnu.fk.repository.SecondLevelMenuOperationRepository;
-import com.hnu.fk.repository.SecondLevelMenuRepository;
+import com.hnu.fk.repository.*;
 import org.springframework.beans.BeanUtils;
 import com.hnu.fk.utils.ActionLogUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +33,12 @@ public class NavigationService {
     private SecondLevelMenuOperationRepository secondLevelMenuOperationRepository;
     @Autowired
     private OperationRepository operationRepository;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private RoleSecondLevelMenuOperationRepository roleSecondLevelMenuOperationRepository;
 
     /**
      * 新增
@@ -270,6 +273,126 @@ public class NavigationService {
             Navigation navigation = firstLevelMenu.getNavigation();
             if(navigation != null && navigation.getId() != null){
                 if(navigationHashMap.containsKey(navigation.getId())){
+                    navigationHashMap.get(navigation.getId()).getFirstLevelMenus().add(firstLevelMenu);
+                } else {
+                    navigation.getFirstLevelMenus().add(firstLevelMenu);
+                    navigationHashMap.put(navigation.getId(), navigation);
+                }
+            }
+
+            // 置空父菜单
+            firstLevelMenu.setNavigation(null);
+        }
+
+        List<Navigation> navigations = new ArrayList<>(navigationHashMap.values());
+        return navigations;
+    }
+
+    /**
+     * 通过用户主键查询所有菜单
+     *
+     * @param userId
+     * @return
+     */
+    public List<Navigation> findAllByUserId(Integer userId) {
+        // 查询用户的角色
+        Set<Integer> roleIds = userRoleService.findRoleIdsByUserId(userId);
+
+        return findAllByRoleIds(roleIds);
+    }
+
+    /**
+     * 通过角色查询所有菜单
+     *
+     * @param roleIds
+     * @return
+     */
+    public List<Navigation> findAllByRoleIds(Set<Integer> roleIds){
+        // 根据角色查询所有的权限信息: role-menu-operation
+        List<RoleSecondLevelMenuOperation> roleSecondLevelMenuOperations = roleSecondLevelMenuOperationRepository.findByRoleIdIn(roleIds);
+
+        // 取出menu和operation的id, 并去重
+        Set<Integer> secondLevelMenuIds = new HashSet<>();
+        Set<Integer> operationIds = new HashSet<>();
+        for (RoleSecondLevelMenuOperation roleSecondLevelMenuOperation : roleSecondLevelMenuOperations) {
+            secondLevelMenuIds.add(roleSecondLevelMenuOperation.getSecondLevelMenuId());
+            operationIds.add(roleSecondLevelMenuOperation.getOperationId());
+        }
+
+        // 查询出对象
+        List<SecondLevelMenu> secondLevelMenus = new ArrayList<>();
+        List<Operation> operations = new ArrayList<>();
+
+        // 循环copy对象
+        for(SecondLevelMenu secondLevelMenu : secondLevelMenuRepository.findAllById(secondLevelMenuIds)){
+
+            // 1、copy 二级菜单
+            // 创建的新对象
+            SecondLevelMenu menu = new SecondLevelMenu();
+
+            // 执行copy
+            BeanUtils.copyProperties(secondLevelMenu, menu);
+
+            // 添加到新的list里
+            secondLevelMenus.add(menu);
+
+            // 1、copy 一级菜单
+            FirstLevelMenu firstLevelMenu = new FirstLevelMenu();
+            BeanUtils.copyProperties(menu.getFirstLevelMenu(), firstLevelMenu);
+            menu.setFirstLevelMenu(firstLevelMenu);
+        }
+
+        for(Operation operation : operationRepository.findAllById(operationIds)){
+            Operation o = new Operation();
+            BeanUtils.copyProperties(operation, o);
+            operations.add(o);
+        }
+
+        // 建立主键与对象映射关系
+        Map<Integer, SecondLevelMenu> secondLevelMenuMap = new HashMap<>();
+        for (SecondLevelMenu secondLevelMenu : secondLevelMenus) {
+            secondLevelMenuMap.put(secondLevelMenu.getId(), secondLevelMenu);
+        }
+
+        // 建立主键与对象映射关系
+        Map<Integer, Operation> operationMap = new HashMap<>();
+        for (Operation operation : operations) {
+            operationMap.put(operation.getId(), operation);
+        }
+
+        // 把操作添加到二级菜单下
+        for (RoleSecondLevelMenuOperation roleSecondLevelMenuOperation : roleSecondLevelMenuOperations) {
+            Integer secondLevelMenuId = roleSecondLevelMenuOperation.getSecondLevelMenuId();
+            Integer operationId = roleSecondLevelMenuOperation.getOperationId();
+            if (secondLevelMenuMap.containsKey(secondLevelMenuId) && operationMap.containsKey(operationId)) {
+                secondLevelMenuMap.get(secondLevelMenuId).getOperations().add(operationMap.get(operationId));
+            }
+        }
+
+        // 把二级菜单添加到一级菜单下
+        Map<Integer, FirstLevelMenu> firstLevelMenuMap = new HashMap<>();
+        for (SecondLevelMenu secondLevelMenu : secondLevelMenus) {
+            FirstLevelMenu firstLevelMenu = secondLevelMenu.getFirstLevelMenu();
+            if (firstLevelMenu != null && firstLevelMenu.getId() != null) {
+                if (firstLevelMenuMap.containsKey(firstLevelMenu.getId())) {
+                    firstLevelMenuMap.get(firstLevelMenu.getId()).getSecondLevelMenus().add(secondLevelMenu);
+                } else {
+                    firstLevelMenu.getSecondLevelMenus().add(secondLevelMenu);
+                    firstLevelMenuMap.put(firstLevelMenu.getId(), firstLevelMenu);
+                }
+            }
+
+            // 置空父菜单
+            secondLevelMenu.setFirstLevelMenu(null);
+            secondLevelMenu.setNavigation(null);
+        }
+
+        // 把一级菜单添加到导航下
+        Map<Integer, Navigation> navigationHashMap = new HashMap<>();
+        for (FirstLevelMenu firstLevelMenu : firstLevelMenuMap.values()) {
+            Navigation navigation = firstLevelMenu.getNavigation();
+            if (navigation != null && navigation.getId() != null) {
+                if (navigationHashMap.containsKey(navigation.getId())) {
                     navigationHashMap.get(navigation.getId()).getFirstLevelMenus().add(firstLevelMenu);
                 } else {
                     navigation.getFirstLevelMenus().add(firstLevelMenu);

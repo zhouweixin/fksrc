@@ -33,7 +33,10 @@ public enum EnumExceptions {
 	ADD_FAILED_DICID_DUPLICATE(22, "新增失败, 编号重复"),
 	ADD_FAILED_DICNAME_DUPLICATE(23, "新增失败, 名称重复"),
 	ADD_FAILED_DICCONTENT_DUPLICATE(24, "新增失败, 值重复"),
-	ADD_FAILED_DATAPARENT_NOT_EXISTS(25,"新增失败,父编码不存在")
+	ADD_FAILED_DATAPARENT_NOT_EXISTS(25,"新增失败,父编码不存在"),
+    UPDATE_FAILED_SON_NOT_PARENT(26,"部门修改失败, 不可把子部门设置为父部门"),
+    ASSIGN_FAILED_ROLE_NOT_EXISTS(27,"分配失败, 角色不存在"),
+
 	;
 
     /** 编码 */

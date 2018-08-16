@@ -44,8 +44,9 @@ public class ActionLogUtil {
         actionLog.setObject(object);
         actionLog.setTime(currentTime);
         actionLog.setType("修改");
-        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
-        actionLog.setUser(user);
+        //TODO 开发阶段此功能先注释
+//        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
+//        actionLog.setUser(user);
         actionLog.setDescription(LogDescriptionUtil.log(oldData,newData));
         actionLogRepository.save(actionLog);
     }
@@ -68,8 +69,11 @@ public class ActionLogUtil {
         else if(type == 1)
             type1 = "删除";
         actionLog.setType(type1);
-        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
-        actionLog.setUser(user);
+
+        // TODO 开发阶段此功能先注释
+//        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
+//        actionLog.setUser(user);
+
         actionLog.setDescription(LogDescriptionUtil.log(data));
         actionLogRepository.save(actionLog);
     }
@@ -88,12 +92,22 @@ public class ActionLogUtil {
         }
     }
 
+    /**
+     * 导出
+     * @param object 操作对象
+     * @param <T>
+     */
     public static <T> void log(String object){
         ActionLog actionLog = new ActionLog();
         Date currentTime = new Date();
         actionLog.setTime(currentTime);
         actionLog.setObject(object);
-        actionLog.setType("导出EXCEL");
+        actionLog.setType("导出");
+        actionLog.setDescription("导出excel");
+
+        // TODO 开发阶段此功能先注释
+//        User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
+//        actionLog.setUser(user);
 
         actionLogRepository.save(actionLog);
     }

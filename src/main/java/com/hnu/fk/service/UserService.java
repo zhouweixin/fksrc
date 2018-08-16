@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.*;
 
@@ -60,6 +61,9 @@ public class UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private NavigationService navigationService;
 
     /**
      * 新增
@@ -239,7 +243,7 @@ public class UserService {
      * @param password
      * @return
      */
-    public User login(Integer id, String password) {
+    public User login(Integer id, String password, HttpSession session) {
         // 验证用户是否存在
         if (!userRepository.findById(id).isPresent()) {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_NOT_EXISTS);
@@ -250,6 +254,8 @@ public class UserService {
         if ((user=this.checkUserPasswordForLogin(id, password)) == null) {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER);
         }
+
+//        session.setAttribute(FkSecurityConfig.SESSION_USER, user);
 
         return user;
     }
@@ -320,7 +326,7 @@ public class UserService {
         // 如果验证通过
         if (subject.isAuthenticated()) {
             // 查询用户所有的菜单
-            List<Navigation> navigations = roleSecondMenuOperationService.findNavigationsByRoleIds(id);
+            List<Navigation> navigations = navigationService.findAllByUserId(id);
             user.setNavigations(navigations);
 
             // 获取 session， 如果不存在就创建
