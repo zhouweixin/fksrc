@@ -11,12 +11,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * @Author: huXuDong
+ * @Description: 数据字典
+ * @Date: Created in 10:20 2018/8/15
+ * @Modified By:
+ */
 @Entity
 @Table(name = "basicinfo_dictionary")
 @ApiModel(description = "数据字典")
-@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "fieldHandler"})
 public class DataDictionary {
-
     /**
      * 主键：自增长
      */
@@ -24,41 +29,48 @@ public class DataDictionary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("主键：自增长")
     private Long id;
+
     /**
      * 数据字典编号
      */
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     @ApiModelProperty("数据字典编号")
     private Integer dicId;
+
     /**
      * 字典父编号,字典数据的父编号,父编号为-1
      */
     @Column(nullable = false)
     @ApiModelProperty("字典父编号,字典类型为-1,数据的父编号是其他类型的编号")
     private Integer dicParentId;
+
     /**
      * 字典名称
      */
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     @ApiModelProperty("字典名称")
     private String dicName;
+
     /**
      * 字典值
      */
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     @ApiModelProperty("字典值")
     private String dicContent;
+
     /**
      * 排序
      */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("显示顺序,自增长")
     private Integer rank = 1;
+
     /**
      * 字典数据描述
      */
     @ApiModelProperty("字典数据描述")
     private String dicDescription;
+
     /**
      * 更新时间
      */

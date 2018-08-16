@@ -15,15 +15,24 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-
+/**
+ * @Author: huXuDong
+ * @Description: 数据字典
+ * @Date: Created in 10:20 2018/8/15
+ * @Modified By:
+ */
 @RestController
 @RequestMapping(value = "/dataDictionary")
 @Api(tags = "数据字典")
 public class DataDictionaryController {
     @Autowired
     private DataDictionaryService dataDictionaryService;
+
     /**
      * 新增
+     * @param dataDictionary
+     * @param bindingResult
+     * @return
      */
     @PostMapping(value = "/add")
     @ApiOperation(value = "新增",notes = "父类型父编码默认Integer-1")
@@ -35,8 +44,12 @@ public class DataDictionaryController {
 
         return ResultUtil.success(dataDictionaryService.save(dataDictionary));
     }
+
     /**
      * 更新
+     * @param dataDictionary
+     * @param bindingResult
+     * @return
      */
     @PostMapping(value = "/update")
     @ApiOperation(value = "更新",notes = "编码,名称,值均有同名校验")
@@ -47,8 +60,11 @@ public class DataDictionaryController {
 
         return ResultUtil.success(dataDictionaryService.update(dataDictionary));
     }
+
     /**
      * 根据id删除
+     * @param id
+     * @return
      */
     @DeleteMapping(value = "/deleteById")
     @ApiOperation(value="通过id删除",notes = "删除类型会删除其所有数据")
@@ -56,8 +72,11 @@ public class DataDictionaryController {
         dataDictionaryService.delete(id);
         return ResultUtil.success();
     }
+
     /**
-     * 批量删除
+     * 根据ids批量删除
+     * @param ids
+     * @return
      */
     @DeleteMapping(value = "/deleteByIds")
     @ApiOperation(value = "批量删除",notes="删除类型会删除类型下所有数据")
@@ -65,40 +84,56 @@ public class DataDictionaryController {
         dataDictionaryService.deleteByIdIn(ids);
         return ResultUtil.success();
     }
+
     /**
      * 根据id查询
+     * @param id
+     * @return
      */
     @GetMapping(value = "/getById")
     @ApiOperation(value = "根据id查询",notes = "根据主键id查询")
     public Result<DataDictionary> getById(@ApiParam(value = "主键") @RequestParam Long id){
         return ResultUtil.success(dataDictionaryService.findOne(id));
     }
+
     /**
      * 查询所有
+     * @return
      */
     @GetMapping(value = "/getAll")
     @ApiOperation(value = "查询所有")
     public Result<List<DataDictionary>> getAll(){
         return ResultUtil.success(dataDictionaryService.findAll());
     }
+
     /**
-     * 根据字典类型主键查询其所有数据
+     * 根据类型主键查询其所有数据
+     * @param id
+     * @return
      */
     @GetMapping(value = "/getAllByParentId")
     @ApiOperation(value = "查询类型下所有数据")
     public Result<List<DataDictionary>> getAllByParentId(@ApiParam(value = "主键") @RequestParam Long id){
         return ResultUtil.success(dataDictionaryService.findAllChildrenById(id));
     }
+
     /**
      * 查询所有类型
+     * @return
      */
     @GetMapping(value = "/getAllParents")
     @ApiOperation(value = "查询所有类型")
     public Result<List<DataDictionary>> getAllParents(){
         return ResultUtil.success(dataDictionaryService.findAllParents());
     }
+
     /**
-     * 查询所有类型分页
+     * 分页查询所有类型
+     * @param page
+     * @param size
+     * @param sortFieldName
+     * @param asc
+     * @return
      */
     @GetMapping(value = "/getAllByPage")
     @ApiOperation(value = "查询所有类型-分页")
@@ -112,7 +147,13 @@ public class DataDictionaryController {
     }
 
     /**
-     * 分页查询数据
+     * 分页查询一个类型下所有数据
+     * @param page
+     * @param size
+     * @param sortFieldName
+     * @param asc
+     * @param id
+     * @return
      */
     @GetMapping(value = "/getAllChildrensByPage")
     @ApiOperation(value = "查询类型下所有数据-分页")
@@ -123,8 +164,16 @@ public class DataDictionaryController {
       @ApiParam(value = "类型主键id") @RequestParam Long id){
         return  ResultUtil.success(dataDictionaryService.findAllChildrensByPageById(page,size,sortFieldName,asc,id));
     }
+
     /**
-     * 分页模糊查询数据
+     * 分页模糊查询一个类型下所有数据
+     * @param page
+     * @param size
+     * @param sortFieldName
+     * @param asc
+     * @param id
+     * @param name
+     * @return
      */
     @GetMapping(value = "/getChildrensByPageNameLike")
     @ApiOperation(value = "模糊查询类型下所有数据-分页")
