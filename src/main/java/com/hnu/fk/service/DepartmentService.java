@@ -234,4 +234,25 @@ public class DepartmentService {
         }
         return departments;
     }
+
+    /**
+     * 查询子部门
+     * @param id
+     * @return
+     */
+    public List<Department> findSonByParent(Integer id){
+        if(departmentRepository.getOne(id) == null)
+            throw new FkExceptions(EnumExceptions.SEARCH_FAILED_NOT_EXIST);
+        return departmentRepository.findByParentDepartment(departmentRepository.getOne(id));
+    }
+
+    public List<Department> findTop(){
+        List<Department> departments = departmentRepository.findAll();
+        List<Department> top = new ArrayList<>();
+        for (Department d:departments) {
+            if(d.getParentDepartment() == null)
+                top.add(d);
+        }
+        return top;
+    }
 }
