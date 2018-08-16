@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 
 import static cn.afterturn.easypoi.excel.entity.enmus.ExcelType.XSSF;
@@ -76,9 +77,14 @@ public class TemporalIntervalController {
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("月统计时间区间表",statisticalYear,XSSF),
                 TemporalInterval.class,temporalIntervals);
 
+        Date time = new Date();
+        String fileName = statisticalYear + "月统计时间区间表" + time.getTime() + ".xlsx";
+
+        response.setContentType("application/force-download");
+        response.addHeader("Content-Disposition","attachment;fileName=" +new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+
         response.flushBuffer();
         workbook.write(response.getOutputStream());
-
         return ResultUtil.success();
     }
 }
