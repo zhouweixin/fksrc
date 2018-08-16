@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 说明:
@@ -24,4 +25,7 @@ public interface LoginLogRepository extends JpaRepository<LoginLog, Long> {
      */
     @Query(value = "SELECT * FROM permission_login_log where time>=?1 and time <=Dateadd(dd,1,?2) order by time desc", nativeQuery = true)
     public Page<LoginLog> findByTimeLike(String startDate,String endDate,Pageable pageable);
+
+    @Query(value = "SELECT * FROM permission_login_log where time>=?1 and time <=Dateadd(dd,1,?2) order by time desc", nativeQuery = true)
+    public List<LoginLog> findByTimeLike(String startDate, String endDate);
 }

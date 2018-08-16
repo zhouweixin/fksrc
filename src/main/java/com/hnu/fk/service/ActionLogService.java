@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 说明:
@@ -99,5 +100,10 @@ public class ActionLogService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         return actionLogRepository.findByTimeLike(startDate,endDate,pageable);
+    }
+
+    public List<ActionLog> findByDate(String startDate, String endDate) {
+        return actionLogRepository.findByTimeLike(startDate,endDate);
+
     }
 }

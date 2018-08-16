@@ -1,15 +1,28 @@
 package com.hnu.fk.controller;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.hnu.fk.domain.ActionLog;
 import com.hnu.fk.domain.Result;
+import com.hnu.fk.domain.TemporalInterval;
 import com.hnu.fk.service.ActionLogService;
+import com.hnu.fk.utils.ActionLogUtil;
 import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
+
+import static cn.afterturn.easypoi.excel.entity.enmus.ExcelType.XSSF;
 
 
 /**
@@ -67,7 +80,7 @@ public class ActionLogController {
      * @param asc
      * @return
      */
-    @GetMapping(value = "/getByDate")
+    @PostMapping(value = "/getByDate")
     @ApiOperation(value = "通过时间段查询")
     public Result<Page<ActionLog>> getByDateByPage(
             @ApiParam(value = "开始日期，格式为yyyy-MM-dd") @RequestParam(value = "startDate") String startDate,
@@ -78,5 +91,37 @@ public class ActionLogController {
             @ApiParam(value = "排序方向(0:降序；1升序；这里默认为0)") @RequestParam(value = "asc", defaultValue = "0") Integer asc) {
 
         return ResultUtil.success(actionLogService.findByDateLike(startDate,endDate, page, size, sortFieldName, asc));
+    }
+
+    /**
+     * 通过时间段导出
+     * @param startDate
+     * @param endDate
+     * @param response
+     * @return
+     */
+    @GetMapping(value = "/getByDateToExcel")
+    @ApiOperation(value = "通过时间段导出")
+    public Result getByDateToExcel(
+            @ApiParam(value = "开始日期，格式为yyyy-MM-dd") @RequestParam(value = "startDate") String startDate,
+            @ApiParam(value = "结束日期，格式为yyyy-MM-dd") @RequestParam(value = "endDate") String endDate,
+            HttpServletResponse response) throws IOException {
+
+        ActionLogUtil.log("操作日志表");
+
+        List<ActionLog> actionLogs = actionLogService.findByDate(startDate,endDate);
+
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("操作日志表",startDate + "-" + endDate,XSSF),
+                ActionLog.class,actionLogs);
+
+        Date time = new Date();
+        String fileName = startDate + "-" + endDate + "操作日志" + time.getTime() + ".xlsx";
+        response.setContentType("application/force-download");
+        response.addHeader("Content-Disposition","attachment;fileName=" +new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+
+        response.flushBuffer();
+        workbook.write(response.getOutputStream());
+
+        return ResultUtil.success();
     }
 }
