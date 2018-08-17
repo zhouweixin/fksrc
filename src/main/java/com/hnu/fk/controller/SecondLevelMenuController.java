@@ -1,5 +1,6 @@
 package com.hnu.fk.controller;
 
+import com.hnu.fk.domain.Operation;
 import com.hnu.fk.domain.SecondLevelMenu;
 import com.hnu.fk.domain.Result;
 import com.hnu.fk.service.SecondLevelMenuService;
@@ -161,6 +162,19 @@ public class SecondLevelMenuController {
             @ApiParam(value = "菜单2主键") @RequestParam Integer id2) {
 
         secondLevelMenuService.shift(id1, id2);
+        return ResultUtil.success();
+    }
+
+    @GetMapping(value = "/getOperationsById")
+    @ApiOperation(value = "通过主键查询所有分配的操作")
+    public Result<List<Operation>> getOperationsById(@ApiParam(value = "二级菜单主键") @RequestParam Integer id){
+        return ResultUtil.success(secondLevelMenuService.getOperationsById(id));
+    }
+
+    public Result<Object> assignOperations(
+            @ApiParam(value = "二级菜单主键") @RequestParam Integer menuId,
+            @ApiParam(value = "操作主键数组") @RequestParam Integer[] operationIds){
+        secondLevelMenuService.assignOperations(menuId, operationIds);
         return ResultUtil.success();
     }
 }

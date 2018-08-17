@@ -1,9 +1,13 @@
 package com.hnu.fk.service;
 
 import com.hnu.fk.domain.FirstLevelMenu;
+import com.hnu.fk.domain.Operation;
 import com.hnu.fk.domain.SecondLevelMenu;
+import com.hnu.fk.domain.SecondLevelMenuOperation;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
+import com.hnu.fk.repository.OperationRepository;
+import com.hnu.fk.repository.SecondLevelMenuOperationRepository;
 import com.hnu.fk.repository.SecondLevelMenuRepository;
 import com.hnu.fk.utils.ActionLogUtil;
 import org.springframework.beans.BeanUtils;
@@ -15,9 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Author: zhouweixin
@@ -32,6 +34,12 @@ public class SecondLevelMenuService {
 
     @Autowired
     private SecondLevelMenuRepository secondLevelRepositoryRepository;
+
+    @Autowired
+    private SecondLevelMenuOperationRepository secondLevelMenuOperationRepository;
+
+    @Autowired
+    private OperationRepository operationRepository;
 
     /**
      * 新增
@@ -216,5 +224,39 @@ public class SecondLevelMenuService {
         // 保存日志
         ActionLogUtil.log(NAME, oldSecondLevelMenu1, newSecondLevelMenu1);
         ActionLogUtil.log(NAME, oldSecondLevelMenu2, newSecondLevelMenu2);
+    }
+
+    /**
+     * 通过菜单主键查询所有操作
+     * @param id
+     * @return
+     */
+    public List<Operation> getOperationsById(Integer id) {
+        List<SecondLevelMenuOperation> menuOperations = secondLevelMenuOperationRepository.findBySecondLevelMenuId(id);
+        Set<Integer> operationIds = new HashSet<>();
+        for(SecondLevelMenuOperation menuOperation : menuOperations){
+            operationIds.add(menuOperation.getOperationId());
+        }
+
+        return operationRepository.findAllById(operationIds);
+    }
+
+    /**
+     * 给二级菜单分配操作
+     *
+     * @param menuId
+     * @param operationIds
+     */
+    @Transactional
+    public void assignOperations(Integer menuId, Integer[] operationIds) {
+        // 删除旧的分配
+        secondLevelMenuOperationRepository.deleteBySecondLevelMenuId(menuId);
+
+        List<SecondLevelMenuOperation> menuOperations = new ArrayList<>();
+        for(Integer operationId : operationIds){
+            menuOperations.add(new SecondLevelMenuOperation(menuId, operationId));
+        }
+
+        secondLevelMenuOperationRepository.saveAll(menuOperations);
     }
 }

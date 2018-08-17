@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 
 /**
  * @Author: zhouweixin
@@ -18,4 +20,11 @@ public interface SecondLevelMenuOperationRepository extends JpaRepository<Second
      * 通过二级菜单id删除
      */
     void deleteBySecondLevelMenuId(Integer secondLevelMenuId);
+
+    /**
+     * 通过二级菜单查询操作
+     *
+     * @param id
+     */
+    List<SecondLevelMenuOperation> findBySecondLevelMenuId(Integer id);
 }

@@ -26,6 +26,14 @@ public class SecondLevelMenuOperation {
     @ApiModelProperty("操作主键")
     private Integer operationId;
 
+    public SecondLevelMenuOperation(Integer secondLevelMenuId, Integer operationId) {
+        this.secondLevelMenuId = secondLevelMenuId;
+        this.operationId = operationId;
+    }
+
+    public SecondLevelMenuOperation() {
+    }
+
     public Integer getSecondLevelMenuId() {
         return secondLevelMenuId;
     }
