@@ -8,6 +8,7 @@ import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.catalina.util.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -97,6 +98,18 @@ public class DataDictionaryController {
     }
 
     /**
+     * 根据编码查询
+     * @param dicId
+     * @param ParentId
+     * @return
+     */
+    @GetMapping(value = "/getByDicId")
+    @ApiOperation(value = "根据编码查询",notes ="查询时需要传入父编码")
+    public Result<DataDictionary> getByDicId(@ApiParam(value = "编码") @RequestParam Integer dicId,
+                                             @ApiParam(value = "父编码") @RequestParam Integer ParentId){
+        return ResultUtil.success(dataDictionaryService.findOneByDicId(dicId,ParentId));
+    }
+    /**
      * 查询所有
      * @return
      */
@@ -107,13 +120,13 @@ public class DataDictionaryController {
     }
 
     /**
-     * 根据类型主键查询其所有数据
+     * 根据类型编码查询其所有数据
      * @param id
      * @return
      */
     @GetMapping(value = "/getAllByParentId")
-    @ApiOperation(value = "查询类型下所有数据")
-    public Result<List<DataDictionary>> getAllByParentId(@ApiParam(value = "主键") @RequestParam Long id){
+    @ApiOperation(value = "根据编码查询类型下所有数据")
+    public Result<List<DataDictionary>> getAllByParentId(@ApiParam(value = "主键") @RequestParam Integer id){
         return ResultUtil.success(dataDictionaryService.findAllChildrenById(id));
     }
 
@@ -152,7 +165,7 @@ public class DataDictionaryController {
      * @param size
      * @param sortFieldName
      * @param asc
-     * @param id
+     * @param dicId
      * @return
      */
     @GetMapping(value = "/getAllChildrensByPage")
@@ -161,8 +174,8 @@ public class DataDictionaryController {
       @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
       @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "id") String sortFieldName,
       @ApiParam(value = "排序方向(0:降序；1升序；默认为1)") @RequestParam(value = "asc", defaultValue = "1") Integer asc,
-      @ApiParam(value = "类型主键id") @RequestParam Long id){
-        return  ResultUtil.success(dataDictionaryService.findAllChildrensByPageById(page,size,sortFieldName,asc,id));
+      @ApiParam(value = "类型编码") @RequestParam Integer dicId){
+        return  ResultUtil.success(dataDictionaryService.findAllChildrensByPageById(page,size,sortFieldName,asc,dicId));
     }
 
     /**
@@ -171,7 +184,7 @@ public class DataDictionaryController {
      * @param size
      * @param sortFieldName
      * @param asc
-     * @param id
+     * @param dicId
      * @param name
      * @return
      */
@@ -181,8 +194,8 @@ public class DataDictionaryController {
                                                              @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                              @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "id") String sortFieldName,
                                                              @ApiParam(value = "排序方向(0:降序；1升序；默认为1)") @RequestParam(value = "asc", defaultValue = "1") Integer asc,
-                                                             @ApiParam(value = "类型主键id") @RequestParam Long id,@ApiParam(value = "数据名") @RequestParam String name){
-        return  ResultUtil.success(dataDictionaryService.findChildrensByPageNameLikeById(page,size,sortFieldName,asc,id,name));
+                                                             @ApiParam(value = "类型编码") @RequestParam Integer dicId,@ApiParam(value = "数据名") @RequestParam String name){
+        return  ResultUtil.success(dataDictionaryService.findChildrensByPageNameLikeById(page,size,sortFieldName,asc,dicId,name));
     }
 
 }

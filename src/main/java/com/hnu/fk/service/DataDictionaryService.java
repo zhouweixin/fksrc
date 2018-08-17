@@ -154,13 +154,18 @@ public class DataDictionaryService {
     }
 
     /**
-     * 根据类型id查询其下所有数据
-     *
-     * @param id
+     * 根据编码查询字典
+     */
+    public DataDictionary findOneByDicId(Integer dicId,Integer parentId){
+        return dataDictionaryRepository.findByDicIdAndDicParentId(dicId,parentId);
+    }
+
+    /**
+     * 根据类型编码查询其所有数据
+     * @param dicId
      * @return
      */
-    public List<DataDictionary> findAllChildrenById(Long id) {
-        Integer dicId = dataDictionaryRepository.findById(id).get().getDicId();
+    public List<DataDictionary> findAllChildrenById(Integer dicId) {
         return dataDictionaryRepository.findAllByDicParentId(dicId);
     }
 
@@ -174,16 +179,15 @@ public class DataDictionaryService {
     }
 
     /**
-     * 根据类型id分页查询其所有数据
-     *
+     * 根据类型编码分页查询其所有数据
      * @param page
      * @param size
      * @param sortFieldName
      * @param asc
-     * @param id
+     * @param dicId
      * @return
      */
-    public Page<DataDictionary> findAllChildrensByPageById(Integer page, Integer size, String sortFieldName, Integer asc, Long id) {
+        public Page<DataDictionary> findAllChildrensByPageById(Integer page, Integer size, String sortFieldName, Integer asc, Integer dicId) {
         // 判断排序字段名是否存在
         try {
             DataDictionary.class.getDeclaredField(sortFieldName);
@@ -199,23 +203,21 @@ public class DataDictionaryService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        Integer dicId = dataDictionaryRepository.findById(id).get().getDicId();
         return dataDictionaryRepository.findAllByDicParentId(pageable, dicId);
     }
 
     /**
-     * 根据类型id模糊查询其下所有数据-分页
-     *
+     * 根据类型编码模糊查询其下所有数据-分页
      * @param page
      * @param size
      * @param sortFieldName
      * @param asc
-     * @param id
+     * @param dicId
      * @param name
      * @return
      */
     public Page<DataDictionary> findChildrensByPageNameLikeById(Integer page, Integer size,
-                                                                String sortFieldName, Integer asc, Long id, String name) {
+                                                                String sortFieldName, Integer asc, Integer dicId, String name) {
         //判断字段名是否存在
         try {
             DataDictionary.class.getDeclaredField(sortFieldName);
@@ -229,8 +231,7 @@ public class DataDictionaryService {
             sort = new Sort(Sort.Direction.ASC, sortFieldName);
         }
         Pageable pageable = PageRequest.of(page, size, sort);
-        Integer dicParentId = dataDictionaryRepository.findById(id).get().getDicId();
-        return dataDictionaryRepository.findByDicNameLikeAndDicParentId(pageable, "%" + name + "%", dicParentId);
+        return dataDictionaryRepository.findByDicNameLikeAndDicParentId(pageable, "%" + name + "%", dicId);
     }
 
     /**
