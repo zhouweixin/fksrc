@@ -20,6 +20,11 @@ import java.util.List;
 @Repository
 public interface DataDictionaryRepository extends JpaRepository<DataDictionary, Long> {
     /**
+     * 根据字典编码和父编码查询
+     */
+    DataDictionary findByDicIdAndDicParentId(Integer dicId,Integer parentId);
+
+    /**
      * 根据字典编码查询
      *
      * @param dicId
