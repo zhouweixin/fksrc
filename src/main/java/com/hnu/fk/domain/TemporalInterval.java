@@ -28,19 +28,19 @@ public class TemporalInterval {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("主键：自增长")
-    @Excel(name = "序号", orderNum = "0")
+    @Excel(name = "序号", width = 10 ,orderNum = "0")
     private Long id;
     /**
      * 统计年份
      */
     @ApiModelProperty("统计年份")
-    @Excel(name = "统计年份", orderNum = "1")
+    @Excel(name = "统计年份", width = 10 ,orderNum = "1")
     private String statisticalYear;
     /**
      * 统计月份
      */
     @ApiModelProperty("统计月份")
-    @Excel(name = "统计月份", orderNum = "2")
+    @Excel(name = "统计月份", width = 10 ,orderNum = "2")
     private String statisticalMonth;
     /**
      * 起始日期
@@ -49,7 +49,7 @@ public class TemporalInterval {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("起始日期")
-    @Excel(name = "起始日期",exportFormat="yyyy-MM-dd", orderNum = "3")
+    @Excel(name = "起始日期",exportFormat="yyyy-MM-dd",width = 15 , orderNum = "3")
     private Date startDate;
     /**
      * 结束日期
@@ -58,7 +58,7 @@ public class TemporalInterval {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("结束日期")
-    @Excel(name = "结束日期",exportFormat="yyyy-MM-dd", orderNum = "4")
+    @Excel(name = "结束日期",exportFormat="yyyy-MM-dd",width = 15, orderNum = "4")
     private Date endDate;
     /**
      * 起始班次
@@ -76,7 +76,7 @@ public class TemporalInterval {
      * 备注
      */
     @ApiModelProperty("备注")
-    @Excel(name = "备注", orderNum = "7")
+    @Excel(name = "备注",width = 15, orderNum = "7")
     private String description;
     /**
      * 数据更新时间
@@ -85,7 +85,7 @@ public class TemporalInterval {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("数据更新时间")
-    @Excel(name = "数据更新时间",exportFormat="yyyy-MM-dd HH:mm:ss", orderNum = "8")
+    @Excel(name = "数据更新时间",width = 20,exportFormat = "yyyy-MM-dd HH:mm:ss", orderNum = "8")
     private Date updateTime;
     /**
      * 数据更新人

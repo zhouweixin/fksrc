@@ -23,7 +23,7 @@ public class ActionLog {
     @Id
     @ApiModelProperty("主键: 自增长")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Excel(name = "序号", orderNum = "0")
+    @Excel(name = "序号",width = 10 , orderNum = "0")
     private Long id;
 
     @ManyToOne(targetEntity = User.class)
@@ -33,23 +33,23 @@ public class ActionLog {
     private User user;
 
     @ApiModelProperty("操作对象")
-    @Excel(name = "操作对象",orderNum = "2")
+    @Excel(name = "操作对象",width = 20 ,orderNum = "2")
     private String object;
 
     @ApiModelProperty("操作类型")
-    @Excel(name = "操作类型",orderNum = "3")
+    @Excel(name = "操作类型",width = 10 ,orderNum = "3")
     private String type;
 
     @ApiModelProperty("操作数据描述")
-    @Excel(name = "操作数据描述",orderNum = "4")
+    @Excel(name = "操作数据描述",width = 20 ,orderNum = "4")
     private String description;
 
     @Temporal(value = TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("时间")
-    @Excel(name = "时间",orderNum = "5")
-    private Date time = new Date();
+    @Excel(name = "时间",width = 20,exportFormat = "yyyy-MM-dd HH:mm:ss",orderNum = "5")
+    private Date time;
 
     public Long getId() {
         return id;

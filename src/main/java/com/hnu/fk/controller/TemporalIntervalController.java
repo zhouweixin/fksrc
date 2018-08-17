@@ -79,8 +79,6 @@ public class TemporalIntervalController {
 
         Date time = new Date();
         String fileName = statisticalYear + "月统计时间区间表" + time.getTime() + ".xlsx";
-
-        response.setContentType("application/force-download");
         response.addHeader("Content-Disposition","attachment;fileName=" +new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
 
         response.flushBuffer();
