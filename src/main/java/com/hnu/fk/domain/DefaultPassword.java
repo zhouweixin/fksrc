@@ -24,9 +24,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "basicinfo_default_password")
 @ApiModel(description = "默认密码")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class DefaultPassword {
 
     /**
@@ -42,4 +39,28 @@ public class DefaultPassword {
      */
     @ApiModelProperty(value = "默认密码", name = "password", example = "123456")
     private String password;
+
+    public DefaultPassword() {
+    }
+
+    public DefaultPassword(Integer id, String password) {
+        this.id = id;
+        this.password = password;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
