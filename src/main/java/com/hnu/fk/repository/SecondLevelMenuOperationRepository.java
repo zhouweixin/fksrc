@@ -1,13 +1,11 @@
 package com.hnu.fk.repository;
 
-import com.hnu.fk.domain.Department;
-import com.hnu.fk.domain.RoleSecondLevelMenuOperation;
-import com.hnu.fk.domain.SecondLevelMenuOperation;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.hnu.fk.domain.*;
 
-import java.util.Collection;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 
 /**
  * @Author: zhouweixin
@@ -16,4 +14,8 @@ import java.util.Collection;
  * @Modified By:
  */
 public interface SecondLevelMenuOperationRepository extends JpaRepository<SecondLevelMenuOperation, Integer> {
+    /**
+     * 通过二级菜单id删除
+     */
+    void deleteBySecondLevelMenuId(Integer secondLevelMenuId);
 }

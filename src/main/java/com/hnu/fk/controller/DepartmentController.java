@@ -152,4 +152,25 @@ public class DepartmentController {
 
         return ResultUtil.success(departmentService.findByNameLikeByPage(name, page, size, sortFieldName, asc));
     }
+
+    /**
+     * 查询所有子部门
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "getSonByParent")
+    @ApiOperation(value = "查询子部门")
+    public Result<List<Department>> getSonByParent(@ApiParam(value = "部门id") @RequestParam Integer id){
+        return ResultUtil.success(departmentService.findSonByParent(id));
+    }
+
+    /**
+     * 查询所有顶层部门
+     * @return
+     */
+    @GetMapping(value = "getTop")
+    @ApiOperation(value = "查询所有顶层部门")
+    public Result<List<Department>> getTop(){
+        return ResultUtil.success(departmentService.findTop());
+    }
 }

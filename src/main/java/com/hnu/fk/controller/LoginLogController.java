@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 
 import static cn.afterturn.easypoi.excel.entity.enmus.ExcelType.XSSF;
@@ -99,7 +101,7 @@ public class LoginLogController {
      * @param response
      * @return
      */
-    @PostMapping(value = "/getByDateToExcel")
+    @GetMapping(value = "/getByDateToExcel")
     @ApiOperation(value = "通过时间段导出")
     public Result getByDateToExcel(
             @ApiParam(value = "开始日期，格式为yyyy-MM-dd") @RequestParam(value = "startDate") String startDate,
@@ -111,6 +113,11 @@ public class LoginLogController {
         List<LoginLog> loginLogs = loginLogService.findByDate(startDate,endDate);
 
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("登录日志表",startDate + "-" + endDate,XSSF),LoginLog.class,loginLogs);
+
+        Date time = new Date();
+        String fileName = startDate + "-" + endDate + "登录日志" + time.getTime() + ".xlsx";
+        response.setContentType("application/force-download");
+        response.addHeader("Content-Disposition","attachment;fileName=" +new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
 
         response.flushBuffer();
         workbook.write(response.getOutputStream());

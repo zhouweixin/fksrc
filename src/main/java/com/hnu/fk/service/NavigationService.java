@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -191,8 +192,10 @@ public class NavigationService {
         Pageable pageable =PageRequest.of(page, size, sort);
         return navigationRepository.findByNameLike("%" + name + "%", pageable);
     }
+
     /**
-     * 查询所有子菜单及其允许操作
+     * 查询所有菜单及其可以分配操作
+     * @return
      */
     public List<Navigation> findAllNavigationOperations(){
         //得到所有允许操作
@@ -286,6 +289,34 @@ public class NavigationService {
 
         List<Navigation> navigations = new ArrayList<>(navigationHashMap.values());
         return navigations;
+    }
+
+    /**
+     * 更新菜单可分配操作
+     * @param secondMenuId
+     * @param operationIds
+     * @return
+     */
+    @Transactional
+    public List<SecondLevelMenuOperation> updateSecondLevelMenuOperatons(Integer secondMenuId,Integer[] operationIds){
+        //验证是否存在
+        if (secondLevelMenuRepository.findById(secondMenuId).isPresent()==false){
+            throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST); }
+        for(Integer id : operationIds){
+            if(operationRepository.findById(id).isPresent()==false){
+                throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
+            }
+        }
+        secondLevelMenuOperationRepository.deleteBySecondLevelMenuId(secondMenuId);
+        List<SecondLevelMenuOperation> secondLevelMenuOperations = new ArrayList<>();
+        for(Integer operationId :operationIds){
+            SecondLevelMenuOperation secondLevelMenuOperation = new SecondLevelMenuOperation();
+            secondLevelMenuOperation.setSecondLevelMenuId(secondMenuId);
+            secondLevelMenuOperation.setOperationId(operationId);
+            secondLevelMenuOperations.add(secondLevelMenuOperation);
+        }
+        ActionLogUtil.log("二级菜单操作关系",0,secondLevelMenuOperations);
+        return secondLevelMenuOperationRepository.saveAll(secondLevelMenuOperations);
     }
 
     /**
