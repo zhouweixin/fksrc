@@ -37,6 +37,9 @@ public enum EnumExceptions {
     UPDATE_FAILED_SON_NOT_PARENT(26,"部门修改失败, 不可把子部门设置为父部门"),
     ASSIGN_FAILED_ROLE_NOT_EXISTS(27,"分配失败, 角色不存在"),
 	SEARCH_FAILED_NOT_EXIST(28,"查询失败，不存在"),
+    UPDATE_DEPARTMENT_FAILED_USER_NOT_EXISTS(29,"修改部门失败, 用户不存在"),
+    UPDATE_DEPARTMENT_FAILED_DEPARTMENT_NOT_EXISTS(30,"修改部门失败, 部门不存在"),
+    UPDATE_ENABLE_FAILED_USER_EXISTS(31,"修改启用失败, 用户不存在"),
 	;
 
     /** 编码 */

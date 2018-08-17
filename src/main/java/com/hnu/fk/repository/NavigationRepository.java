@@ -4,6 +4,7 @@ import com.hnu.fk.domain.Navigation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
 
@@ -29,4 +30,12 @@ public interface NavigationRepository extends JpaRepository<Navigation, Integer>
      * @return
      */
     public Page<Navigation> findByNameLike(String name, Pageable pageable);
+
+    /**
+     * 查询最大排序
+     *
+     * @return
+     */
+    @Query(value = "select max(n.rank) from Navigation n")
+    public Integer findMaxRank();
 }

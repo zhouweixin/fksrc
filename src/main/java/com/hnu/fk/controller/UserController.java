@@ -197,13 +197,33 @@ public class UserController {
 
     @GetMapping(value = "/getRolesById")
     @ApiOperation(value = "查询用户的角色")
-    public Result<List<Role>> getRolesById(Integer id){
+    public Result<List<Role>> getRolesById(
+            @ApiParam(value = "用户主键") @RequestParam Integer id){
         return ResultUtil.success(userService.getRolesById(id));
     }
 
     @GetMapping(value = "/getPermissionsById")
     @ApiOperation(value = "查询用户的权限")
-    public Result<List<RoleSecondLevelMenuOperation>> getPermissionsById(Integer id){
+    public Result<List<RoleSecondLevelMenuOperation>> getPermissionsById(
+            @ApiParam(value = "用户主键") @RequestParam Integer id){
         return ResultUtil.success(userService.getPermissionsById(id));
+    }
+
+    @PostMapping(value = "/updateDepartmentById")
+    @ApiOperation(value = "更新部门")
+    public Result<Object> updateDepartmentById(
+            @ApiParam(value = "用户主键") @RequestParam Integer id,
+            @ApiParam(value = "部门主键") @RequestParam Integer departmentId){
+        userService.updateDepartmentById(id, departmentId);
+        return ResultUtil.success();
+    }
+
+    @PostMapping(value = "/updateEnableById")
+    @ApiOperation(value = "更新启用")
+    public Result<Object> updateEnableById(
+            @ApiParam(value = "用户主键") @RequestParam Integer id,
+            @ApiParam(value = "启用: 0不启用; 1启用") @RequestParam int enable){
+        userService.updateEnableById(id, enable);
+        return ResultUtil.success();
     }
 }

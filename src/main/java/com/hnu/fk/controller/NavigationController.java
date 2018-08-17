@@ -1,5 +1,6 @@
 package com.hnu.fk.controller;
 
+import com.hnu.fk.domain.FirstLevelMenu;
 import com.hnu.fk.domain.Navigation;
 import com.hnu.fk.domain.Result;
 import com.hnu.fk.domain.SecondLevelMenuOperation;
@@ -172,5 +173,11 @@ public class NavigationController {
             @ApiParam(value = "二级菜单主键") @RequestParam Integer MenuId,
             @ApiParam(value = "操作主键数组") @RequestParam Integer[] Operationids){
         return ResultUtil.success(navigationService.updateSecondLevelMenuOperatons(MenuId,Operationids));
+    }
+
+    @GetMapping(value = "/getFirstLevelMenusById")
+    @ApiOperation(value = "通过主键查询一级菜单")
+    public Result<List<FirstLevelMenu>> getFirstLevelMenusById(@ApiParam(value = "导航主键") @RequestParam Integer id){
+        return ResultUtil.success(navigationService.getFirstLevelMenusById(id));
     }
 }

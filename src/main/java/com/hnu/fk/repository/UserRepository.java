@@ -40,4 +40,24 @@ public interface UserRepository extends JpaRepository<User, Integer> {
      * @return
      */
     public Page<User> findByDepartmentIn(Collection<Department> departments, Pageable pageable);
+
+    /**
+     * 通过用户主键更新部门
+     *
+     * @param department
+     * @param id
+     */
+    @Modifying
+    @Query(value = "update User u set u.department=?1 where u.id=?2")
+    public void updateDepartmentById(Department department, Integer id);
+
+    /**
+     * 通过用户主键更新启用
+     *
+     * @param enable
+     * @param id
+     */
+    @Modifying
+    @Query(value = "update User u set u.enable=?1 where u.id=?2")
+    public void updateEnableById(Integer enable, Integer id);
 }

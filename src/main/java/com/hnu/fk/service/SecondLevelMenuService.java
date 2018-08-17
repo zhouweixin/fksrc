@@ -54,6 +54,10 @@ public class SecondLevelMenuService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
+        Integer maxRank = secondLevelRepositoryRepository.findMaxRank();
+        int rank = maxRank == null ? 1 : maxRank + 1;
+        secondLevelRepository.setRank(rank);
+
         SecondLevelMenu save = secondLevelRepositoryRepository.save(secondLevelRepository);
         ActionLogUtil.log(NAME, 0, save);
         return save;

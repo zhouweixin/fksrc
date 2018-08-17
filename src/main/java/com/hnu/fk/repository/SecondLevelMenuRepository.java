@@ -1,13 +1,14 @@
 package com.hnu.fk.repository;
 
-import com.hnu.fk.domain.Department;
 import com.hnu.fk.domain.FirstLevelMenu;
 import com.hnu.fk.domain.SecondLevelMenu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @Author: zhouweixin
@@ -31,4 +32,20 @@ public interface SecondLevelMenuRepository extends JpaRepository<SecondLevelMenu
      * @return
      */
     public Page<SecondLevelMenu> findByNameLike(String name, Pageable pageable);
+
+    /**
+     * 查询最大排序
+     *
+     * @return
+     */
+    @Query(value = "select max(n.rank) from SecondLevelMenu n")
+    public Integer findMaxRank();
+
+    /**
+     * 通过一级菜单查询所有二级菜单
+     *
+     * @param firstLevelMenu
+     * @return
+     */
+    public List<SecondLevelMenu> findByFirstLevelMenu(FirstLevelMenu firstLevelMenu);
 }
