@@ -124,7 +124,7 @@ public class RealmService extends AuthorizingRealm {
         }
 
         SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(id, user.getPassword(), "fkRealm");
-        simpleAuthenticationInfo.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
+//        simpleAuthenticationInfo.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
         return simpleAuthenticationInfo;
     }
 }

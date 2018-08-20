@@ -75,14 +75,26 @@ public class DataDictionaryController {
     }
 
     /**
-     * 根据ids批量删除
+     * 根据ids批量删除类型
      * @param ids
      * @return
      */
-    @DeleteMapping(value = "/deleteByIds")
+    @DeleteMapping(value = "/deleteTypeById")
     @ApiOperation(value = "批量删除",notes="删除类型会删除类型下所有数据")
-    public Result<Object> deleteById(@ApiParam(value = "主键数组")@RequestParam Long[] ids){
-        dataDictionaryService.deleteByIdIn(ids);
+    public Result<Object> deleteTypeById(@ApiParam(value = "主键数组")@RequestParam Long[] ids){
+        dataDictionaryService.deleteByIdIn(ids, DataDictionary.FLAG_TYPE);
+        return ResultUtil.success();
+    }
+
+    /**
+     * 根据ids批量删除数据
+     * @param ids
+     * @return
+     */
+    @DeleteMapping(value = "/deleteDataById")
+    @ApiOperation(value = "批量删除",notes="删除类型会删除类型下所有数据")
+    public Result<Object> deleteDataById(@ApiParam(value = "主键数组")@RequestParam Long[] ids){
+        dataDictionaryService.deleteByIdIn(ids, DataDictionary.FLAG_DATA);
         return ResultUtil.success();
     }
 
@@ -109,6 +121,7 @@ public class DataDictionaryController {
                                              @ApiParam(value = "父编码") @RequestParam Integer ParentId){
         return ResultUtil.success(dataDictionaryService.findOneByDicId(dicId,ParentId));
     }
+
     /**
      * 查询所有
      * @return
@@ -126,7 +139,7 @@ public class DataDictionaryController {
      */
     @GetMapping(value = "/getAllByParentId")
     @ApiOperation(value = "根据编码查询类型下所有数据")
-    public Result<List<DataDictionary>> getAllByParentId(@ApiParam(value = "主键") @RequestParam Integer id){
+    public Result<List<DataDictionary>> getAllByParentId(@ApiParam(value = "父编码") @RequestParam Integer id){
         return ResultUtil.success(dataDictionaryService.findAllChildrenById(id));
     }
 

@@ -116,4 +116,12 @@ public interface DataDictionaryRepository extends JpaRepository<DataDictionary, 
      */
     @Transactional
     void deleteByIdIn(Collection<Long> ids);
+
+    /**
+     * 通过父编码查询所有数据
+     *
+     * @param dicParentIds
+     * @return
+     */
+    List<DataDictionary> findByDicParentIdIn(Collection<Long> dicParentIds);
 }

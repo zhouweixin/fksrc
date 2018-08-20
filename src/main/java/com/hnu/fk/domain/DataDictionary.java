@@ -2,6 +2,7 @@ package com.hnu.fk.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -30,11 +32,15 @@ public class DataDictionary {
     @ApiModelProperty("主键：自增长")
     private Long id;
 
+    public static final int FLAG_TYPE = -1;
+    public static final int FLAG_DATA = 1;
+
     /**
      * 数据字典编号
      */
     @Column(nullable = false, unique = true)
     @ApiModelProperty("数据字典编号")
+    @NotNull(message = "数据字典编号不可为空")
     private Integer dicId;
 
     /**
@@ -42,13 +48,18 @@ public class DataDictionary {
      */
     @Column(nullable = false)
     @ApiModelProperty("字典父编号,字典类型为-1,数据的父编号是其他类型的编号")
+    @NotNull(message = "字典父编号不可为空")
     private Integer dicParentId;
+
+    @ManyToOne(cascade = {CascadeType.REMOVE})
+    private DataDictionary dataDictionary;
 
     /**
      * 字典名称
      */
     @Column(nullable = false, unique = true)
     @ApiModelProperty("字典名称")
+    @NotNull(message = "字典名称不可为空")
     private String dicName;
 
     /**
@@ -56,6 +67,7 @@ public class DataDictionary {
      */
     @Column(nullable = false, unique = true)
     @ApiModelProperty("字典值")
+    @NotNull(message = "字典值不可为空")
     private String dicContent;
 
     /**
@@ -142,5 +154,14 @@ public class DataDictionary {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @JsonIgnore
+    public DataDictionary getDataDictionary() {
+        return dataDictionary;
+    }
+
+    public void setDataDictionary(DataDictionary dataDictionary) {
+        this.dataDictionary = dataDictionary;
     }
 }

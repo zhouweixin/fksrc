@@ -112,19 +112,17 @@ public class DataDictionaryService {
     public void delete(Long id) {
         //验证是否存在
         Optional<DataDictionary> optional = dataDictionaryRepository.findById(id);
-        if (optional == null) {
+        if (optional.isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
         //判断是否为父类
         if (optional.get().getDicParentId() == -1) {
             List<DataDictionary> dataDictionaries = dataDictionaryRepository.findAllByDicParentId(optional.get().getDicId());
-            List<Long> dataIds = new ArrayList<>();
-            for (DataDictionary dataDictionary : dataDictionaries) {
-                dataIds.add(dataDictionary.getId());
-            }
-            dataIds.add(id);
-            ActionLogUtil.log(NAME, 1, dataDictionaryRepository.findAllById(dataIds));
-            dataDictionaryRepository.deleteByIdIn(dataIds);
+            // 把自己也加进来
+            dataDictionaries.add(optional.get());
+
+            ActionLogUtil.log(NAME, 1, dataDictionaries);
+            dataDictionaryRepository.deleteInBatch(dataDictionaries);
         } else {
             ActionLogUtil.log(NAME, 1, optional.get());
             dataDictionaryRepository.deleteById(id);
@@ -137,9 +135,19 @@ public class DataDictionaryService {
      * @param ids
      */
     @Transactional
-    public void deleteByIdIn(Long[] ids) {
-        for (Long id : ids) {
-            delete(id);
+    public void deleteByIdIn(Long[] ids, int flag) {
+        // 删除类型
+        if(flag < 0){
+            // 1.查询所有的数据
+            dataDictionaryRepository.findByDicParentIdIn(Arrays.asList(ids));
+
+            // 2.删除数据
+
+            // 3.删除类型
+            dataDictionaryRepository.deleteByIdIn(Arrays.asList(ids));
+        } else {
+            // 删除数据
+            dataDictionaryRepository.deleteByIdIn(Arrays.asList(ids));
         }
     }
 
