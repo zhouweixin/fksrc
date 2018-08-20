@@ -84,7 +84,7 @@ public class UserService {
         }
 
         // 获得默认密码
-        String password = defaultPasswordService.getDefaultPassword().getPassword();
+        String password = defaultPasswordService.getDefaultPassword().toString();
         // 加密
         encryptPassword(user, password);
 
