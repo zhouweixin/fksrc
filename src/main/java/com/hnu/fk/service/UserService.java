@@ -327,7 +327,6 @@ public class UserService {
             Session session = subject.getSession(true);
             session.setAttribute("user", user);
 
-            // TODO 保存登录日志
             LoginLogUtil.log();
 
             return user;
