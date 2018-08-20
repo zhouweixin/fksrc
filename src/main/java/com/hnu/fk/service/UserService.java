@@ -548,4 +548,39 @@ public class UserService {
         }
         return roleSecondLevelMenuOperationRepository.findByRoleIdIn(roleIds);
     }
+
+    /**
+     * 更新部门
+     *
+     * @param id
+     * @param departmentId
+     */
+    @Transactional
+    public void updateDepartmentById(Integer id, Integer departmentId) {
+        if(userRepository.findById(id).isPresent() == false){
+            throw new FkExceptions(EnumExceptions.UPDATE_DEPARTMENT_FAILED_USER_NOT_EXISTS);
+        }
+
+        Optional<Department> optional = departmentRepository.findById(departmentId);
+        if(optional.isPresent() ==  false){
+            throw new FkExceptions(EnumExceptions.UPDATE_DEPARTMENT_FAILED_DEPARTMENT_NOT_EXISTS);
+        }
+
+        userRepository.updateDepartmentById(optional.get(), id);
+    }
+
+    /**
+     * 更新启用
+     *
+     * @param id
+     * @param enable
+     */
+    @Transactional
+    public void updateEnableById(Integer id, Integer enable) {
+        if(userRepository.findById(id).isPresent() == false){
+            throw new FkExceptions(EnumExceptions.UPDATE_ENABLE_FAILED_USER_EXISTS);
+        }
+
+        userRepository.updateEnableById(enable, id);
+    }
 }

@@ -2,6 +2,7 @@ package com.hnu.fk.controller;
 
 import com.hnu.fk.domain.Result;
 import com.hnu.fk.domain.FirstLevelMenu;
+import com.hnu.fk.domain.SecondLevelMenu;
 import com.hnu.fk.service.FirstLevelMenuService;
 import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -162,5 +164,11 @@ public class FirstLevelMenuController {
 
         firstLevelMenuService.shift(id1, id2);
         return ResultUtil.success();
+    }
+
+    @GetMapping(value = "/getSecondLevelMenusById")
+    @ApiOperation(value = "通过主键查询二级菜单")
+    public Result<List<SecondLevelMenu>> getSecondLevelMenusById(@ApiParam(value = "一级菜单主键") @RequestParam Integer id){
+        return ResultUtil.success(firstLevelMenuService.getSecondLevelMenusById(id));
     }
 }

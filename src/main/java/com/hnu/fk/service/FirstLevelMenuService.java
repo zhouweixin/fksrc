@@ -2,9 +2,11 @@ package com.hnu.fk.service;
 
 import com.hnu.fk.domain.FirstLevelMenu;
 import com.hnu.fk.domain.Navigation;
+import com.hnu.fk.domain.SecondLevelMenu;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.FirstLevelMenuRepository;
+import com.hnu.fk.repository.SecondLevelMenuRepository;
 import com.hnu.fk.utils.ActionLogUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class FirstLevelMenuService {
     @Autowired
     private FirstLevelMenuRepository firstLevelMenuRepository;
 
+    @Autowired
+    private SecondLevelMenuRepository secondLevelMenuRepository;
+
     /**
      * 新增
      *
@@ -44,6 +49,10 @@ public class FirstLevelMenuService {
         if (firstLevelMenu == null || (firstLevelMenu.getId() != null && firstLevelMenuRepository.findById(firstLevelMenu.getId()).isPresent()) == true) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
+
+        Integer maxRank = firstLevelMenuRepository.findMaxRank();
+        int rank = maxRank == null ? 1 : maxRank + 1;
+        firstLevelMenu.setRank(rank);
 
         FirstLevelMenu save = firstLevelMenuRepository.save(firstLevelMenu);
         ActionLogUtil.log(NAME, 0, save);
@@ -216,5 +225,17 @@ public class FirstLevelMenuService {
         // 保存日志
         ActionLogUtil.log(NAME, oldFirstLevelMenu1, newFirstLevelMenu1);
         ActionLogUtil.log(NAME, oldFirstLevelMenu2, newFirstLevelMenu2);
+    }
+
+    /**
+     * 通过一级菜单查询所有二级菜单
+     *
+     * @param id
+     * @return
+     */
+    public List<SecondLevelMenu> getSecondLevelMenusById(Integer id) {
+        FirstLevelMenu firstLevelMenu = new FirstLevelMenu();
+        firstLevelMenu.setId(id);
+        return secondLevelMenuRepository.findByFirstLevelMenu(firstLevelMenu);
     }
 }

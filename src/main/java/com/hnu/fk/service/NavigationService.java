@@ -41,6 +41,9 @@ public class NavigationService {
     @Autowired
     private RoleSecondLevelMenuOperationRepository roleSecondLevelMenuOperationRepository;
 
+    @Autowired
+    private FirstLevelMenuRepository firstLevelMenuRepository;
+
     /**
      * 新增
      *
@@ -53,6 +56,10 @@ public class NavigationService {
         if (navigation == null || (navigation.getId() != null && navigationRepository.findById(navigation.getId()).isPresent()) == true) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
+
+        Integer maxRank = navigationRepository.findMaxRank();
+        int rank = maxRank == null ? 1 : maxRank + 1;
+        navigation.setRank(rank);
 
         Navigation save = navigationRepository.save(navigation);
         ActionLogUtil.log(NAME, 0, save);
@@ -437,5 +444,17 @@ public class NavigationService {
 
         List<Navigation> navigations = new ArrayList<>(navigationHashMap.values());
         return navigations;
+    }
+
+    /**
+     * 通过导航主键查询所有一级菜单
+     *
+     * @param id
+     * @return
+     */
+    public List<FirstLevelMenu> getFirstLevelMenusById(Integer id) {
+        Navigation navigation = new Navigation();
+        navigation.setId(id);
+        return firstLevelMenuRepository.findByNavigation(navigation);
     }
 }
