@@ -65,8 +65,7 @@ public class FirstLevelMenuService {
      * @param firstLevelMenu
      * @return
      */
-    public FirstLevelMenu
-    update(FirstLevelMenu firstLevelMenu) {
+    public FirstLevelMenu update(FirstLevelMenu firstLevelMenu) {
 
         // 验证是否存在
         Optional<FirstLevelMenu> optional = null;
@@ -258,6 +257,28 @@ public class FirstLevelMenuService {
 
         BeanUtils.copyProperties(oldFirstLevelMenu, newFirstLevelMenu);
         newFirstLevelMenu.setName(name);
+        firstLevelMenuRepository.save(newFirstLevelMenu);
+        ActionLogUtil.log(NAME, oldFirstLevelMenu, newFirstLevelMenu);
+    }
+
+    /**
+     * 更新图标路径
+     *
+     * @param id
+     * @param path
+     */
+    public void updatePathById(Integer id, String path) {
+        // 验证是否存在
+        Optional<FirstLevelMenu> optional = firstLevelMenuRepository.findById(id);
+        if (optional.isPresent() == false) {
+            throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
+        }
+
+        FirstLevelMenu oldFirstLevelMenu = optional.get();
+        FirstLevelMenu newFirstLevelMenu = new FirstLevelMenu();
+
+        BeanUtils.copyProperties(oldFirstLevelMenu, newFirstLevelMenu);
+        newFirstLevelMenu.setPath(path);
         firstLevelMenuRepository.save(newFirstLevelMenu);
         ActionLogUtil.log(NAME, oldFirstLevelMenu, newFirstLevelMenu);
     }

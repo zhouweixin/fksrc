@@ -5,6 +5,7 @@ import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.*;
 import com.hnu.fk.utils.ActionLogUtil;
+import com.hnu.fk.utils.LoginLogUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -323,11 +324,11 @@ public class UserService {
             user.setNavigations(navigations);
 
             // 获取 session， 如果不存在就创建
-//            Session session = subject.getSession(true);
-//            session.setAttribute("user", user);
+            Session session = subject.getSession(true);
+            session.setAttribute("user", user);
 
             // TODO 保存登录日志
-//            LoginLogUtil.log();
+            LoginLogUtil.log();
 
             return user;
         } catch (Exception e) {

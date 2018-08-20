@@ -62,6 +62,20 @@ public class FirstLevelMenuController {
     }
 
     /**
+     * 更新图标路径
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping(value = "/updatePathById")
+    @ApiOperation(value = "更新图标路径")
+    public Result<Object> updatePathById(@ApiParam(value = "主键") @RequestParam Integer id,
+                                         @ApiParam(value = "图标路径") @RequestParam String path) {
+        firstLevelMenuService.updatePathById(id, path);
+        return ResultUtil.success();
+    }
+
+    /**
      * 通过id删除
      *
      * @param id
