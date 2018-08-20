@@ -242,7 +242,7 @@ public class UserService {
      * @param password
      * @return
      */
-    public User login(Integer id, String password, HttpSession session) {
+    public User login(Integer id, String password) {
         // 验证用户是否存在
         if (!userRepository.findById(id).isPresent()) {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_NOT_EXISTS);
@@ -254,7 +254,7 @@ public class UserService {
             throw new FkExceptions(EnumExceptions.LOGIN_FAILED_USER_PASSWORD_NOT_MATCHER);
         }
 
-        session.setAttribute("user", user);
+//        session.setAttribute("user", user);
 
         return user;
     }
@@ -274,8 +274,7 @@ public class UserService {
         // 随机生成加密次数1-5
         int md5Num = new Random().nextInt(5) + 1;
         // 用带盐的加密
-//        String pwd = new Md5Hash(password, salt, md5Num).toString();
-        String pwd = new Md5Hash(password).toString();
+        String pwd = new Md5Hash(password, salt, md5Num).toString();
 
         user.setSalt(salt);
         user.setMd5Num(md5Num);
@@ -303,7 +302,7 @@ public class UserService {
         // md5 加密
         matcher.setHashAlgorithmName("md5");
         // 迭代次数
-//        matcher.setHashIterations(user.getMd5Num());
+        matcher.setHashIterations(user.getMd5Num());
 
         // 1、构建SecurityManager环境
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
@@ -324,15 +323,15 @@ public class UserService {
             user.setNavigations(navigations);
 
             // 获取 session， 如果不存在就创建
-            Session session = subject.getSession(true);
-            session.setAttribute("user", user);
+//            Session session = subject.getSession(true);
+//            session.setAttribute("user", user);
 
             // TODO 保存登录日志
 //            LoginLogUtil.log();
 
             return user;
         } catch (Exception e) {
-            // 登录失败
+            e.printStackTrace();
             return null;
         }
 
@@ -364,7 +363,7 @@ public class UserService {
         // md5 加密
         matcher.setHashAlgorithmName("md5");
         // 迭代次数
-//        matcher.setHashIterations(user.getMd5Num());
+        matcher.setHashIterations(user.getMd5Num());
 
         // 1、构建SecurityManager环境
         DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();

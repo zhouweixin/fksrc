@@ -33,7 +33,7 @@ public class SecondLevelMenuService {
     public static final String NAME = "二级菜单";
 
     @Autowired
-    private SecondLevelMenuRepository secondLevelRepositoryRepository;
+    private SecondLevelMenuRepository secondLevelMenuRepository;
 
     @Autowired
     private SecondLevelMenuOperationRepository secondLevelMenuOperationRepository;
@@ -50,15 +50,15 @@ public class SecondLevelMenuService {
     public SecondLevelMenu save(SecondLevelMenu secondLevelRepository) {
 
         // 验证是否存在
-        if (secondLevelRepository == null || (secondLevelRepository.getId() != null && secondLevelRepositoryRepository.findById(secondLevelRepository.getId()).isPresent()) == true) {
+        if (secondLevelRepository == null || (secondLevelRepository.getId() != null && secondLevelMenuRepository.findById(secondLevelRepository.getId()).isPresent()) == true) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
-        Integer maxRank = secondLevelRepositoryRepository.findMaxRank();
+        Integer maxRank = secondLevelMenuRepository.findMaxRank();
         int rank = maxRank == null ? 1 : maxRank + 1;
         secondLevelRepository.setRank(rank);
 
-        SecondLevelMenu save = secondLevelRepositoryRepository.save(secondLevelRepository);
+        SecondLevelMenu save = secondLevelMenuRepository.save(secondLevelRepository);
         ActionLogUtil.log(NAME, 0, save);
         return save;
     }
@@ -73,12 +73,12 @@ public class SecondLevelMenuService {
 
         // 验证是否存在
         Optional<SecondLevelMenu> optional = null;
-        if (secondLevelRepository == null || secondLevelRepository.getId() == null || (optional=secondLevelRepositoryRepository.findById(secondLevelRepository.getId())).isPresent() == false) {
+        if (secondLevelRepository == null || secondLevelRepository.getId() == null || (optional=secondLevelMenuRepository.findById(secondLevelRepository.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
 
         SecondLevelMenu oldSecondLevelMenu = optional.get();
-        SecondLevelMenu newSecondLevelMenu = secondLevelRepositoryRepository.save(secondLevelRepository);
+        SecondLevelMenu newSecondLevelMenu = secondLevelMenuRepository.save(secondLevelRepository);
         ActionLogUtil.log(NAME, oldSecondLevelMenu, newSecondLevelMenu);
         return newSecondLevelMenu;
     }
@@ -92,12 +92,12 @@ public class SecondLevelMenuService {
 
         // 验证是否存在
         Optional<SecondLevelMenu> optional = null;
-        if ((optional=secondLevelRepositoryRepository.findById(id)).isPresent() == false) {
+        if ((optional=secondLevelMenuRepository.findById(id)).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
 
         ActionLogUtil.log(NAME, 1, optional.get());
-        secondLevelRepositoryRepository.deleteById(id);
+        secondLevelMenuRepository.deleteById(id);
     }
 
     /**
@@ -107,8 +107,8 @@ public class SecondLevelMenuService {
      */
     @Transactional
     public void deleteByIdIn(Integer[] ids) {
-        ActionLogUtil.log(NAME, 1, secondLevelRepositoryRepository.findAllById(Arrays.asList(ids)));
-        secondLevelRepositoryRepository.deleteByIdIn(Arrays.asList(ids));
+        ActionLogUtil.log(NAME, 1, secondLevelMenuRepository.findAllById(Arrays.asList(ids)));
+        secondLevelMenuRepository.deleteByIdIn(Arrays.asList(ids));
     }
 
     /**
@@ -118,7 +118,7 @@ public class SecondLevelMenuService {
      * @return
      */
     public SecondLevelMenu findOne(Integer id) {
-        Optional<SecondLevelMenu> optional = secondLevelRepositoryRepository.findById(id);
+        Optional<SecondLevelMenu> optional = secondLevelMenuRepository.findById(id);
         if(optional.isPresent()){
             return optional.get();
         }
@@ -131,7 +131,7 @@ public class SecondLevelMenuService {
      * @return
      */
     public List<SecondLevelMenu> findAll() {
-        return secondLevelRepositoryRepository.findAll();
+        return secondLevelMenuRepository.findAll();
     }
 
     /**
@@ -161,7 +161,7 @@ public class SecondLevelMenuService {
         }
 
         Pageable pageable =PageRequest.of(page, size, sort);
-        return secondLevelRepositoryRepository.findAll(pageable);
+        return secondLevelMenuRepository.findAll(pageable);
     }
 
     /**
@@ -193,7 +193,7 @@ public class SecondLevelMenuService {
         }
 
         Pageable pageable =PageRequest.of(page, size, sort);
-        return secondLevelRepositoryRepository.findByNameLike("%" + name + "%", pageable);
+        return secondLevelMenuRepository.findByNameLike("%" + name + "%", pageable);
     }
 
     /**
@@ -203,8 +203,8 @@ public class SecondLevelMenuService {
      * @param id2
      */
     public void shift(Integer id1, Integer id2) {
-        Optional<SecondLevelMenu> optional1 = secondLevelRepositoryRepository.findById(id1);
-        Optional<SecondLevelMenu> optional2 = secondLevelRepositoryRepository.findById(id2);
+        Optional<SecondLevelMenu> optional1 = secondLevelMenuRepository.findById(id1);
+        Optional<SecondLevelMenu> optional2 = secondLevelMenuRepository.findById(id2);
 
         if(optional1.isPresent() == false || optional1.isPresent() == false){
             throw new FkExceptions(EnumExceptions.MENU_SHIFT_FAILED_NOT_EXISTS);
@@ -222,8 +222,8 @@ public class SecondLevelMenuService {
         optional2.get().setRank(temp);
 
         // 更新数据
-        SecondLevelMenu newSecondLevelMenu1 = secondLevelRepositoryRepository.save(optional1.get());
-        SecondLevelMenu newSecondLevelMenu2 = secondLevelRepositoryRepository.save(optional2.get());
+        SecondLevelMenu newSecondLevelMenu1 = secondLevelMenuRepository.save(optional1.get());
+        SecondLevelMenu newSecondLevelMenu2 = secondLevelMenuRepository.save(optional2.get());
 
         // 保存日志
         ActionLogUtil.log(NAME, oldSecondLevelMenu1, newSecondLevelMenu1);
@@ -262,5 +262,27 @@ public class SecondLevelMenuService {
         }
 
         secondLevelMenuOperationRepository.saveAll(menuOperations);
+    }
+
+    /**
+     * 更新名称
+     * 
+     * @param id
+     * @param name
+     */
+    public void updateNameById(Integer id, String name) {
+        // 验证是否存在
+        Optional<SecondLevelMenu> optional = secondLevelMenuRepository.findById(id);
+        if (optional.isPresent() == false) {
+            throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
+        }
+
+        SecondLevelMenu oldSecondLevelMenu = optional.get();
+        SecondLevelMenu newSecondLevelMenu = new SecondLevelMenu();
+
+        BeanUtils.copyProperties(oldSecondLevelMenu, newSecondLevelMenu);
+        newSecondLevelMenu.setName(name);
+        secondLevelMenuRepository.save(newSecondLevelMenu);
+        ActionLogUtil.log(NAME, oldSecondLevelMenu, newSecondLevelMenu);
     }
 }

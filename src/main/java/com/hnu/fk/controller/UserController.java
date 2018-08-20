@@ -48,8 +48,8 @@ public class UserController {
 
     @PostMapping(value = "/login")
     @ApiOperation(value = "登录")
-    public Result<User> login(Integer id, String password, HttpSession session) {
-        return ResultUtil.success(userService.login(id, password, session));
+    public Result<User> login(Integer id, String password) {
+        return ResultUtil.success(userService.login(id, password));
     }
 
     /**

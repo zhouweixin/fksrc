@@ -457,4 +457,26 @@ public class NavigationService {
         navigation.setId(id);
         return firstLevelMenuRepository.findByNavigation(navigation);
     }
+
+    /**
+     * 更新名称
+     *
+     * @param id
+     * @param name
+     */
+    public void updateNameById(Integer id, String name) {
+        // 验证是否存在
+        Optional<Navigation> optional = navigationRepository.findById(id);
+        if (optional.isPresent() == false) {
+            throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
+        }
+
+        Navigation oldNavigation = optional.get();
+        Navigation newNavigation = new Navigation();
+
+        BeanUtils.copyProperties(oldNavigation, newNavigation);
+        newNavigation.setName(name);
+        navigationRepository.save(newNavigation);
+        ActionLogUtil.log(NAME, oldNavigation, newNavigation);
+    }
 }

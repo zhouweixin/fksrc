@@ -47,20 +47,17 @@ public class SecondLevelMenuController {
     }
 
     /**
-     * 更新
+     * 更新名称
      *
-     * @param secondLevelMenu
+     * @param id
      * @return
      */
-    @PostMapping(value = "/update")
-    @ApiOperation(value = "更新")
-    public Result<SecondLevelMenu> update(@Valid SecondLevelMenu secondLevelMenu, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
-        }
-
-        return ResultUtil.success(secondLevelMenuService.update(secondLevelMenu));
+    @PostMapping(value = "/updateNameById")
+    @ApiOperation(value = "更新名称")
+    public Result<SecondLevelMenu> updateNameById(@ApiParam(value = "主键") @RequestParam Integer id,
+                                             @ApiParam(value = "名称") @RequestParam String name) {
+        secondLevelMenuService.updateNameById(id, name);
+        return ResultUtil.success();
     }
 
     /**
@@ -171,6 +168,8 @@ public class SecondLevelMenuController {
         return ResultUtil.success(secondLevelMenuService.getOperationsById(id));
     }
 
+    @GetMapping(value = "/assignOperations")
+    @ApiOperation(value = "分配操作给二级菜单")
     public Result<Object> assignOperations(
             @ApiParam(value = "二级菜单主键") @RequestParam Integer menuId,
             @ApiParam(value = "操作主键数组") @RequestParam Integer[] operationIds){

@@ -48,20 +48,17 @@ public class NavigationController {
     }
 
     /**
-     * 更新
+     * 更新名称
      *
-     * @param navigation
+     * @param id
      * @return
      */
-    @PostMapping(value = "/update")
-    @ApiOperation(value = "更新")
-    public Result<Navigation> update(@Valid Navigation navigation, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
-        }
-
-        return ResultUtil.success(navigationService.update(navigation));
+    @PostMapping(value = "/updateNameById")
+    @ApiOperation(value = "更新名称")
+    public Result<Navigation> updateNameById(@ApiParam(value = "主键") @RequestParam Integer id,
+                                         @ApiParam(value = "名称") @RequestParam String name) {
+        navigationService.updateNameById(id, name);
+        return ResultUtil.success();
     }
 
     /**

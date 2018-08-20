@@ -48,20 +48,17 @@ public class FirstLevelMenuController {
     }
 
     /**
-     * 更新
+     * 更新名称
      *
-     * @param firstLevelMenu
+     * @param id
      * @return
      */
-    @PostMapping(value = "/update")
-    @ApiOperation(value = "更新")
-    public Result<FirstLevelMenu> update(@Valid FirstLevelMenu firstLevelMenu, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
-        }
-
-        return ResultUtil.success(firstLevelMenuService.update(firstLevelMenu));
+    @PostMapping(value = "/updateNameById")
+    @ApiOperation(value = "更新名称")
+    public Result<Object> updateNameById(@ApiParam(value = "主键") @RequestParam Integer id,
+                                             @ApiParam(value = "名称") @RequestParam String name) {
+        firstLevelMenuService.updateNameById(id, name);
+        return ResultUtil.success();
     }
 
     /**
