@@ -42,6 +42,7 @@ public enum EnumExceptions {
     UPDATE_FAILED_MATERAIL_TYPE_NOT_EXISTS(33, "修改失败, 物料类型不存在"),
     ADD_FAILED_ENTER_USER_NOT_EXISTS(34, "录入失败, 录入人不存在"),
     UPDATE_FAILED_MODIFY_USER_NOT_EXISTS(35, "修改失败, 修改人不存在"),
+	SEARCH_FAILED_NAME_NULL(36,"查询失败，名称不能为空"),
 	;
 
     /** 编码 */

@@ -29,7 +29,7 @@ public class ActionLog {
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ApiModelProperty("用户")
-    @ExcelEntity(id = "Operator")
+    @ExcelEntity(id = "alOperator")
     private User user;
 
     @ApiModelProperty("操作对象")
