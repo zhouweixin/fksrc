@@ -21,7 +21,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "basicinfo_dictionary")
-@ApiModel(description = "数据字典")
+@ApiModel(description = "数据字典数据")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "fieldHandler"})
 public class DataDictionary {
     /**
@@ -32,32 +32,10 @@ public class DataDictionary {
     @ApiModelProperty("主键：自增长")
     private Long id;
 
-    public static final int FLAG_TYPE = -1;
-    public static final int FLAG_DATA = 1;
-
-    /**
-     * 数据字典编号
-     */
-    @Column(nullable = false, unique = true)
-    @ApiModelProperty("数据字典编号")
-    @NotNull(message = "数据字典编号不可为空")
-    private Integer dicId;
-
-    /**
-     * 字典父编号,字典数据的父编号,父编号为-1
-     */
-    @Column(nullable = false)
-    @ApiModelProperty("字典父编号,字典类型为-1,数据的父编号是其他类型的编号")
-    @NotNull(message = "字典父编号不可为空")
-    private Integer dicParentId;
-
-    @ManyToOne(cascade = {CascadeType.REMOVE})
-    private DataDictionary dataDictionary;
-
     /**
      * 字典名称
      */
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @ApiModelProperty("字典名称")
     @NotNull(message = "字典名称不可为空")
     private String dicName;
@@ -65,23 +43,31 @@ public class DataDictionary {
     /**
      * 字典值
      */
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @ApiModelProperty("字典值")
     @NotNull(message = "字典值不可为空")
     private String dicContent;
 
-    /**
-     * 排序
-     */
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty("显示顺序,自增长")
-    private Integer rank = 1;
 
     /**
      * 字典数据描述
      */
     @ApiModelProperty("字典数据描述")
     private String dicDescription;
+
+    /**
+     * 排序
+     */
+    @ApiModelProperty("显示顺序,自增长")
+    private Integer rank;
+
+    /**
+     * 字典所属类型
+     */
+    @ApiModelProperty("字典所属类型")
+    @ManyToOne(targetEntity = DataDictionaryType.class)
+    @JoinColumn(name = "parent_type_id", referencedColumnName = "id")
+    private DataDictionaryType dataDictionaryType;
 
     /**
      * 更新时间
@@ -100,22 +86,6 @@ public class DataDictionary {
         this.id = id;
     }
 
-    public Integer getDicId() {
-        return dicId;
-    }
-
-    public void setDicId(Integer dicId) {
-        this.dicId = dicId;
-    }
-
-    public Integer getDicParentId() {
-        return dicParentId;
-    }
-
-    public void setDicParentId(Integer dicParentId) {
-        this.dicParentId = dicParentId;
-    }
-
     public String getDicName() {
         return dicName;
     }
@@ -132,14 +102,6 @@ public class DataDictionary {
         this.dicContent = dicContent;
     }
 
-    public Integer getRank() {
-        return rank;
-    }
-
-    public void setRank(Integer rank) {
-        this.rank = rank;
-    }
-
     public String getDicDescription() {
         return dicDescription;
     }
@@ -148,20 +110,28 @@ public class DataDictionary {
         this.dicDescription = dicDescription;
     }
 
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    @JsonIgnore
+    public DataDictionaryType getDataDictionaryType() {
+        return dataDictionaryType;
+    }
+
+    public void setDataDictionaryType(DataDictionaryType dataDictionaryType) {
+        this.dataDictionaryType = dataDictionaryType;
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    @JsonIgnore
-    public DataDictionary getDataDictionary() {
-        return dataDictionary;
-    }
-
-    public void setDataDictionary(DataDictionary dataDictionary) {
-        this.dataDictionary = dataDictionary;
     }
 }

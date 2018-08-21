@@ -1,9 +1,11 @@
 package com.hnu.fk.service;
 
 import com.hnu.fk.domain.DataDictionary;
+import com.hnu.fk.domain.DataDictionaryType;
 import com.hnu.fk.exception.EnumExceptions;
 import com.hnu.fk.exception.FkExceptions;
 import com.hnu.fk.repository.DataDictionaryRepository;
+import com.hnu.fk.repository.DataDictionaryTypeRepository;
 import com.hnu.fk.utils.ActionLogUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,110 +26,217 @@ import java.util.*;
 
 @Service
 public class DataDictionaryService {
-    public static final String NAME = "数据字典";
+    public static final String TYPENAME = "数据字典类型";
+    public static final String DATANAME = "数据字典数据";
     @Autowired
     private DataDictionaryRepository dataDictionaryRepository;
+    @Autowired
+    private DataDictionaryTypeRepository dataDictionaryTypeRepository;
 
     /**
-     * 新增字典
+     * 新增数据字典类型
      *
-     * @param dataDictionary
+     * @param dataDictionaryType
      * @return
      */
-    public DataDictionary save(DataDictionary dataDictionary) {
+    public DataDictionaryType saveType(DataDictionaryType dataDictionaryType) {
+
         //验证是否存在
-        if (dataDictionary == null || (dataDictionary.getId() != null && dataDictionaryRepository.findById(dataDictionary.getId()).isPresent() == true)) {
+        if (dataDictionaryType == null ||
+                (dataDictionaryType.getId() != null && dataDictionaryRepository.findById(dataDictionaryType.getId()).isPresent()) == true) {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
-        //判断是类型还是数据
-        if (dataDictionary.getDicParentId() != -1 &&
-                dataDictionaryRepository.findFirstByDicId(dataDictionary.getDicParentId()) == null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DATAPARENT_NOT_EXISTS);
+
+        //验证值是否同名
+        if (dataDictionaryTypeRepository.findFirstByTypeValue(dataDictionaryType.getTypeValue()) != null) {
+            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICVALUE_DUPLICATE);
         }
-        //编号重复
-        if (dataDictionaryRepository.findFirstByDicId(dataDictionary.getDicId()) != null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICID_DUPLICATE);
-        }
-        //名称重复
-        if (dataDictionaryRepository.findFirstByDicName(dataDictionary.getDicName()) != null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICNAME_DUPLICATE);
-        }
-        //值重复
-        if (dataDictionaryRepository.findFirstByDicContent(dataDictionary.getDicContent()) != null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICCONTENT_DUPLICATE);
-        }
-        Integer max = dataDictionaryRepository.maxRank();
+
+        //自动填入排序
+        Integer max = dataDictionaryTypeRepository.maxRank();
         if (max == null) {
             max = 0;
         }
-        dataDictionary.setRank(max + 1);
-        DataDictionary save = dataDictionaryRepository.save(dataDictionary);
-        ActionLogUtil.log(NAME, 0, save);
+        dataDictionaryType.setRank(max + 1);
+        DataDictionaryType save = dataDictionaryTypeRepository.save(dataDictionaryType);
+        ActionLogUtil.log(TYPENAME, 0, save);
         return save;
+
     }
 
     /**
-     * 更新字典
-     *
-     * @param dataDictionary
-     * @return
+     * 更新数据字典类型
      */
-    public DataDictionary update(DataDictionary dataDictionary) {
-        Optional<DataDictionary> optional = null;
+    public DataDictionaryType updateType(DataDictionaryType dataDictionaryType) {
+        Optional<DataDictionaryType> optional = null;
         //验证是否存在
-        if (dataDictionary == null || dataDictionary.getId() == null ||
-                (optional = dataDictionaryRepository.findById(dataDictionary.getId())).isPresent() == false) {
+        if (dataDictionaryType == null || dataDictionaryType.getId() == null ||
+                (optional = dataDictionaryTypeRepository.findById(dataDictionaryType.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
-        //判断是类型还是数据
-        if (dataDictionary.getDicParentId() != -1 &&
-                dataDictionaryRepository.findFirstByDicId(dataDictionary.getDicParentId()) == null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DATAPARENT_NOT_EXISTS);
-        }
-        //编号重复
-        if (dataDictionaryRepository.findFirstByIdNotAndDicId(dataDictionary.getId(), dataDictionary.getDicId()) != null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICID_DUPLICATE);
-        }
-        //名称重复
-        if (dataDictionaryRepository.findFirstByIdNotAndDicName(dataDictionary.getId(), dataDictionary.getDicName()) != null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICNAME_DUPLICATE);
-        }
-        //值重复
-        if (dataDictionaryRepository.findFirstByIdNotAndDicContent(dataDictionary.getId(), dataDictionary.getDicContent()) != null) {
-            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICCONTENT_DUPLICATE);
-        }
-        DataDictionary oldValue = optional.get();
-        DataDictionary newValue = dataDictionaryRepository.save(dataDictionary);
-        ActionLogUtil.log(NAME, oldValue, newValue);
+        DataDictionaryType oldValue = optional.get();
+        DataDictionaryType newValue = dataDictionaryTypeRepository.save(dataDictionaryType);
+
+        ActionLogUtil.log(TYPENAME, oldValue, newValue);
 
         return newValue;
     }
 
     /**
-     * 删除字典,删除类型会删除其下所有数据
+     * 删除数据字典类型
+     */
+    public void deleteType(Long id) {
+        // 验证是否存在
+        if (dataDictionaryTypeRepository.findById(id).isPresent() == false) {
+            throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
+        }
+        ActionLogUtil.log(TYPENAME, 1, dataDictionaryTypeRepository.getOne(id));
+
+        dataDictionaryTypeRepository.deleteById(id);
+    }
+
+    /**
+     * 批量删除数据字典类型
+     */
+    @Transactional
+    public void deleteTypeInbatch(Long[] ids) {
+        List<DataDictionary> dataDictionaries = dataDictionaryRepository.findAllByDataDictionaryTypeIdIn(Arrays.asList(ids));
+        ActionLogUtil.log(TYPENAME, 1, dataDictionaryTypeRepository.findAllById(Arrays.asList(ids)));
+        ActionLogUtil.log(DATANAME,1,dataDictionaries);
+        dataDictionaryTypeRepository.deleteByIdIn(Arrays.asList(ids));
+    }
+
+    /**
+     * 根据id查询数据字典类型
+     */
+    public DataDictionaryType findOneType(Long id) {
+        return dataDictionaryTypeRepository.findById(id).get();
+    }
+
+    /**
+     * 查询所有数据字典类型
+     *
+     * @return
+     */
+    public List<DataDictionaryType> findAllTypes() {
+        return dataDictionaryTypeRepository.findAll();
+    }
+
+    /**
+     * 查询所有数据字典类型-分页
+     */
+    public Page<DataDictionaryType> findAllTypesByPage(Integer page, Integer size, String sortFieldName, Integer asc) {
+        //判断排序字段名是否存在
+        try {
+            DataDictionary.class.getField(sortFieldName);
+        } catch (Exception e) {
+            sortFieldName = "id";
+        }
+        Sort sort = null;
+        if (asc == 0) {
+            sort = new Sort(Sort.Direction.DESC, sortFieldName);
+        } else {
+            sort = new Sort(Sort.Direction.ASC, sortFieldName);
+        }
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return dataDictionaryTypeRepository.findAll(pageable);
+    }
+
+    /**
+     * 模糊查询所有数据字典类型-分页
+     */
+    public Page<DataDictionaryType> findAllTypeNameLikeByPage(Integer page, Integer size, String sortFieldName, Integer asc, String typeName) {
+        //判断排序字段名是否存在
+        try {
+            DataDictionary.class.getField(sortFieldName);
+        } catch (Exception e) {
+            sortFieldName = "id";
+        }
+        Sort sort = null;
+        if (asc == 0) {
+            sort = new Sort(Sort.Direction.DESC, sortFieldName);
+        } else {
+            sort = new Sort(Sort.Direction.ASC, sortFieldName);
+        }
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return dataDictionaryTypeRepository.findByTypeNameLike(typeName, pageable);
+    }
+
+    /**
+     * 新增数据字典数据
+     */
+    public DataDictionary saveData(DataDictionary dataDictionary) {
+        //验证是否存在
+        if (dataDictionary == null || (dataDictionary.getId() != null && dataDictionaryRepository.findById(dataDictionary.getId()).isPresent()) == true) {
+            throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
+        }
+        //验证是否存在类型
+        if (dataDictionary.getDataDictionaryType() == null || dataDictionaryTypeRepository.findById(dataDictionary.getDataDictionaryType().getId()) == null) {
+            throw new FkExceptions(EnumExceptions.ADD_FAILED_DATAPARENT_NOT_EXISTS);
+        }
+        //值重复
+        if (dataDictionaryRepository.findFirstByDicContentAndDataDictionaryTypeId(dataDictionary.getDicContent(), dataDictionary.getDataDictionaryType().getId()) != null) {
+            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICVALUE_DUPLICATE);
+        }
+
+        //自动填入排序
+        Integer max = dataDictionaryRepository.maxRank();
+        if (max == null) {
+            max = 0;
+        }
+        dataDictionary.setRank(max + 1);
+
+        DataDictionary save = dataDictionaryRepository.save(dataDictionary);
+        ActionLogUtil.log(DATANAME, 0, save);
+        return save;
+    }
+
+    /**
+     * 更新数据字典数据
+     *
+     * @param dataDictionary
+     * @return
+     */
+    public DataDictionary updateData(DataDictionary dataDictionary) {
+        Optional<DataDictionary> optional = null;
+        //验证是否存在
+        if (dataDictionary == null || dataDictionary.getId() == null ||
+                (optional = dataDictionaryRepository.findById(dataDictionary.getId())).isPresent() == false
+                ) {
+            throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
+        }
+        //验证是否存在类型
+        if (dataDictionary.getDataDictionaryType() == null || dataDictionaryTypeRepository.findById(dataDictionary.getDataDictionaryType().getId()) == null) {
+            throw new FkExceptions(EnumExceptions.ADD_FAILED_DATAPARENT_NOT_EXISTS);
+        }
+        //值重复
+        if (dataDictionaryRepository.findFirstByIdNotAndDicContentAndDataDictionaryTypeId(dataDictionary.getId(), dataDictionary.getDicContent(),dataDictionary.getDataDictionaryType().getId()) != null) {
+            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICVALUE_DUPLICATE);
+        }
+
+        DataDictionary oldValue = optional.get();
+        DataDictionary newValue = dataDictionaryRepository.save(dataDictionary);
+
+        ActionLogUtil.log(DATANAME, oldValue, newValue);
+
+        return newValue;
+    }
+
+    /**
+     * 删除字典数据
      *
      * @param id
      */
-    @Transactional
-    public void delete(Long id) {
+    public void deleteData(Long id) {
         //验证是否存在
         Optional<DataDictionary> optional = dataDictionaryRepository.findById(id);
         if (optional.isPresent() == false) {
             throw new FkExceptions(EnumExceptions.DELETE_FAILED_NOT_EXIST);
         }
-        //判断是否为父类
-        if (optional.get().getDicParentId() == -1) {
-            List<DataDictionary> dataDictionaries = dataDictionaryRepository.findAllByDicParentId(optional.get().getDicId());
-            // 把自己也加进来
-            dataDictionaries.add(optional.get());
-
-            ActionLogUtil.log(NAME, 1, dataDictionaries);
-            dataDictionaryRepository.deleteInBatch(dataDictionaries);
-        } else {
-            ActionLogUtil.log(NAME, 1, optional.get());
+            ActionLogUtil.log(DATANAME, 1, optional.get());
             dataDictionaryRepository.deleteById(id);
         }
-    }
+
 
     /**
      * 批量删除字典
@@ -135,20 +244,9 @@ public class DataDictionaryService {
      * @param ids
      */
     @Transactional
-    public void deleteByIdIn(Long[] ids, int flag) {
-        // 删除类型
-        if(flag < 0){
-            // 1.查询所有的数据
-            dataDictionaryRepository.findByDicParentIdIn(Arrays.asList(ids));
-
-            // 2.删除数据
-
-            // 3.删除类型
+    public void deleteDataInBatch(Long[] ids) {
+            ActionLogUtil.log(DATANAME, 1,dataDictionaryRepository.findAllById(Arrays.asList(ids)));
             dataDictionaryRepository.deleteByIdIn(Arrays.asList(ids));
-        } else {
-            // 删除数据
-            dataDictionaryRepository.deleteByIdIn(Arrays.asList(ids));
-        }
     }
 
     /**
@@ -157,45 +255,26 @@ public class DataDictionaryService {
      * @param id
      * @return
      */
-    public DataDictionary findOne(Long id) {
+    public DataDictionary findOneData(Long id) {
         return dataDictionaryRepository.findById(id).get();
     }
 
-    /**
-     * 根据编码查询字典
-     */
-    public DataDictionary findOneByDicId(Integer dicId,Integer parentId){
-        return dataDictionaryRepository.findByDicIdAndDicParentId(dicId,parentId);
-    }
 
     /**
-     * 根据类型编码查询其所有数据
-     * @param dicId
-     * @return
-     */
-    public List<DataDictionary> findAllChildrenById(Integer dicId) {
-        return dataDictionaryRepository.findAllByDicParentId(dicId);
-    }
-
-    /**
-     * 查询所有类型
+     * 根据类型主键查询其所有数据
      *
+     * @param id
      * @return
      */
-    public List<DataDictionary> findAllParents() {
-        return dataDictionaryRepository.findAllByDicParentId(-1);
+    public List<DataDictionary> findAllDataByTypeId(Long id) {
+        return dataDictionaryRepository.findAllByDataDictionaryTypeId(id);
     }
 
     /**
-     * 根据类型编码分页查询其所有数据
-     * @param page
-     * @param size
-     * @param sortFieldName
-     * @param asc
-     * @param dicId
-     * @return
+     * 根据类型主键查询其所有数据-分页
+     *
      */
-        public Page<DataDictionary> findAllChildrensByPageById(Integer page, Integer size, String sortFieldName, Integer asc, Integer dicId) {
+    public Page<DataDictionary> findAllDataByPageByTypeId(Integer page, Integer size, String sortFieldName, Integer asc, Long id) {
         // 判断排序字段名是否存在
         try {
             DataDictionary.class.getDeclaredField(sortFieldName);
@@ -211,21 +290,22 @@ public class DataDictionaryService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return dataDictionaryRepository.findAllByDicParentId(pageable, dicId);
+        return dataDictionaryRepository.findAllByDataDictionaryTypeId(id,pageable);
     }
 
     /**
-     * 根据类型编码模糊查询其下所有数据-分页
+     * 根据类型主键模糊查询其下所有数据-分页
+     *
      * @param page
      * @param size
      * @param sortFieldName
      * @param asc
-     * @param dicId
+     * @param id
      * @param name
      * @return
      */
-    public Page<DataDictionary> findChildrensByPageNameLikeById(Integer page, Integer size,
-                                                                String sortFieldName, Integer asc, Integer dicId, String name) {
+    public Page<DataDictionary> findDataByPageNameLikeById(Integer page, Integer size,
+                                                           String sortFieldName, Integer asc, Long id, String name) {
         //判断字段名是否存在
         try {
             DataDictionary.class.getDeclaredField(sortFieldName);
@@ -239,41 +319,7 @@ public class DataDictionaryService {
             sort = new Sort(Sort.Direction.ASC, sortFieldName);
         }
         Pageable pageable = PageRequest.of(page, size, sort);
-        return dataDictionaryRepository.findByDicNameLikeAndDicParentId(pageable, "%" + name + "%", dicId);
+        return dataDictionaryRepository.findAllByDataDictionaryTypeIdAndDicNameLike(id, "%" + name + "%", pageable);
     }
 
-    /**
-     * 查询所有
-     *
-     * @return
-     */
-    public List<DataDictionary> findAll() {
-        return dataDictionaryRepository.findAll();
-    }
-
-    /**
-     * 分页查询所有类型
-     *
-     * @param page
-     * @param size
-     * @param sortFieldName
-     * @param asc
-     * @return
-     */
-    public Page<DataDictionary> findAllParentsByPage(Integer page, Integer size, String sortFieldName, Integer asc) {
-        //判断排序字段名是否存在
-        try {
-            DataDictionary.class.getField(sortFieldName);
-        } catch (Exception e) {
-            sortFieldName = "id";
-        }
-        Sort sort = null;
-        if (asc == 0) {
-            sort = new Sort(Sort.Direction.DESC, sortFieldName);
-        } else {
-            sort = new Sort(Sort.Direction.ASC, sortFieldName);
-        }
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return dataDictionaryRepository.findAll(pageable);
-    }
 }
