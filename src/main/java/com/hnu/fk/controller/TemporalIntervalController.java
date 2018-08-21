@@ -35,7 +35,7 @@ import static cn.afterturn.easypoi.excel.entity.enmus.ExcelType.XSSF;
  */
 @RestController
 @RequestMapping(value = "/temporalInterval")
-@Api(tags = "月统计时间区间表")
+@Api(tags = "月统计时间区间")
 public class TemporalIntervalController {
     @Autowired
     private TemporalIntervalService temporalIntervalService;
@@ -70,7 +70,7 @@ public class TemporalIntervalController {
     @GetMapping(value = "/download")
     @ApiOperation(value = "导出excel",notes = "点击下载指定年份的excel")
     public Result downloadThisYear(@ApiParam(value = "年份") @RequestParam String statisticalYear, HttpServletResponse response) throws IOException {
-        ActionLogUtil.log("月统计时间区间表");
+        ActionLogUtil.log("月统计时间区间");
 
         List<TemporalInterval> temporalIntervals = temporalIntervalService.getAllByYear(statisticalYear);
 
