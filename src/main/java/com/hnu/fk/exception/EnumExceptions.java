@@ -41,7 +41,9 @@ public enum EnumExceptions {
     UPDATE_DEPARTMENT_FAILED_DEPARTMENT_NOT_EXISTS(30,"修改部门失败, 部门不存在"),
     UPDATE_ENABLE_FAILED_USER_EXISTS(31,"修改启用失败, 用户不存在"),
     ADD_FAILED_MATERAIL_TYPE_NOT_EXISTS(32, "新增失败, 物料类型不存在"),
-    UPDATE_FAILED_MATERAIL_TYPE_NOT_EXISTS(33, "更新失败, 物料类型不存在"),
+    UPDATE_FAILED_MATERAIL_TYPE_NOT_EXISTS(33, "修改失败, 物料类型不存在"),
+    ADD_FAILED_ENTER_USER_NOT_EXISTS(34, "录入失败, 录入人不存在"),
+    UPDATE_FAILED_MODIFY_USER_NOT_EXISTS(35, "修改失败, 修改人不存在"),
 	;
 
     /** 编码 */
