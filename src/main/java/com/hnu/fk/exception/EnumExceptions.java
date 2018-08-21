@@ -43,6 +43,8 @@ public enum EnumExceptions {
     ADD_FAILED_ENTER_USER_NOT_EXISTS(34, "录入失败, 录入人不存在"),
     UPDATE_FAILED_MODIFY_USER_NOT_EXISTS(35, "修改失败, 修改人不存在"),
 	SEARCH_FAILED_NAME_NULL(36,"查询失败，名称不能为空"),
+    EXPORT_FAILED_FIELD_NULL(37,"导出失败, 字段为空"),
+    EXPORT_FAILED_DATA_NULL(38,"导出失败, 数据为空"),
 	;
 
     /** 编码 */

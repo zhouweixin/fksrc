@@ -53,7 +53,7 @@ public class MaterialConsumptionHeader {
     @ApiModelProperty(value = "修改人")
     private User modifyUser;
 
-    @OneToMany(targetEntity = MaterialConsumptionDetail.class, cascade = {CascadeType.ALL})
+    @OneToMany(targetEntity = MaterialConsumptionDetail.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "header_id", referencedColumnName = "id")
     private List<MaterialConsumptionDetail> materialConsumptionDetails;
 
