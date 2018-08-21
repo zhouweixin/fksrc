@@ -18,9 +18,14 @@ public class LogDescriptionUtil {
      * @return
      */
     public static <T>String log(T oldData,T newData) {
-        String description = "";
         Field   fields[]   =   oldData.getClass().getDeclaredFields();
         Field.setAccessible(fields,true);
+        String description = null;
+        try {
+            description = fields[0].getName()+ ":" + fields[0].get(oldData)+ "|";
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         for (Field field : fields) {
             try {
                 if(field.get(oldData)!= null && field.get(newData)!=null) {
