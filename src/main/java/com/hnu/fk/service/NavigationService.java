@@ -457,4 +457,60 @@ public class NavigationService {
         navigation.setId(id);
         return firstLevelMenuRepository.findByNavigation(navigation);
     }
+
+    /**
+     * 更新名称
+     *
+     * @param id
+     * @param name
+     */
+    public void updateNameById(Integer id, String name) {
+        // 验证是否存在
+        Optional<Navigation> optional = navigationRepository.findById(id);
+        if (optional.isPresent() == false) {
+            throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
+        }
+
+        Navigation oldNavigation = optional.get();
+        Navigation newNavigation = new Navigation();
+
+        BeanUtils.copyProperties(oldNavigation, newNavigation);
+        newNavigation.setName(name);
+        navigationRepository.save(newNavigation);
+        ActionLogUtil.log(NAME, oldNavigation, newNavigation);
+    }
+
+    /**
+     * 上下移动菜单
+     *
+     * @param id1
+     * @param id2
+     */
+    public void shift(Integer id1, Integer id2) {
+        Optional<Navigation> optional1 = navigationRepository.findById(id1);
+        Optional<Navigation> optional2 = navigationRepository.findById(id2);
+
+        if(optional1.isPresent() == false || optional1.isPresent() == false){
+            throw new FkExceptions(EnumExceptions.MENU_SHIFT_FAILED_NOT_EXISTS);
+        }
+
+        // 复制旧数据
+        Navigation oldNavigation1 = new Navigation();
+        Navigation oldNavigation2 = new Navigation();
+        BeanUtils.copyProperties(optional1.get(), oldNavigation1);
+        BeanUtils.copyProperties(optional2.get(), oldNavigation2);
+
+        // 交换序号
+        int temp = optional1.get().getRank();
+        optional1.get().setRank(optional2.get().getRank());
+        optional2.get().setRank(temp);
+
+        // 更新数据
+        Navigation newNavigation1 = navigationRepository.save(optional1.get());
+        Navigation newNavigation2 = navigationRepository.save(optional2.get());
+
+        // 保存日志
+        ActionLogUtil.log(NAME, oldNavigation1, newNavigation1);
+        ActionLogUtil.log(NAME, oldNavigation2, newNavigation2);
+    }
 }

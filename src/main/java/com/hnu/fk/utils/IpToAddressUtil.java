@@ -3,8 +3,7 @@ package com.hnu.fk.utils;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 
 /**
  * 说明:
@@ -17,8 +16,10 @@ public class IpToAddressUtil {
     public static String getAddresses(String ip) {
         String content = "ip=" + ip;
         String encodingString = "utf-8";
-        // 这里调用淘宝API
+        // 淘宝API
         String urlStr = "http://ip.taobao.com/service/getIpInfo.php";
+        //String urlStr = "http://api.help.bj.cn/apis/ip/";
+        // 国外IP http://ip-api.com/json/
         String returnStr = getResult(urlStr, content, encodingString);
         if (returnStr != null) {
             // 处理返回的json信息
@@ -29,6 +30,8 @@ public class IpToAddressUtil {
             String area = json.getString("area");
             //省份
             String region = json.getString("region");
+            //String region = json.getString("province");
+
             //城市
             String city = json.getString("city");
             //区/县
@@ -44,8 +47,9 @@ public class IpToAddressUtil {
                 return "无效IP";
             }
             return address;
+        }else{
+            return "地址查询失败";
         }
-        return null;
     }
     /**
      * @param urlStr
@@ -62,8 +66,8 @@ public class IpToAddressUtil {
         try {
             url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();// 新建连接实例
-            connection.setConnectTimeout(2000);// 设置连接超时时间，单位毫秒
-            connection.setReadTimeout(2000);// 设置读取数据超时时间，单位毫秒
+            connection.setConnectTimeout(1000);// 设置连接超时时间，单位毫秒
+            connection.setReadTimeout(1000);// 设置读取数据超时时间，单位毫秒
             connection.setDoOutput(true);// 是否打开输出流 true|false
             connection.setDoInput(true);// 是否打开输入流true|false
             connection.setRequestMethod("POST");// 提交方法POST|GET
@@ -85,20 +89,20 @@ public class IpToAddressUtil {
             reader.close();
             return buffer.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         } finally {
             if (connection != null) {
                 connection.disconnect();// 关闭连接
             }
         }
-        return null;
     }
 
     // 测试
-  /*  public static void main(String[] args) {
+/*    public static void main(String[] args) {
         // 参数ip
-        String ip = "175.9.29.244";
-        String address = IpToAddressUtil.getAddresses(ip);
+        String ip = "117.89.35.58";
+        String ip1 = "175.9.29.116";
+        String address = IpToAddressUtil.getAddresses(ip1);
         System.out.println(address);
     }*/
 }
