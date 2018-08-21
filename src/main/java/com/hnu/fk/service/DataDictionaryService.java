@@ -159,7 +159,7 @@ public class DataDictionaryService {
             sort = new Sort(Sort.Direction.ASC, sortFieldName);
         }
         Pageable pageable = PageRequest.of(page, size, sort);
-        return dataDictionaryTypeRepository.findByTypeNameLike(typeName, pageable);
+        return dataDictionaryTypeRepository.findByTypeNameLike("%"+typeName+"%", pageable);
     }
 
     /**

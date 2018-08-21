@@ -199,6 +199,20 @@ public class DataDictionaryController {
     }
 
     /**
+     * 模糊查询所有类型—分页
+     */
+    @GetMapping(value = "/getAllTypesByNameLikeByPage")
+    @ApiOperation(value = "模糊查询所有类型-分页")
+    public Result<Page<DataDictionaryType>> getAllTypesByNameLikeByPage(
+            @ApiParam(value = "名称(默认为\"\")") @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "id") String sortFieldName,
+            @ApiParam(value = "排序方向(0:降序；1升序；默认为1)") @RequestParam(value = "asc", defaultValue = "1") Integer asc,
+            @ApiParam(value="类型名称") @RequestParam String typeName) {
+
+        return ResultUtil.success(dataDictionaryService.findAllTypeNameLikeByPage(page, size, sortFieldName, asc,typeName));
+    }
+    /**
      * 分页查询一个类型下所有数据
      */
     @GetMapping(value = "/getAllDataByTypeByPage")

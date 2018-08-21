@@ -40,6 +40,7 @@ public class DataDictionaryType {
      */
     @Column(nullable = false,unique = true)
     @ApiModelProperty("字典类型值,唯一不为空")
+    @NotNull(message = "字典类型值不可以为空")
     private String typeValue;
 
 
