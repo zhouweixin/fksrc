@@ -182,7 +182,7 @@ public class MaintenanceScheduleService {
         if(description==null)
             return maintenanceScheduleRepository.findAllByEquipmentInfoId_NameLike("%" + name + "%",pageable);
         else
-            return maintenanceScheduleRepository.findAllByEquipmentInfoId_NameLikeAndDescriptionLike("&" + name + "%","&" + description + "%",pageable);
+            return maintenanceScheduleRepository.findAllByEquipmentInfoId_NameLikeAndDescriptionLike("%" + name + "%","%" + description + "%",pageable);
     }
 }
 

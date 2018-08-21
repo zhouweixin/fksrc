@@ -87,20 +87,20 @@ public class MaintenanceScheduleController {
     public Result<Page<MaintenanceSchedule>> getAllNotCompleteByPage(
             @ApiParam(value = "页码(默认为0)") @RequestParam(value = "page", defaultValue = "0") Integer page,
             @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
-            @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "enteringTime") String sortFieldName,
+            @ApiParam(value = "排序字段名(默认为enteringTime)") @RequestParam(value = "sortFieldName", defaultValue = "enteringTime") String sortFieldName,
             @ApiParam(value = "排序方向(0:降序；1升序；这里默认为0)") @RequestParam(value = "asc", defaultValue = "0") Integer asc) {
 
         return ResultUtil.success(maintenanceScheduleService.findAllNotCompleteByPage(page, size, sortFieldName, asc));
     }
 
     @GetMapping(value = "getAllByNameAndDescriptionLikeByPage")
-    @ApiOperation(value = "通过设备名称和故障描述模糊查询")
+    @ApiOperation(value = "通过设备名称和故障描述模糊查询-分页")
     public Result<Page<MaintenanceSchedule>> getAllByNameAndDescriptionLikeByPage(
             @ApiParam(value = "设备名称") @RequestParam(value = "name") String name,
             @ApiParam(value = "故障描述") @RequestParam(value = "description",required = false) String description,
             @ApiParam(value = "页码(默认为0)") @RequestParam(value = "page", defaultValue = "0") Integer page,
             @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
-            @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "enteringTime") String sortFieldName,
+            @ApiParam(value = "排序字段名(默认为enteringTime)") @RequestParam(value = "sortFieldName", defaultValue = "enteringTime") String sortFieldName,
             @ApiParam(value = "排序方向(0:降序；1升序；这里默认为0)") @RequestParam(value = "asc", defaultValue = "0") Integer asc) {
 
         return ResultUtil.success(maintenanceScheduleService.findAllByNameAndDescriptionLike(name,description,page, size, sortFieldName, asc));
