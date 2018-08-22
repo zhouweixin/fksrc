@@ -58,6 +58,7 @@ public class DataDictionaryService {
             max = 0;
         }
         dataDictionaryType.setRank(max + 1);
+
         DataDictionaryType save = dataDictionaryTypeRepository.save(dataDictionaryType);
         ActionLogUtil.log(TYPENAME, 0, save);
         return save;
@@ -74,9 +75,16 @@ public class DataDictionaryService {
                 (optional = dataDictionaryTypeRepository.findById(dataDictionaryType.getId())).isPresent() == false) {
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
         }
+        //验证值是否同名
+        if (dataDictionaryTypeRepository.findFirstByIdNotAndTypeName(dataDictionaryType.getId(),dataDictionaryType.getTypeValue()) != null) {
+            throw new FkExceptions(EnumExceptions.ADD_FAILED_DICVALUE_DUPLICATE);
+        }
         DataDictionaryType oldValue = optional.get();
+        //自动保留以前的rank
+        if (dataDictionaryType.getRank()==null){
+            dataDictionaryType.setRank(oldValue.getRank());
+        }
         DataDictionaryType newValue = dataDictionaryTypeRepository.save(dataDictionaryType);
-
         ActionLogUtil.log(TYPENAME, oldValue, newValue);
 
         return newValue;
@@ -215,6 +223,9 @@ public class DataDictionaryService {
         }
 
         DataDictionary oldValue = optional.get();
+        if (dataDictionary.getRank()==null){
+            dataDictionary.setRank(oldValue.getRank());
+        }
         DataDictionary newValue = dataDictionaryRepository.save(dataDictionary);
 
         ActionLogUtil.log(DATANAME, oldValue, newValue);

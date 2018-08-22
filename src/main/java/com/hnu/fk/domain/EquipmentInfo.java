@@ -25,7 +25,7 @@ public class EquipmentInfo {
     private Integer id;
 
     @ApiModelProperty("设备名称")
-    @Excel(name = "设备名称_msEquipment",orderNum = "9",width = 15,isImportField = "true_msEquipment")
+    @Excel(name = "设备名称_msEquipment",orderNum = "1",width = 15,isImportField = "true_msEquipment")
     private String name;
 
     public Integer getId() {

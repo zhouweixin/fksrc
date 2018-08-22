@@ -152,8 +152,10 @@ public class NavigationController {
 
         return ResultUtil.success(navigationService.findByNameLikeByPage(name, page, size, sortFieldName, asc));
     }
+
     /**
      * 查询所有可分配操作
+     * @return
      */
     @GetMapping(value = "/getAllNavigationOperations")
     @ApiOperation(value = "查询所有可分配操作")
@@ -163,6 +165,9 @@ public class NavigationController {
 
     /**
      * 更新二级菜单可分配操作
+     * @param MenuId
+     * @param Operationids
+     * @return
      */
     @PostMapping(value = "/updateNavigationOperations")
     @ApiOperation(value = "更新二级菜单可分配操作")
@@ -172,6 +177,11 @@ public class NavigationController {
         return ResultUtil.success(navigationService.updateSecondLevelMenuOperatons(MenuId,Operationids));
     }
 
+    /**
+     * 通过主键查询一级菜单
+     * @param id
+     * @return
+     */
     @GetMapping(value = "/getFirstLevelMenusById")
     @ApiOperation(value = "通过主键查询一级菜单")
     public Result<List<FirstLevelMenu>> getFirstLevelMenusById(@ApiParam(value = "导航主键") @RequestParam Integer id){

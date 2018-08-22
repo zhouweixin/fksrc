@@ -45,10 +45,14 @@ public enum EnumExceptions {
 	SEARCH_FAILED_NAME_NULL(36,"查询失败，名称不能为空"),
     EXPORT_FAILED_FIELD_NULL(37,"导出失败, 字段为空"),
     EXPORT_FAILED_DATA_NULL(38,"导出失败, 数据为空"),
-    DATA_ENTERED(39,"数据已录入, 不要重复录入"),
-    REPORT_GENERATED(40,"该月报表已生成, 不要重复生成"),
-    REPORT_GENERATED_FAILED_PLAN_DATA_NOT_ENTERED(41,"报表生成失败, 该月计划数据未录入"),
-    REPORT_GENERATED_FAILED_PLAN_DATA_NULL(42,"报表生成失败, 该月计划数据为空"),
+	ADD_FAILED_STANDING_BOOK_TYPE_NOT_EXISTS(39, "新增失败, 台账项目类别不存在"),
+	UPDATE_FAILED_STANDING_BOOK_TYPE_NOT_EXISTS(40,"修改失败,台账项目类别不存在"),
+	ADD_FAILED_SECTION_NOT_EXISTS(41,"新增失败,工段类型不存在"),
+	UPDATE_FAILED_SECTION_NOT_EXISTS(42,"更新失败,工段类型不存在")
+    DATA_ENTERED(43,"数据已录入, 不要重复录入"),
+    REPORT_GENERATED(44,"该月报表已生成, 不要重复生成"),
+    REPORT_GENERATED_FAILED_PLAN_DATA_NOT_ENTERED(45,"报表生成失败, 该月计划数据未录入"),
+    REPORT_GENERATED_FAILED_PLAN_DATA_NULL(46,"报表生成失败, 该月计划数据为空"),
 
 	;
 

@@ -42,6 +42,8 @@ public class MaintenanceScheduleService {
         Date currentTime = new Date();
         maintenanceSchedule.setEnteringTime(currentTime);
 
+        maintenanceSchedule.setFlag(0);
+
 /*TODO
         User user = (User) SecurityUtils.getSubject().getSession(true).getAttribute("user");
         maintenanceSchedule.setEnter(user);
@@ -82,6 +84,18 @@ public class MaintenanceScheduleService {
     public void deleteInBatch(Integer[] ids){
         ActionLogUtil.log("检修计划",1,maintenanceScheduleRepository.findAllById(Arrays.asList(ids)));
         maintenanceScheduleRepository.deleteInBatch(maintenanceScheduleRepository.findAllById(Arrays.asList(ids)));
+    }
+
+    /**
+     * 通过id查询
+     * @param id
+     * @return
+     */
+    public MaintenanceSchedule findById(Integer id){
+        if(maintenanceScheduleRepository.findById(id).isPresent())
+            return maintenanceScheduleRepository.getOne(id);
+        else
+            throw new FkExceptions(EnumExceptions.SEARCH_FAILED_NOT_EXIST);
     }
 
     /**

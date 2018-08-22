@@ -67,7 +67,7 @@ public class DataDictionaryController {
     @ApiOperation(value = "更新类型")
     public Result<DataDictionaryType> updateType(@Valid DataDictionaryType dataDictionaryType,BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage().toString());
+            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage());
         }
 
         return ResultUtil.success(dataDictionaryService.updateType(dataDictionaryType));

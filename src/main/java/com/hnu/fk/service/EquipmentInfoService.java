@@ -57,6 +57,19 @@ public class EquipmentInfoService {
 
         return equipmentInfoRepository.save(equipmentInfo);
     }
+
+    /**
+     * 通过id查询
+     * @param id
+     * @return
+     */
+    public EquipmentInfo findById(Integer id){
+        if(equipmentInfoRepository.findById(id).isPresent())
+            return equipmentInfoRepository.getOne(id);
+        else
+            throw new FkExceptions(EnumExceptions.SEARCH_FAILED_NOT_EXIST);
+    }
+
     /**
      * 通过id批量删除
      * @param ids

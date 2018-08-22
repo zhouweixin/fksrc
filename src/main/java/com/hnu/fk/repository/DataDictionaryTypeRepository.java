@@ -7,15 +7,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
-import java.util.List;
 
+/**
+ * 数据字典类型
+ */
 public interface DataDictionaryTypeRepository extends JpaRepository<DataDictionaryType,Long> {
     /**
-     * 根据主键查询
+     * 根据值查询
      */
-    DataDictionaryType findFirstById(Long id);
     DataDictionaryType findFirstByTypeValue(String name);
-    DataDictionaryType findByIdIn(Collection<Long> ids);
+    DataDictionaryType findFirstByIdNotAndTypeName(Long id,String typeName);
     /**
      * 根据主键批量删除
      */
