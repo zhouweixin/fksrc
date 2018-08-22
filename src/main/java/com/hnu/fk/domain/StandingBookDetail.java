@@ -18,9 +18,9 @@ public class StandingBookDetail {
     private Integer id;
 
     @ApiModelProperty("外键:表头id")
-    @ManyToOne(targetEntity = StandingBookHead.class)
+    @ManyToOne(targetEntity = StandingBookHeader.class)
     @JoinColumn(name = "head_id",referencedColumnName = "id")
-    private StandingBookHead standingBookHead;
+    private StandingBookHeader standingBookHeader;
 
     @ApiModelProperty("外键:项目id")
     @ManyToOne(targetEntity = StandingBookItem.class)
@@ -44,12 +44,12 @@ public class StandingBookDetail {
         this.id = id;
     }
 
-    public StandingBookHead getStandingBookHead() {
-        return standingBookHead;
+    public StandingBookHeader getStandingBookHeader() {
+        return standingBookHeader;
     }
 
-    public void setStandingBookHead(StandingBookHead standingBookHead) {
-        this.standingBookHead = standingBookHead;
+    public void setStandingBookHeader(StandingBookHeader standingBookHeader) {
+        this.standingBookHeader = standingBookHeader;
     }
 
     public StandingBookItem getStandingBookItem() {

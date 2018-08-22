@@ -13,7 +13,7 @@ import java.util.Date;
 @Entity
 @ApiModel(description = "调度台账表头")
 @Table(name = "produce_standing_book_head")
-public class StandingBookHead {
+public class StandingBookHeader {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("主键:自增长")
@@ -49,6 +49,8 @@ public class StandingBookHead {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date time = new Date();
 
+    @OneToMany(targetEntity = StandingBookDetail.class,cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+    @JoinColumn(name = "head_id",referencedColumnName = "id")
     public Integer getId() {
         return id;
     }
