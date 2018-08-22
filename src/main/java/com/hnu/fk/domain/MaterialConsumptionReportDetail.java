@@ -1,5 +1,6 @@
 package com.hnu.fk.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -32,31 +33,40 @@ public class MaterialConsumptionReportDetail {
 
     @ApiModelProperty(value = "单价")
     @Column(precision = 2)
-    private Double price;
+    private Double price = 0.0;
 
     @ApiModelProperty(value = "计划单耗")
     @Column(precision = 2)
-    private Double planUnitConsumption;
+    private Double planUnitConsumption = 0.0;
 
     @ApiModelProperty(value = "库存量")
     @Column(precision = 2)
-    private Double storage;
+    private Double storage = 0.0;
 
     @ApiModelProperty(value = "本月实际用量")
     @Column(precision = 2)
-    private Double currentMonth;
+    private Double currentMonth = 0.0;
 
     @ApiModelProperty(value = "本月累计用量")
     @Column(precision = 2)
-    private Double totalMonth;
+    private Double totalMonth = 0.0;
 
     @ApiModelProperty(value = "本月实际单耗")
     @Column(precision = 2)
-    private Double currentConsump;
+    private Double currentConsump = 0.0;
 
     @ApiModelProperty(value = "本月累计单耗")
     @Column(precision = 2)
-    private Double totalConsump;
+    private Double totalConsump = 0.0;
+
+    public MaterialConsumptionReportDetail() {
+    }
+
+    public MaterialConsumptionReportDetail(Double price, Double planUnitConsumption, Double storage) {
+        this.price = price;
+        this.planUnitConsumption = planUnitConsumption;
+        this.storage = storage;
+    }
 
     public Long getId() {
         return id;
@@ -66,6 +76,7 @@ public class MaterialConsumptionReportDetail {
         this.id = id;
     }
 
+    @JsonIgnore
     public MaterialConsumptionReportHeader getHeader() {
         return header;
     }

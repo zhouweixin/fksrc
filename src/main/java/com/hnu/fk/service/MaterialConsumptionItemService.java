@@ -132,7 +132,7 @@ public class MaterialConsumptionItemService {
      * @return
      */
     public List<MaterialConsumptionItem> findAll() {
-        return materialConsumptionItemRepository.findAll();
+        return materialConsumptionItemRepository.findAll(Sort.by("id"));
     }
 
     /**

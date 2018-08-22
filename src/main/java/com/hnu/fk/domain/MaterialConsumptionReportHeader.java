@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: zhouweixin
@@ -32,12 +33,12 @@ public class MaterialConsumptionReportHeader {
     @Temporal(value = TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @ApiModelProperty(value = "录入时间, 格式为yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "生成时间, 格式为yyyy-MM-dd HH:mm:ss")
     private Date enterTime;
 
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "enter_user_id", referencedColumnName = "id")
-    @ApiModelProperty(value = "录入人")
+    @ApiModelProperty(value = "生成人")
     private User enterUser;
 
     @ApiModelProperty(value = "本月原矿处理量")
@@ -79,6 +80,11 @@ public class MaterialConsumptionReportHeader {
     @ApiModelProperty(value = "累计钢球单位成本")
     @Column(precision = 2)
     private Double ljgqdwcb;
+
+    @OneToMany(targetEntity = MaterialConsumptionReportDetail.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "header_id", referencedColumnName = "id")
+    @ApiModelProperty(value = "详细数据")
+    private List<MaterialConsumptionReportDetail> details;
 
     public Long getId() {
         return id;
@@ -190,5 +196,13 @@ public class MaterialConsumptionReportHeader {
 
     public void setLjgqdwcb(Double ljgqdwcb) {
         this.ljgqdwcb = ljgqdwcb;
+    }
+
+    public List<MaterialConsumptionReportDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<MaterialConsumptionReportDetail> details) {
+        this.details = details;
     }
 }

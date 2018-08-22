@@ -1,6 +1,8 @@
 package com.hnu.fk.repository;
 
 import com.hnu.fk.domain.MaterialConsumptionHeader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -21,4 +23,21 @@ public interface MaterialConsumptionHeaderRepository extends JpaRepository<Mater
      * @return
      */
     List<MaterialConsumptionHeader> findByDateBetween(Date startDate, Date endDate);
+
+    /**
+     * 通过日期区间查询-分页
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    Page<MaterialConsumptionHeader> findByDateBetween(Date startDate, Date endDate, Pageable pageable);
+
+    /**
+     * 通过日期判断是否已经存在
+     *
+     * @param date
+     * @return
+     */
+    MaterialConsumptionHeader findFirstByDate(Date date);
 }

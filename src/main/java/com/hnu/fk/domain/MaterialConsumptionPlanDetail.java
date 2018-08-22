@@ -1,5 +1,6 @@
 package com.hnu.fk.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -32,15 +33,15 @@ public class MaterialConsumptionPlanDetail {
 
     @ApiModelProperty(value = "单价")
     @Column(precision = 2)
-    private Double price;
+    private Double price = 0.0;
 
     @ApiModelProperty(value = "计划单耗")
     @Column(precision = 2)
-    private Double planUnitConsumption;
+    private Double planUnitConsumption = 0.0;
 
     @ApiModelProperty(value = "库存量")
     @Column(precision = 2)
-    private Double storage;
+    private Double storage = 0.0;
 
     public Long getId() {
         return id;
@@ -50,6 +51,7 @@ public class MaterialConsumptionPlanDetail {
         this.id = id;
     }
 
+    @JsonIgnore
     public MaterialConsumptionPlanHeader getHeader() {
         return header;
     }

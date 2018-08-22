@@ -19,4 +19,13 @@ public interface TemporalIntervalRepository extends JpaRepository<TemporalInterv
      */
     public List<TemporalInterval> findByStatisticalYearOrderByStatisticalMonthAsc(String statisticalYear);
 
+    /**
+     * 通过年和月查询
+     *
+     * @param year
+     * @param month
+     * @return
+     */
+    TemporalInterval findFirstByStatisticalYearAndStatisticalMonth(String year, String month);
+
 }

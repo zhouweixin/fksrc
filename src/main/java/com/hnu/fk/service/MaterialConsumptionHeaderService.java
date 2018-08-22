@@ -4,7 +4,6 @@ import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
-import com.hnu.fk.domain.ActionLog;
 import com.hnu.fk.domain.MaterialConsumptionDetail;
 import com.hnu.fk.domain.MaterialConsumptionHeader;
 import com.hnu.fk.domain.MaterialConsumptionItem;
@@ -17,6 +16,10 @@ import com.hnu.fk.repository.UserRepository;
 import com.hnu.fk.utils.ActionLogUtil;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -61,6 +64,11 @@ public class MaterialConsumptionHeaderService {
             throw new FkExceptions(EnumExceptions.ADD_FAILED_DUPLICATE);
         }
 
+        // 判断是否已录入
+        if(materialConsumptionHeaderRepository.findFirstByDate(materialConsumptionHeader.getDate()) != null){
+            throw new FkExceptions(EnumExceptions.DATA_ENTERED);
+        }
+
         // 验证录入人是否存在
         if(materialConsumptionHeader.getEnterUser() == null
                 || userRepository.findById(materialConsumptionHeader.getEnterUser().getId()).isPresent() == false){
@@ -94,7 +102,7 @@ public class MaterialConsumptionHeaderService {
         // 删除旧数据
         materialConsumptionDetailRepository.deleteByHeader(optional.get());
 
-        // 验证录入人是否存在
+        // 验证修改人是否存在
         if(materialConsumptionHeader.getModifyUser() == null
                 || userRepository.findById(materialConsumptionHeader.getModifyUser().getId()).isPresent() == false){
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_MODIFY_USER_NOT_EXISTS);
@@ -127,7 +135,58 @@ public class MaterialConsumptionHeaderService {
      * @return
      */
     public List<MaterialConsumptionHeader> getByStartDateAndEndDate(Date startDate, Date endDate) {
-        return materialConsumptionHeaderRepository.findByDateBetween(startDate, endDate);
+        List<MaterialConsumptionHeader> headers = materialConsumptionHeaderRepository.findByDateBetween(startDate, endDate);
+        for(MaterialConsumptionHeader header : headers){
+            if(header.getMaterialConsumptionDetails() != null && header.getMaterialConsumptionDetails().size() > 1){
+                header.getMaterialConsumptionDetails().sort((o1, o2)->{
+                    if(o1.getItem() != null && o1.getItem().getId() != null && o2.getItem() != null && o2.getItem().getId() != null)
+                        return o1.getItem().getId() - o2.getItem().getId();
+                    return 0;
+                });
+            }
+        }
+        return headers;
+    }
+
+    /**
+     * 通过日期查询-分页
+     *
+     * @param startDate
+     * @param endDate
+     * @param page
+     * @param size
+     * @param sortFieldName
+     * @param asc
+     * @return
+     */
+    public Page<MaterialConsumptionHeader> getByStartDateAndEndDateByPage(Date startDate, Date endDate, Integer page, Integer size, String sortFieldName, Integer asc) {
+        // 判断排序字段名是否存在
+        try {
+            MaterialConsumptionHeader.class.getDeclaredField(sortFieldName);
+        } catch (Exception e) {
+            // 如果不存在就设置为id
+            sortFieldName = "id";
+        }
+
+        Sort sort = null;
+        if (asc == 0) {
+            sort = new Sort(Sort.Direction.DESC, sortFieldName);
+        } else {
+            sort = new Sort(Sort.Direction.ASC, sortFieldName);
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<MaterialConsumptionHeader> headerPage = materialConsumptionHeaderRepository.findByDateBetween(startDate, endDate, pageable);
+        for(MaterialConsumptionHeader header : headerPage.getContent()){
+            if(header.getMaterialConsumptionDetails() != null && header.getMaterialConsumptionDetails().size() > 1){
+                header.getMaterialConsumptionDetails().sort((o1, o2)->{
+                    if(o1.getItem() != null && o1.getItem().getId() != null && o2.getItem() != null && o2.getItem().getId() != null)
+                        return o1.getItem().getId() - o2.getItem().getId();
+                    return 0;
+                });
+            }
+        }
+        return headerPage;
     }
 
     /**
