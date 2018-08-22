@@ -71,6 +71,12 @@ public class MaintenanceScheduleController {
         return ResultUtil.success();
     }
 
+    @GetMapping(value = "/getById")
+    @ApiOperation(value = "通过id查询")
+    public Result<MaintenanceSchedule> getById(@ApiParam(value = "主键id") @RequestParam(value = "id") Integer id){
+        return ResultUtil.success(maintenanceScheduleService.findById(id));
+    }
+
     @GetMapping(value = "/getAllByPage")
     @ApiOperation(value = "查询所有计划-分页")
     public Result<Page<MaintenanceSchedule>> getAllByPage(

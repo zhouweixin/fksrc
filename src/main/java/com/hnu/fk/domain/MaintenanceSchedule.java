@@ -2,6 +2,7 @@ package com.hnu.fk.domain;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import cn.afterturn.easypoi.excel.annotation.ExcelEntity;
+import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
@@ -20,11 +21,12 @@ import java.util.Date;
 @Entity
 @Table(name = "produce_maintenance_schedule")
 @ApiModel(description = "检修计划表")
+@ExcelTarget(value = "maintenanceScheduleEntity")
 public class MaintenanceSchedule {
     @Id
     @ApiModelProperty("序号，主键: 自增长")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Excel(name = "序号")
+    @Excel(name = "检修计划序号")
     private Integer id;
 
     @ApiModelProperty("设备ID")
@@ -37,7 +39,7 @@ public class MaintenanceSchedule {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("报修时间，自动录入当前时间")
-    @Excel(name = "报修时间",width = 20,exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "报修时间",width = 20,exportFormat = "yyyy-MM-dd HH:mm:ss",orderNum = "2")
     private Date enteringTime;
 
     @ManyToOne(targetEntity = User.class)
@@ -47,15 +49,15 @@ public class MaintenanceSchedule {
     private User enter;
 
     @ApiModelProperty("故障描述")
-    @Excel(name = "故障描述",width = 20)
+    @Excel(name = "故障描述",width = 20,orderNum = "3")
     private String description;
 
     @ApiModelProperty("备注")
-    @Excel(name = "备注",width = 20)
+    @Excel(name = "检修计划备注",width = 20,orderNum = "4")
     private String remarks;
 
     @ApiModelProperty("标志位，0未完成，1已完成")
-    @Excel(name = "标志位",replace = { "未完成_0", "已完成_1" })
+    @Excel(name = "标志位",replace = { "未完成_0", "已完成_1" },orderNum = "5")
     private Integer flag;
 
     public void setFlag(Integer flag) {

@@ -7,6 +7,7 @@ import com.hnu.fk.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
@@ -49,6 +50,18 @@ public class EquipmentInfoController {
         }
 
         return ResultUtil.success(equipmentInfoService.update(equipmentInfo));
+    }
+
+    /**
+     * 通过id查询
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/getById")
+    @ApiOperation(value = "通过id查询")
+    public Result<EquipmentInfo> getById(@ApiParam(value = "主键id") @RequestParam Integer id) {
+        return ResultUtil.success(equipmentInfoService.findById(id));
     }
 
     /**

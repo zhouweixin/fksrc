@@ -27,7 +27,7 @@ public class User {
     private Integer id;
 
     @ApiModelProperty("名称")
-    @Excel(name = "数据更新人_tiUpdater,操作人_alOperator,保修人_msEnter",
+    @Excel(name = "数据更新人_tiUpdater,操作人_alOperator,报修人_msEnter,维修人_bfiEnter",
             orderNum = "9",width = 15,
             isImportField = "")
     private String name;
