@@ -43,7 +43,7 @@ public interface DataDictionaryRepository extends JpaRepository<DataDictionary, 
      *
      * @return
      */
-    @Query(value = "select max(d.rank) from DataDictionaryType d")
+    @Query(value = "select max(d.rank) from DataDictionary d")
     Integer maxRank();
 
     /**
