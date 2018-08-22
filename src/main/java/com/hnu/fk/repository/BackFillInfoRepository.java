@@ -23,8 +23,8 @@ public interface BackFillInfoRepository extends JpaRepository<BackFillInfo,Integ
      * @return
      */
     @Query(value = "SELECT * FROM produce_back_fill_info where maintenance_schedule_code in (SELECT id FROM produce_maintenance_schedule WHERE entering_time>=?1 and entering_time <=Dateadd(dd,1,?2) AND equipment_code LIKE ?3) order by finish_time desc", nativeQuery = true)
-    public Page<BackFillInfo> findByEnteringTimeAndEquipment(String startDate, String endDate,Integer equipmentCode, Pageable pageable);
+    public Page<BackFillInfo> findByEnteringTimeAndEquipment(String startDate, String endDate,String equipmentCode, Pageable pageable);
 
     @Query(value = "SELECT * FROM produce_back_fill_info where maintenance_schedule_code in (SELECT id FROM produce_maintenance_schedule WHERE entering_time>=?1 and entering_time <=Dateadd(dd,1,?2) AND equipment_code LIKE ?3) order by finish_time desc", nativeQuery = true)
-    public List<BackFillInfo> findByEnteringTimeAndEquipment(String startDate, String endDate,Integer equipmentCode);
+    public List<BackFillInfo> findByEnteringTimeAndEquipment(String startDate, String endDate,String equipmentCode);
 }

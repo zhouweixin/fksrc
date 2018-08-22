@@ -117,7 +117,18 @@ public class BackFillInfoService {
         return backFillInfoRepository.findAll(pageable);
     }
 
-    public Page<BackFillInfo> getAllByEquipmentAndTime(String startDate, String endDate,Integer equipmentCode,Integer page, Integer size, String sortFieldName, Integer asc) {
+    /**
+     * 通过时间段和设备查询
+     * @param startDate
+     * @param endDate
+     * @param equipmentCode
+     * @param page
+     * @param size
+     * @param sortFieldName
+     * @param asc
+     * @return
+     */
+    public Page<BackFillInfo> getAllByEquipmentAndTime(String startDate, String endDate,String equipmentCode,Integer page, Integer size, String sortFieldName, Integer asc) {
 
         // 判断排序字段名是否存在
         try {
@@ -135,10 +146,10 @@ public class BackFillInfoService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return backFillInfoRepository.findByEnteringTimeAndEquipment(startDate,endDate,equipmentCode,pageable);
+        return backFillInfoRepository.findByEnteringTimeAndEquipment(startDate,endDate,"%"+ equipmentCode + "%",pageable);
     }
 
-    public List<BackFillInfo> getAllByEquipmentAndTime(String startDate, String endDate,Integer equipmentCode) {
-        return backFillInfoRepository.findByEnteringTimeAndEquipment(startDate,endDate,equipmentCode);
+    public List<BackFillInfo> getAllByEquipmentAndTime(String startDate, String endDate,String equipmentCode) {
+        return backFillInfoRepository.findByEnteringTimeAndEquipment(startDate,endDate,"%"+ equipmentCode + "%");
     }
 }

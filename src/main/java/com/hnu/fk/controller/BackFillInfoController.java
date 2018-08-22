@@ -91,7 +91,7 @@ public class BackFillInfoController {
     public Result<Page<BackFillInfo>> getAllByEquipmentAndTime(
             @ApiParam(value = "开始日期，格式为yyyy-MM-dd") @RequestParam(value = "startDate") String startDate,
             @ApiParam(value = "结束日期，格式为yyyy-MM-dd") @RequestParam(value = "endDate") String endDate,
-            @ApiParam(value = "设备，不传值时查询所有设备") @RequestParam(required = false) Integer equipmentCode,
+            @ApiParam(value = "设备，不传值时查询所有设备") @RequestParam(value = "equipmentCode",defaultValue = "") String equipmentCode,
             @ApiParam(value = "页码(默认为0)") @RequestParam(value = "page", defaultValue = "0") Integer page,
             @ApiParam(value = "每页记录数(默认为10)") @RequestParam(value = "size", defaultValue = "10") Integer size,
             @ApiParam(value = "排序字段名(默认为id)") @RequestParam(value = "sortFieldName", defaultValue = "enteringTime") String sortFieldName,
@@ -105,7 +105,7 @@ public class BackFillInfoController {
     public Result getByDateToExcel(
             @ApiParam(value = "开始日期，格式为yyyy-MM-dd") @RequestParam(value = "startDate") String startDate,
             @ApiParam(value = "结束日期，格式为yyyy-MM-dd") @RequestParam(value = "endDate") String endDate,
-            @ApiParam(value = "设备，不传值时查询所有设备") @RequestParam(required = false) Integer equipmentCode,
+            @ApiParam(value = "设备，不传值时查询所有设备") @RequestParam(value = "equipmentCode",defaultValue = "") String equipmentCode,
             HttpServletResponse response) throws IOException {
 
         ActionLogUtil.log("回填工单");
