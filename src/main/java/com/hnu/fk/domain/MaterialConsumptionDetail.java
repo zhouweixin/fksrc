@@ -33,7 +33,7 @@ public class MaterialConsumptionDetail {
 
     @Column(precision = 2)
     @ApiModelProperty(value = "物料消耗项目值")
-    private Double value;
+    private Double value = 0.0;
 
     public Long getId() {
         return id;

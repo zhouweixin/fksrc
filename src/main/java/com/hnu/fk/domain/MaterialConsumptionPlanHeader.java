@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: zhouweixin
@@ -40,8 +41,24 @@ public class MaterialConsumptionPlanHeader {
     @ApiModelProperty(value = "录入人")
     private User enterUser;
 
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "修改时间, 格式为yyyy-MM-dd HH:mm:ss")
+    private Date modifyTime;
+
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "modify_user_id", referencedColumnName = "id")
+    @ApiModelProperty(value = "修改人")
+    private User modifyUser;
+
     @ApiModelProperty(value = "标志: 0未提交; 1已提交")
-    private Integer flag;
+    private Integer flag = 0;
+
+    @OneToMany(targetEntity = MaterialConsumptionPlanDetail.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "header_id", referencedColumnName = "id")
+    @ApiModelProperty(value = "详细数据")
+    private List<MaterialConsumptionPlanDetail> details;
 
     public Long getId() {
         return id;
@@ -81,5 +98,29 @@ public class MaterialConsumptionPlanHeader {
 
     public void setFlag(Integer flag) {
         this.flag = flag;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public User getModifyUser() {
+        return modifyUser;
+    }
+
+    public void setModifyUser(User modifyUser) {
+        this.modifyUser = modifyUser;
+    }
+
+    public List<MaterialConsumptionPlanDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<MaterialConsumptionPlanDetail> details) {
+        this.details = details;
     }
 }
