@@ -48,7 +48,7 @@ public enum EnumExceptions {
 	ADD_FAILED_STANDING_BOOK_TYPE_NOT_EXISTS(39, "新增失败, 台账项目类别不存在"),
 	UPDATE_FAILED_STANDING_BOOK_TYPE_NOT_EXISTS(40,"修改失败,台账项目类别不存在"),
 	ADD_FAILED_SECTION_NOT_EXISTS(41,"新增失败,工段类型不存在"),
-	UPDATE_FAILED_SECTION_NOT_EXISTS(42,"更新失败,工段类型不存在")
+	UPDATE_FAILED_SECTION_NOT_EXISTS(42,"更新失败,工段类型不存在"),
     DATA_ENTERED(43,"数据已录入, 不要重复录入"),
     REPORT_GENERATED(44,"该月报表已生成, 不要重复生成"),
     REPORT_GENERATED_FAILED_PLAN_DATA_NOT_ENTERED(45,"报表生成失败, 该月计划数据未录入"),
