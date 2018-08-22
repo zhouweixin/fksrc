@@ -48,7 +48,9 @@ public enum EnumExceptions {
 	ADD_FAILED_STANDING_BOOK_TYPE_NOT_EXISTS(39, "新增失败, 台账项目类别不存在"),
 	UPDATE_FAILED_STANDING_BOOK_TYPE_NOT_EXISTS(40,"修改失败,台账项目类别不存在"),
 	ADD_FAILED_SECTION_NOT_EXISTS(41,"新增失败,工段类型不存在"),
-	UPDATE_FAILED_SECTION_NOT_EXISTS(42,"更新失败,工段类型不存在")
+	UPDATE_FAILED_SECTION_NOT_EXISTS(42,"更新失败,工段类型不存在"),
+	ADD_FAILED_USER_CODE_ENTER_NOT_EXISTS(43, "录入失败, 调度员不存在"),
+	ADD_FAILED_SSBZ_NOT_EXISTS(44,"录入失败,班组不存在")
 	;
 
     /** 编码 */

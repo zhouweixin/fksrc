@@ -26,12 +26,12 @@ public class StandingBookHead {
 
     @ApiModelProperty("值班调度员")
     @ManyToOne(targetEntity = User.class)
-    @JoinColumn(name="permission_user",referencedColumnName = "id")
+    @JoinColumn(name="user_id",referencedColumnName = "id")
     private User user;
 
     @ApiModelProperty("所属班组")
     @ManyToOne(targetEntity = DataDictionary.class)
-    @JoinColumn(name = "basicinfo_dictionary",referencedColumnName = "id")
+    @JoinColumn(name = "dictionary_id",referencedColumnName = "id")
     private DataDictionary dataDictionary;
 
     @ApiModelProperty("备注")
@@ -44,9 +44,9 @@ public class StandingBookHead {
     private Date date = new Date();
 
     @ApiModelProperty("台账录入时间")
-    @Temporal(value = TemporalType.TIME)
-    @DateTimeFormat(pattern = "HH:mm:ss")
-    @JsonFormat(pattern = "HH:mm:ss")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date time = new Date();
 
     public Integer getId() {
