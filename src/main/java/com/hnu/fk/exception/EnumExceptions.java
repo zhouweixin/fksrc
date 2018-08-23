@@ -49,12 +49,14 @@ public enum EnumExceptions {
 	UPDATE_FAILED_STANDING_BOOK_TYPE_NOT_EXISTS(40,"修改失败,台账项目类别不存在"),
 	ADD_FAILED_SECTION_NOT_EXISTS(41,"新增失败,工段类型不存在"),
 	UPDATE_FAILED_SECTION_NOT_EXISTS(42,"更新失败,工段类型不存在"),
-    DATA_ENTERED(43,"数据已录入, 不要重复录入"),
-    REPORT_GENERATED(44,"该月报表已生成, 不要重复生成"),
-    REPORT_GENERATED_FAILED_PLAN_DATA_NOT_ENTERED(45,"报表生成失败, 该月计划数据未录入"),
-    REPORT_GENERATED_FAILED_PLAN_DATA_NULL(46,"报表生成失败, 该月计划数据为空"),
-    REPORT_GENERATED_FAILED_MONTH_NOT_EXISTS(47,"报表生成失败, 月统计时间为空"),
-    REPORT_GENERATED_FAILED_ENTER_USER_NOT_EXISTS(48, "报表生成失败, 录入人不存在"),
+	ADD_FAILED_USER_CODE_ENTER_NOT_EXISTS(43, "录入失败, 调度员不存在"),
+	ADD_FAILED_BanCi_NOT_EXISTS(44,"录入失败,班次不存在"),
+    DATA_ENTERED(45,"数据已录入, 不要重复录入"),
+    REPORT_GENERATED(46,"该月报表已生成, 不要重复生成"),
+    REPORT_GENERATED_FAILED_PLAN_DATA_NOT_ENTERED(47,"报表生成失败, 该月计划数据未录入"),
+    REPORT_GENERATED_FAILED_PLAN_DATA_NULL(48,"报表生成失败, 该月计划数据为空"),
+    REPORT_GENERATED_FAILED_MONTH_NOT_EXISTS(49,"报表生成失败, 月统计时间为空"),
+    REPORT_GENERATED_FAILED_ENTER_USER_NOT_EXISTS(50, "报表生成失败, 录入人不存在"),
 
 	;
 

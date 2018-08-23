@@ -3,6 +3,7 @@ package com.hnu.fk.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,9 +18,9 @@ public class StandingBookDetail {
     private Integer id;
 
     @ApiModelProperty("外键:表头id")
-    @ManyToOne(targetEntity = StandingBookHead.class)
+    @ManyToOne(targetEntity = StandingBookHeader.class)
     @JoinColumn(name = "head_id",referencedColumnName = "id")
-    private StandingBookHead standingBookHead;
+    private StandingBookHeader standingBookHeader;
 
     @ApiModelProperty("外键:项目id")
     @ManyToOne(targetEntity = StandingBookItem.class)
@@ -29,10 +30,11 @@ public class StandingBookDetail {
     @ApiModelProperty("字段类型1:浮点型 2:字符型 3:日期型")
     @Column(nullable = false)
     @NotNull(message = "字段类型不能为空")
+    @Range(min = 1,max = 3)
     private Integer fieldId;
 
     @ApiModelProperty("项目值")
-    private String ItemValue;
+    private String itemValue;
 
     public Integer getId() {
         return id;
@@ -42,12 +44,12 @@ public class StandingBookDetail {
         this.id = id;
     }
 
-    public StandingBookHead getStandingBookHead() {
-        return standingBookHead;
+    public StandingBookHeader getStandingBookHeader() {
+        return standingBookHeader;
     }
 
-    public void setStandingBookHead(StandingBookHead standingBookHead) {
-        this.standingBookHead = standingBookHead;
+    public void setStandingBookHeader(StandingBookHeader standingBookHeader) {
+        this.standingBookHeader = standingBookHeader;
     }
 
     public StandingBookItem getStandingBookItem() {
@@ -67,10 +69,10 @@ public class StandingBookDetail {
     }
 
     public String getItemValue() {
-        return ItemValue;
+        return itemValue;
     }
 
     public void setItemValue(String itemValue) {
-        ItemValue = itemValue;
+        itemValue = itemValue;
     }
 }
