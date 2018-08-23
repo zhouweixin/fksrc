@@ -38,6 +38,18 @@ public class TemporalIntervalService {
     }
 
     /**
+     * 根据序号id查询
+     * @param id
+     * @return
+     */
+    public TemporalInterval getById(Long id){
+        if(!temporalIntervalRepository.findById(id).isPresent()){
+            throw new FkExceptions(EnumExceptions.SEARCH_FAILED_NOT_EXIST);
+        }else
+            return temporalIntervalRepository.getOne(id);
+    }
+
+    /**
      * 编辑
      * @param temporalInterval
      * @return

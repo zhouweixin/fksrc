@@ -50,6 +50,12 @@ public class TemporalIntervalController {
         return ResultUtil.success(temporalIntervalService.getAllByYear(statisticalYear));
     }
 
+    @GetMapping(value = "getById")
+    @ApiOperation(value = "按照序号查询某一月数据")
+    public Result<TemporalInterval> getById(@ApiParam(value = "序号") @RequestParam Long id){
+        return ResultUtil.success(temporalIntervalService.getById(id));
+    }
+
     /**
      * 编辑，传入主键存在则更新，不存在则新增
      * @param temporalInterval
