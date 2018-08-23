@@ -20,7 +20,7 @@ public interface MaintenanceScheduleRepository extends JpaRepository<Maintenance
      * @return
      */
     //@Query(value = "SELECT * FROM produce_maintenance_schedule where equipment_code =(SELECT id FROM produce_equipment_info WHERE name LIKE ?1) AND description LIKE ?2 AND flag =0 order by entering_time desc", nativeQuery = true)
-    Page<MaintenanceSchedule> findAllByEquipmentInfoId_NameLikeAndDescriptionLike(String name, String description,Pageable pageable);
+    Page<MaintenanceSchedule> findAllByEquipmentInfoId_NameLikeAndDescriptionLikeAndFlag(String name, String description,Pageable pageable,Integer flag);
 
     /**
      * 通过检修设备模糊查询
@@ -28,7 +28,7 @@ public interface MaintenanceScheduleRepository extends JpaRepository<Maintenance
      * @param pageable
      * @return
      */
-    Page<MaintenanceSchedule> findAllByEquipmentInfoId_NameLike(String name,Pageable pageable);
+    Page<MaintenanceSchedule> findAllByEquipmentInfoId_NameLikeAndFlag(String name,Pageable pageable,Integer flag);
 
     /**
      * 通过故障描述模糊查询

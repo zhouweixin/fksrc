@@ -194,9 +194,9 @@ public class MaintenanceScheduleService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         if(description==null)
-            return maintenanceScheduleRepository.findAllByEquipmentInfoId_NameLike("%" + name + "%",pageable);
+            return maintenanceScheduleRepository.findAllByEquipmentInfoId_NameLikeAndFlag("%" + name + "%",pageable,0);
         else
-            return maintenanceScheduleRepository.findAllByEquipmentInfoId_NameLikeAndDescriptionLike("%" + name + "%","%" + description + "%",pageable);
+            return maintenanceScheduleRepository.findAllByEquipmentInfoId_NameLikeAndDescriptionLikeAndFlag("%" + name + "%","%" + description + "%",pageable,0);
     }
 }
 
