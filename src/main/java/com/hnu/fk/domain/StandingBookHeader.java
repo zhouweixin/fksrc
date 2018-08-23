@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -36,17 +38,18 @@ public class StandingBookHeader {
     private String ssbz;
 
     @ApiModelProperty("调度台账日期")
+    @Column(nullable = false)
+    @NotNull(message = "调度台账日期不可为空")
     @Temporal(value = TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date date = new Date();
+    private Date date;
 
     @ApiModelProperty("台账录入时间")
     @Temporal(value = TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date time = new Date();
-
 
     @OneToMany(targetEntity = StandingBookDetail.class,cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     @JoinColumn(name = "head_id",referencedColumnName = "id")

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -27,4 +28,9 @@ public interface StandingBookHeaderRepository extends JpaRepository<StandingBook
      * 根据日期和班次查询-分页
      */
     Page<StandingBookHeader> findByDataDictionary_IdAndDateBetween(Long scheduleId, Date startDate, Date endDate, Pageable pageable);
+    /**
+     * 根据ids查询
+     * @param ids
+     */
+    List<StandingBookHeader> findByIdIn(List<Object> ids);
 }

@@ -43,7 +43,6 @@ public class StandingBookItem {
         this.id = id;
     }
 
-    @JsonIgnore
     public StandingBookType getStandingBookType() {
         return standingBookType;
     }

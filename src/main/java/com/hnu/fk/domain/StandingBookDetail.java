@@ -1,6 +1,7 @@
 package com.hnu.fk.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Range;
@@ -29,7 +30,7 @@ public class StandingBookDetail {
 
     @ApiModelProperty("字段类型1:浮点型 2:字符型 3:日期型")
     @Column(nullable = false)
-    @NotNull(message = "字段类型不能为空")
+    @NotNull(message = "字段类型不可为空")
     @Range(min = 1,max = 3)
     private Integer fieldId;
 
@@ -44,6 +45,7 @@ public class StandingBookDetail {
         this.id = id;
     }
 
+    @JsonIgnore
     public StandingBookHeader getStandingBookHeader() {
         return standingBookHeader;
     }
@@ -73,6 +75,6 @@ public class StandingBookDetail {
     }
 
     public void setItemValue(String itemValue) {
-        itemValue = itemValue;
+        this.itemValue = itemValue;
     }
 }

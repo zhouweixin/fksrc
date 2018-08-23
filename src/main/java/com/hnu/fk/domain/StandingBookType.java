@@ -42,7 +42,6 @@ public class StandingBookType {
         this.itemTypeName = itemTypeName;
     }
 
-    @JsonIgnore
     public SectionInfo getSectionInfo() {
         return sectionInfo;
     }

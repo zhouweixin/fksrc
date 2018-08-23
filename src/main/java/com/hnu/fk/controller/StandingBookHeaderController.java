@@ -1,6 +1,7 @@
 package com.hnu.fk.controller;
 
 import com.hnu.fk.domain.Result;
+import com.hnu.fk.domain.StandingBookDetail;
 import com.hnu.fk.domain.StandingBookHeader;
 import com.hnu.fk.service.StandingBookHeaderService;
 import com.hnu.fk.utils.ResultUtil;
@@ -28,7 +29,7 @@ public class StandingBookHeaderController {
     @PostMapping(value = "/add")
     @ApiOperation(value = "新增")
     public Result<StandingBookHeader> add(
-            @ApiParam(value = "standingBookHeader") @RequestBody StandingBookHeader standingBookHeader){
+            @ApiParam(value = "standingBookHeader") @RequestBody @Valid StandingBookHeader standingBookHeader){
         return ResultUtil.success(standingBookHeaderService.save(standingBookHeader));
     }
     /**
