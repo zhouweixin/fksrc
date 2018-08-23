@@ -28,7 +28,7 @@ public class StandingBookHeaderController {
     @PostMapping(value = "/add")
     @ApiOperation(value = "新增")
     public Result<StandingBookHeader> add(
-            @ApiParam(value = "standingBookHeader") @RequestBody @Valid StandingBookHeader standingBookHeader){
+            @ApiParam(value = "standingBookHeader") @RequestBody StandingBookHeader standingBookHeader){
         return ResultUtil.success(standingBookHeaderService.save(standingBookHeader));
     }
     /**

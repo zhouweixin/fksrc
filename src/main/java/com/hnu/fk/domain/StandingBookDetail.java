@@ -34,7 +34,7 @@ public class StandingBookDetail {
     private Integer fieldId;
 
     @ApiModelProperty("项目值")
-    private String ItemValue;
+    private String itemValue;
 
     public Integer getId() {
         return id;
@@ -69,10 +69,10 @@ public class StandingBookDetail {
     }
 
     public String getItemValue() {
-        return ItemValue;
+        return itemValue;
     }
 
     public void setItemValue(String itemValue) {
-        ItemValue = itemValue;
+        itemValue = itemValue;
     }
 }

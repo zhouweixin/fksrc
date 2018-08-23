@@ -1,7 +1,6 @@
 package com.hnu.fk.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @ApiModel(description = "调度台账表头")
@@ -20,8 +20,6 @@ public class StandingBookHeader {
     private Integer id;
 
     @ApiModelProperty("调度台账编号")
-    @Column(nullable = false)
-    @NotNull(message = "调度台账编号不可为空")
     private String standingBook;
 
     @ApiModelProperty("值班调度员")
@@ -49,8 +47,19 @@ public class StandingBookHeader {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date time = new Date();
 
+
     @OneToMany(targetEntity = StandingBookDetail.class,cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     @JoinColumn(name = "head_id",referencedColumnName = "id")
+    private List<StandingBookDetail> standingBookDetailList;
+
+    public List<StandingBookDetail> getStandingBookDetailList() {
+        return standingBookDetailList;
+    }
+
+    public void setStandingBookDetailList(List<StandingBookDetail> standingBookDetailList) {
+        this.standingBookDetailList = standingBookDetailList;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -67,7 +76,6 @@ public class StandingBookHeader {
         this.standingBook = standingBook;
     }
 
-    @JsonIgnore
     public User getUser() {
         return user;
     }
@@ -76,7 +84,6 @@ public class StandingBookHeader {
         this.user = user;
     }
 
-    @JsonIgnore
     public DataDictionary getDataDictionary() {
         return dataDictionary;
     }
