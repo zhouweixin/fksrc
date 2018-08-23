@@ -29,7 +29,7 @@ import java.util.*;
 @RequestMapping(value = "/materialConsumptionHeader")
 @Api(tags = "物料消耗表头接口")
 public class MaterialConsumptionHeaderController {
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     private MaterialConsumptionHeaderService materialConsumptionHeaderService;

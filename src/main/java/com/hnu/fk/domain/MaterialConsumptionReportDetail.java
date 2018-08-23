@@ -23,7 +23,7 @@ public class MaterialConsumptionReportDetail {
 
     @ManyToOne(targetEntity = MaterialConsumptionReportHeader.class)
     @JoinColumn(name = "header_id", referencedColumnName = "id")
-    @ApiModelProperty(value = "物料消耗计划表头")
+    @ApiModelProperty(value = "物料消耗统计表头")
     private MaterialConsumptionReportHeader header;
 
     @ManyToOne(targetEntity = MaterialConsumptionItem.class)
@@ -37,7 +37,7 @@ public class MaterialConsumptionReportDetail {
 
     @ApiModelProperty(value = "计划单耗")
     @Column(precision = 2)
-    private Double planUnitConsumption = 0.0;
+    private Double planUnitConsump = 0.0;
 
     @ApiModelProperty(value = "库存量")
     @Column(precision = 2)
@@ -45,27 +45,65 @@ public class MaterialConsumptionReportDetail {
 
     @ApiModelProperty(value = "本月实际用量")
     @Column(precision = 2)
-    private Double currentMonth = 0.0;
+    private Double curConsump = 0.0;
 
     @ApiModelProperty(value = "本月累计用量")
     @Column(precision = 2)
-    private Double totalMonth = 0.0;
+    private Double totalConsump = 0.0;
 
     @ApiModelProperty(value = "本月实际单耗")
     @Column(precision = 2)
-    private Double currentConsump = 0.0;
+    private Double curUnitConsump = 0.0;
 
     @ApiModelProperty(value = "本月累计单耗")
     @Column(precision = 2)
-    private Double totalConsump = 0.0;
+    private Double totalUnitConsump = 0.0;
 
+    /**
+     * 无参构造函数
+     */
     public MaterialConsumptionReportDetail() {
     }
 
-    public MaterialConsumptionReportDetail(Double price, Double planUnitConsumption, Double storage) {
+    /**
+     * 有参构造函数
+     *
+     * @param price
+     * @param planUnitConsump
+     * @param storage
+     */
+    public MaterialConsumptionReportDetail(Double price, Double planUnitConsump, Double storage) {
         this.price = price;
-        this.planUnitConsumption = planUnitConsumption;
+        this.planUnitConsump = planUnitConsump;
         this.storage = storage;
+    }
+
+    /**
+     * 设置本月实际用量和本月实际单耗
+     *
+     * @param currentMonth
+     * @param curRawOre
+     */
+    public void setCurrentMonthAndCurConsump(double currentMonth, double curRawOre) {
+        this.curConsump = currentMonth;
+        if(curRawOre > 0){
+            // t转kg
+            this.curUnitConsump = 1000 * currentMonth / curRawOre;
+        }
+    }
+
+    /**
+     * 设置累计实际用量和累计单耗
+     *
+     * @param totalMonth
+     * @param totalRawOre
+     */
+    public void setTotalMonth(double totalMonth, double totalRawOre) {
+        this.totalConsump = totalMonth;
+        if(totalRawOre > 0){
+            // t转kg
+            this.totalUnitConsump = 1000 * totalMonth / totalRawOre;
+        }
     }
 
     public Long getId() {
@@ -101,12 +139,12 @@ public class MaterialConsumptionReportDetail {
         this.price = price;
     }
 
-    public Double getPlanUnitConsumption() {
-        return planUnitConsumption;
+    public Double getPlanUnitConsump() {
+        return planUnitConsump;
     }
 
-    public void setPlanUnitConsumption(Double planUnitConsumption) {
-        this.planUnitConsumption = planUnitConsumption;
+    public void setPlanUnitConsump(Double planUnitConsump) {
+        this.planUnitConsump = planUnitConsump;
     }
 
     public Double getStorage() {
@@ -117,28 +155,12 @@ public class MaterialConsumptionReportDetail {
         this.storage = storage;
     }
 
-    public Double getCurrentMonth() {
-        return currentMonth;
+    public Double getCurConsump() {
+        return curConsump;
     }
 
-    public void setCurrentMonth(Double currentMonth) {
-        this.currentMonth = currentMonth;
-    }
-
-    public Double getTotalMonth() {
-        return totalMonth;
-    }
-
-    public void setTotalMonth(Double totalMonth) {
-        this.totalMonth = totalMonth;
-    }
-
-    public Double getCurrentConsump() {
-        return currentConsump;
-    }
-
-    public void setCurrentConsump(Double currentConsump) {
-        this.currentConsump = currentConsump;
+    public void setCurConsump(Double curConsump) {
+        this.curConsump = curConsump;
     }
 
     public Double getTotalConsump() {
@@ -147,5 +169,21 @@ public class MaterialConsumptionReportDetail {
 
     public void setTotalConsump(Double totalConsump) {
         this.totalConsump = totalConsump;
+    }
+
+    public Double getCurUnitConsump() {
+        return curUnitConsump;
+    }
+
+    public void setCurUnitConsump(Double curUnitConsump) {
+        this.curUnitConsump = curUnitConsump;
+    }
+
+    public Double getTotalUnitConsump() {
+        return totalUnitConsump;
+    }
+
+    public void setTotalUnitConsump(Double totalUnitConsump) {
+        this.totalUnitConsump = totalUnitConsump;
     }
 }
