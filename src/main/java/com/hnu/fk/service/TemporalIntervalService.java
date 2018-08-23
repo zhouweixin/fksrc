@@ -49,16 +49,13 @@ public class TemporalIntervalService {
         Date currentTime = new Date();
         temporalInterval.setUpdateTime(currentTime);
         if(temporalInterval.getId()!=null && temporalInterval.getId() == -1){
+            ActionLogUtil.log("月统计时间区间表",0,temporalInterval);
             return temporalIntervalRepository.save(temporalInterval);
         } else if ( !temporalIntervalRepository.findById(temporalInterval.getId()).isPresent()){
             throw new FkExceptions(EnumExceptions.UPDATE_FAILED_NOT_EXIST);
+        } else {
+            ActionLogUtil.log("月统计时间区间表",temporalIntervalRepository.getOne(temporalInterval.getId()),temporalInterval);
+            return temporalIntervalRepository.save(temporalInterval);
         }
-
-        if (temporalInterval.getId()!=null)
-            ActionLogUtil.log("月统计时间区间表",temporalIntervalRepository.findById(temporalInterval.getId()),temporalInterval);
-        else
-            ActionLogUtil.log("月统计时间区间表",0,temporalInterval);
-
-        return temporalIntervalRepository.save(temporalInterval);
     }
 }
